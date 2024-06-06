@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+eslint_d --fix $(git status -s | sed 's/[AM]\s*//' | grep -e '\(tsx\|ts\|html\)$' | xargs)

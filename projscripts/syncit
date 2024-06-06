@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+dirs_to_update=(~/Documents ~/tmux_config ~/.vim ~/.config/nvim ~/projscripts ~/.config/alacritty ~/.config/i3 ~/.config/i3status)
+
+for dir in ${dirs_to_update[@]}; do
+	if [ -e $dir ]; then
+		cd $dir
+		echo "Syncing $dir"
+		git status -s
+		git pull
+	else
+		echo "WARNING: $dir is not present! Please clone the repo"
+	fi
+done
+
+# sync passwords
+echo "Syncing passwords"
+pass git pull

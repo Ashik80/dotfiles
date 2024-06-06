@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+. utils
+
+selected_path=$(find_relevant_directories)
+selected_dir=$(basename $selected_path)
+current_session=$(tmux display-message -p '#S')
+target_window="$current_session:$selected_dir"
+
+tmux switch-client -t $target_window 2>/dev/null
+
+if [[ $? == 1 ]]; then
+    tmux new-window -n $selected_dir -c $selected_path
+fi

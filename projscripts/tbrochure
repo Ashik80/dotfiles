@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+function switch_to_window() {
+    if [[ -z $TMUX ]]; then
+        tmux a -t brochure:fe
+    else
+        tmux switch-client -t brochure:fe
+    fi
+}
+
+tmux has-session -t brochure 2>/dev/null
+
+if [[ $? == 1 ]]; then
+    tmux new -ds brochure -c $HOME/src/ManzilApp/manzil-brochure
+    tmux rename-window -t brochure:0 fe
+fi
+
+switch_to_window 2>/dev/null
+
+if [[ $? == 1 ]]; then
+    tmux new-window -t brochure -n fe -c $HOME/src/ManzilApp/manzil-brochure
+fi

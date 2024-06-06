@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+function create_session_and_window() {
+    tmux new -ds platform -c $HOME/src/ManzilApp/platform-$1
+    tmux rename-window -t platform:0 $1
+}
+
+function create_new_window() {
+    tmux new-window -t platform -n $1 -c $HOME/src/ManzilApp/platform-$1
+}
+
+function activate_virtualenv() {
+    tmux send-keys -t platform:be "pyenv activate platform-be" C-m
+    tmux send-keys -t platform:be "clear" C-m
+}
+
+function switch_to_window() {
+    if [[ -z $TMUX ]]; then
+        tmux a -t platform:$1
+    else
+        tmux switch-client -t platform:$1
+    fi
+}
+
+if [[ -z $1 ]]; then
+    tmux has-session -t platform 2>/dev/null
+    if [[ $? == 1 ]]; then
+        create_session_and_window be
+        activate_virtualenv
+        create_new_window fe
+    fi
+    switch_to_window be
+elif [[ $1 == "be" ]]; then
+    tmux has-session -t platform 2>/dev/null
+    if [[ $? == 1 ]]; then
+        create_session_and_window be
+        activate_virtualenv
+    fi
+    switch_to_window be 2>/dev/null
+    if [[ $? == 1 ]]; then
+        create_new_window be
+        activate_virtualenv
+        switch_to_window be
+    fi
+elif [[ $1 == "fe" ]]; then
+    tmux has-session -t platform 2>/dev/null
+    if [[ $? == 1 ]]; then
+        create_session_and_window fe
+    fi
+    switch_to_window fe 2/dev/null
+    if [[ $? == 1 ]]; then
+        create_new_window fe
+        switch_to_window fe
+    fi
+else
+    echo "ERROR: Wrong parameter"
+    exit 1
+fi

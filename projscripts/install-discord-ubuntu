@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+current_version=0.0.55
+
+if [ -L /usr/bin/Discord ]; then
+    sudo unlink /usr/bin/Discord
+fi
+
+if [ -e /usr/share/applications/discord.desktop ]; then
+    sudo rm /usr/share/applications/discord.desktop
+fi
+
+if [ -e /opt/Discord ]; then
+    sudo rm -r /opt/Discord
+fi
+
+if [ -e $HOME/make-builds/Discord ]; then
+    rm -r $HOME/make-builds/Discord
+fi
+
+if [ ! -e $HOME/make-builds/discord-$current_version.tar.gz ]; then
+    echo "Downloading discord-$current_version"
+    curl -o $HOME/make-builds/discord-$current_version.tar.gz https://dl.discordapp.net/apps/linux/$current_version/discord-$current_version.tar.gz
+fi
+
+cd $HOME/make-builds/
+
+sudo tar xvf discord-$current_version.tar.gz -C /opt
+
+sudo ln -s /opt/Discord/Discord /usr/local/bin/discord
+
+sudo cp /opt/Discord/discord.desktop /usr/share/applications/

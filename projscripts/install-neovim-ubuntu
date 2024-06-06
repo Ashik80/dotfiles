@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+version="0.10.0"
+
+if [[ ! -e ~/make-builds ]]; then
+    mkdir -p ~/make-builds
+fi
+
+cd ~/make-builds
+
+if [[ ! -e ~/make-builds/neovim-$version ]]; then
+    echo "Downloading neovim version $version"
+    curl -o neovim-$version.tar.gz https://codeload.github.com/neovim/neovim/tar.gz/refs/tags/v$version
+
+    echo "Unpacking neovim-$version"
+    tar xvf neovim-$version.tar.gz
+
+    echo "Removing tarball"
+    rm neovim-$version.tar.gz
+fi
+
+sudo apt-get install ninja-build gettext cmake unzip curl build-essential
+
+cd neovim-$version
+
+echo "Cleaning..."
+make distclean
+make clean
+
+if [[ -e build ]]; then
+    rm -r build
+fi
+
+make
+
+sudo make install
