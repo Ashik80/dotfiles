@@ -57,7 +57,11 @@
 ;; MAIN CONFIG
 ;; ========================================
 
-;; font
+;; Disable menus
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+;; Font
 (set-face-attribute 'default nil :font "FiraMono Nerd Font" :height 140)
 (when (member "Noto Color Emoji" (font-family-list))
   (set-fontset-font
@@ -113,14 +117,12 @@
 ;; Enable lsp ui
 (require 'lsp-ui)
 (lsp-ui-mode 1)
-(setq lsp-ui-doc-enable t
-      lsp-ui-doc-use-childframe t
-      lsp-ui-doc-position 'at-point
-      lsp-ui-doc-show-with-mouse t)
 
 ;; disable evil key
 (define-key evil-motion-state-map (kbd "K") nil)
-(evil-define-key 'normal lsp-mode-map (kbd "K") #'lsp-ui-doc-toggle)
+;; hover information
+(evil-define-key 'normal lsp-mode-map (kbd "K") #'lsp-describe-thing-at-point)
+
 (define-key lsp-ui-mode-map [remap evil-goto-definition] #'lsp-ui-peek-find-definitions)
 (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
 
