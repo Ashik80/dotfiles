@@ -4,9 +4,11 @@
 
 ;;; Code:
 (require 'lsp-mode)
+(require 'evil)
 
 (evil-define-key 'normal lsp-mode-map
   (kbd "SPC g d") 'evil-goto-definition
+  (kbd "SPC c a") 'lsp-execute-code-action
   (kbd "SPC g r") 'xref-find-references)
 
 ;; Enable lsp ui

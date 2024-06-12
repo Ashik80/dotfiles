@@ -8,9 +8,10 @@
   (package-install 'js2-mode))
 
 (require 'js2-mode)
+(add-hook 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-hook 'auto-mode-alist '("\\.jsx\\'" . js2-mode))
 ;; Start lsp for typescript
 (add-hook 'js2-mode-hook #'lsp-deferred)
-(add-hook 'js-jsx-mode-hook #'lsp-deferred)
 
 (require 'prettier-js)
 ;; uncomment this if you want prettier on save
