@@ -10,6 +10,10 @@
 (require 'js2-mode)
 (add-hook 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-hook 'auto-mode-alist '("\\.jsx\\'" . js2-mode))
+;; Set indent level
+(add-hook 'js2-mode-hook
+	  '(lambda ()
+	     (setq js2-basic-offset 2)))
 ;; Start lsp for typescript
 (add-hook 'js2-mode-hook #'lsp-deferred)
 

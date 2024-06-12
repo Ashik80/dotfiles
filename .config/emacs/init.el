@@ -8,7 +8,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(js2-mode prettier-js lsp-pyright python-mode typescript-mode evil cmake-mode)))
+   '(python-black js2-mode prettier-js lsp-pyright python-mode typescript-mode evil cmake-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -51,7 +51,7 @@
 (recentf-mode 1)
 ;; Enable company
 (require 'company)
-(company-mode 1)
+(global-company-mode 1)
 ;; Enable ivy for autocomplete
 (require 'ivy)
 (ivy-mode 1)
@@ -62,6 +62,8 @@
 ;; Define a prefix command for the space key in normal mode
 (define-prefix-command 'my-evil-space-prefix)
 (evil-define-key 'normal 'global (kbd "SPC") 'my-evil-space-prefix)
+;; C-u will scroll up half page
+(evil-define-key 'normal 'global (kbd "C-u") 'evil-scroll-up)
 ;; disable evil key
 (define-key evil-motion-state-map (kbd "K") nil)
 

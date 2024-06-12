@@ -8,6 +8,10 @@
   (package-install 'typescript-mode))
 
 (require 'typescript-mode)
+;; Set indent level
+(add-hook 'typescript-mode-hook
+	  '(lambda ()
+	     (setq typescript-indent-level 2)))
 ;; Start lsp for typescript
 (add-hook 'typescript-mode-hook #'lsp-deferred)
 
