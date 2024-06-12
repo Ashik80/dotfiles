@@ -42,5 +42,9 @@
 ;; Download emojify
 (unless (package-installed-p 'emojify)
   (package-install 'emojify))
+;; Download prettier-js
+(unless (package-installed-p 'prettier-js)
+  (package-install 'prettier-js))
 
 ;;; packages.el ends here
+

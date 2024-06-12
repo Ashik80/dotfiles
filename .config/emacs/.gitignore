@@ -5,3 +5,4 @@ eshell
 projectile-bookmarks.eld
 recentf
 .lsp-session*
+.cache
