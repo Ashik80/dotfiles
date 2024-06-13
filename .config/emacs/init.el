@@ -33,7 +33,11 @@
 ;; Enable line numbers globally
 (global-display-line-numbers-mode)
 ;; Set theme
-(load-theme 'wombat t)
+(unless (package-installed-p 'autothemer)
+  (package-install 'autothemer))
+(load-file "~/.config/emacs/kanagawa-theme.el")
+(load-theme 'kanagawa t)
+;; (load-theme 'wombat t)
 ;; Disable backup file
 (setq make-backup-files nil)
 
@@ -77,7 +81,7 @@
 (load-file "~/.config/emacs/lsp-setup.el")
 
 ;; Set the path to the Node.js binary
-(let ((node-path "/home/ashik/.nvm/versions/node/v20.12.1/bin"))
+(let ((node-path "/home/shuvo/.nvm/versions/node/v20.11.1/bin"))
   (setq exec-path (append exec-path (list node-path)))
   (setenv "PATH" (concat node-path ":" (getenv "PATH"))))
 
