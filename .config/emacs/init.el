@@ -25,6 +25,8 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
+;; Convert tabs to spaces
+(setq-default indent-tabs-mode nil)
 ;; Font
 (set-face-attribute 'default nil :font "FiraMono Nerd Font" :height 140)
 (when (member "Noto Color Emoji" (font-family-list))
@@ -32,14 +34,14 @@
     t 'symbol (font-spec :family "Noto Color Emoji") nil 'prepend))
 ;; Enable line numbers globally
 (global-display-line-numbers-mode)
+;; Disable backup file
+(setq make-backup-files nil)
 ;; Set theme
 (unless (package-installed-p 'autothemer)
   (package-install 'autothemer))
 (load-file "~/.config/emacs/kanagawa-theme.el")
 (load-theme 'kanagawa t)
 ;; (load-theme 'wombat t)
-;; Disable backup file
-(setq make-backup-files nil)
 
 ;; Enable emojify
 (require 'emojify)
@@ -63,6 +65,8 @@
 (require 'flycheck)
 (global-flycheck-mode 1)
 
+(load-file "~/.config/emacs/grep-project.el")
+
 ;; Define a prefix command for the space key in normal mode
 (define-prefix-command 'my-evil-space-prefix)
 (evil-define-key 'normal 'global (kbd "SPC") 'my-evil-space-prefix)
@@ -75,13 +79,23 @@
 (evil-define-key 'normal 'global (kbd "SPC p p") 'projectile-switch-project)
 (evil-define-key 'normal 'global (kbd "SPC f f") 'projectile-find-file)
 
+;; Open terminal in current project
+(defun my-open-terminal()
+  "Opens terminal at the current project root."
+  (interactive)
+  (let ((project-root (projectile-project-root)))
+    (if project-root
+        (let ((default-directory project-root))
+          (term (getenv "SHELL"))))))
+(evil-define-key 'normal 'global (kbd "SPC M-t") 'my-open-terminal)
+
 ;; Recentf keybinds
 (evil-define-key 'normal 'global (kbd "SPC f r") 'recentf-open-files)
 
 (load-file "~/.config/emacs/lsp-setup.el")
 
 ;; Set the path to the Node.js binary
-(let ((node-path "/home/shuvo/.nvm/versions/node/v20.11.1/bin"))
+(let ((node-path "/home/ashik/.nvm/versions/node/v20.12.1/bin"))
   (setq exec-path (append exec-path (list node-path)))
   (setenv "PATH" (concat node-path ":" (getenv "PATH"))))
 

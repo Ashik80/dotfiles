@@ -1,0 +1,26 @@
+;;; package --- Summary
+;;; Commentary:
+;;; Add searching for patterns functionality
+;;; Code:
+;; Customize grep
+
+(require 'projectile)
+(defvar exclude-dirs-grep "{node_modules,.git,__pycache__,.next,build,.build,dist,target}")
+(defun my-grep-whole-project(search-term base-directory)
+  "Search the whole project for SEARCH-TERM and BASE-DIRECTORY."
+  (interactive "sSearch Expression: \nsBase Directory:")
+  (projectile-with-default-dir (projectile-project-root)
+    (grep (concat "grep --exclude-dir=" exclude-dirs-grep " --color -Ri -nH --null -e " search-term " " base-directory))))
+(defun my-grep-whole-project-full-word(search-term base-directory)
+  "Search the whole project for SEARCH-TERM and BASE-DIRECTORY."
+  (interactive "sSearch Word: \nsBase Directory:")
+  (projectile-with-default-dir (projectile-project-root)
+    (grep (concat "grep --exclude-dir=" exclude-dirs-grep " --color -Ri -w -nH --null -e " search-term " " base-directory))))
+
+(require 'evil)
+;; Grepping shortcut
+(evil-define-key 'normal 'global (kbd "SPC f g") 'my-grep-whole-project)
+(evil-define-key 'normal 'global (kbd "SPC f w") 'my-grep-whole-project-full-word)
+
+;;; grep-project.el ends here
+
