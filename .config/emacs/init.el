@@ -90,12 +90,12 @@
 (evil-define-key 'normal 'global (kbd "SPC M-t") 'my-open-terminal)
 
 ;; Recentf keybinds
-(evil-define-key 'normal 'global (kbd "SPC f r") 'recentf-open-files)
+(evil-define-key 'normal 'global (kbd "SPC f r") 'recentf)
 
 (load-file "~/.config/emacs/lsp-setup.el")
 
 ;; Set the path to the Node.js binary
-(let ((node-path "/home/ashik/.nvm/versions/node/v20.12.1/bin"))
+(let ((node-path "/home/shuvo/.nvm/versions/node/v20.11.1/bin"))
   (setq exec-path (append exec-path (list node-path)))
   (setenv "PATH" (concat node-path ":" (getenv "PATH"))))
 
