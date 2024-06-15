@@ -10,20 +10,21 @@
 (require 'js2-mode)
 (add-hook 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-hook 'auto-mode-alist '("\\.jsx\\'" . js2-mode))
-;; Set indent level
+;; Set indent level and start lsp
 (add-hook 'js2-mode-hook
-	  '(lambda ()
-	     (setq js2-basic-offset 2)))
-;; Start lsp for typescript
-(add-hook 'js2-mode-hook #'lsp-deferred)
+	  #'(lambda ()
+              (lsp-deferred)
+	      (setq js2-basic-offset 2)))
+
+;; Set keyboard shortcuts
+(add-hook 'js2-mode-hook
+          (lambda ()
+            (define-key 'c-l (kbd "f p") 'prettier-js)
+            (define-key 'c-l (kbd "f e") 'lsp-eslint-apply-all-fixes)))
 
 (require 'prettier-js)
 ;; uncomment this if you want prettier on save
 ;; (add-hook 'typescript-mode-hook 'prettier-js-mode)
-
-(require 'evil)
-(evil-define-key 'normal js2-mode-map (kbd "SPC f p") 'prettier-js)
-(evil-define-key 'normal js2-mode-map (kbd "SPC f e") 'lsp-eslint-apply-all-fixes)
 
 ;;; javascript-setup.el ends here
 

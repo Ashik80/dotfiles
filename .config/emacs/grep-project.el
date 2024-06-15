@@ -17,10 +17,9 @@
   (projectile-with-default-dir (projectile-project-root)
     (grep (concat "grep --exclude-dir=" exclude-dirs-grep " --color -Ri -w -nH --null -e " search-term " " base-directory))))
 
-(require 'evil)
 ;; Grepping shortcut
-(evil-define-key 'normal 'global (kbd "SPC f g") 'my-grep-whole-project)
-(evil-define-key 'normal 'global (kbd "SPC f w") 'my-grep-whole-project-full-word)
+(define-key 'c-l (kbd "f g") 'my-grep-whole-project)
+(define-key 'c-l (kbd "f w") 'my-grep-whole-project-full-word)
 
 ;;; grep-project.el ends here
 

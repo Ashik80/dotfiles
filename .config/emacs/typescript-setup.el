@@ -8,20 +8,21 @@
   (package-install 'typescript-mode))
 
 (require 'typescript-mode)
-;; Set indent level
-(add-hook 'typescript-mode-hook
-	  '(lambda ()
-	     (setq typescript-indent-level 2)))
-;; Start lsp for typescript
-(add-hook 'typescript-mode-hook #'lsp-deferred)
-
 (require 'prettier-js)
+;; Set indent level and start lsp
+(add-hook 'typescript-mode-hook
+	  #'(lambda ()
+              (lsp-deferred)
+	     (setq typescript-indent-level 2)))
+
+;; Set keyboard shortcuts
+(add-hook 'typescript-mode-hook
+          (lambda ()
+            (define-key 'c-l (kbd "f p") 'prettier-js)
+            (define-key 'c-l (kbd "f e") 'lsp-eslint-apply-all-fixes)))
+
 ;; uncomment this if you want prettier on save
 ;; (add-hook 'typescript-mode-hook 'prettier-js-mode)
-
-(require 'evil)
-(evil-define-key 'normal typescript-mode-map (kbd "SPC f p") 'prettier-js)
-(evil-define-key 'normal typescript-mode-map (kbd "SPC f e") 'lsp-eslint-apply-all-fixes)
 
 ;;; typescript-setup.el ends here
 

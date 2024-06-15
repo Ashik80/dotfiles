@@ -25,6 +25,8 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
+;; Disable startup screen
+(setq inhibit-startup-screen t)
 ;; Convert tabs to spaces
 (setq-default indent-tabs-mode nil)
 ;; Font
@@ -42,13 +44,13 @@
 (load-file "~/.config/emacs/kanagawa-theme.el")
 (load-theme 'kanagawa t)
 ;; (load-theme 'wombat t)
+;; Go 20 lines down
+(global-set-key (kbd "C-S-n") (lambda () (interactive) (forward-line 20)))
+(global-set-key (kbd "C-S-p") (lambda () (interactive) (forward-line -20)))
 
 ;; Enable emojify
 (require 'emojify)
 (add-hook 'after-init-hook #'global-emojify-mode)
-;; Enable Evil - VI mode
-(require 'evil)
-(evil-mode 1)
 ;; Enable projectile
 (require 'projectile)
 (projectile-mode 1)
@@ -65,19 +67,15 @@
 (require 'flycheck)
 (global-flycheck-mode 1)
 
+(define-prefix-command 'c-l)
+(global-set-key (kbd "C-l") nil)
+(global-set-key (kbd "C-l") 'c-l)
+;; (global-set-key (kbd "C-x f") nil)
 (load-file "~/.config/emacs/grep-project.el")
 
-;; Define a prefix command for the space key in normal mode
-(define-prefix-command 'my-evil-space-prefix)
-(evil-define-key 'normal 'global (kbd "SPC") 'my-evil-space-prefix)
-;; C-u will scroll up half page
-(evil-define-key 'normal 'global (kbd "C-u") 'evil-scroll-up)
-;; disable evil key
-(define-key evil-motion-state-map (kbd "K") nil)
-
 ;; Projectile keybinds
-(evil-define-key 'normal 'global (kbd "SPC p p") 'projectile-switch-project)
-(evil-define-key 'normal 'global (kbd "SPC f f") 'projectile-find-file)
+(define-key 'c-l (kbd "p p") 'projectile-switch-project)
+(define-key 'c-l (kbd "f f") 'projectile-switch-project)
 
 ;; Open terminal in current project
 (defun my-open-terminal()
@@ -86,11 +84,11 @@
   (let ((project-root (projectile-project-root)))
     (if project-root
         (let ((default-directory project-root))
-          (term (getenv "SHELL"))))))
-(evil-define-key 'normal 'global (kbd "SPC M-t") 'my-open-terminal)
+          (ansi-term (getenv "SHELL"))))))
+(define-key 'c-l (kbd "M-t") 'my-open-terminal)
 
 ;; Recentf keybinds
-(evil-define-key 'normal 'global (kbd "SPC f r") 'recentf)
+(define-key 'c-l (kbd "f r") 'recentf)
 
 (load-file "~/.config/emacs/lsp-setup.el")
 
