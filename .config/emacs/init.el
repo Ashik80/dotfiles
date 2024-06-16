@@ -70,12 +70,12 @@
 (define-prefix-command 'c-l)
 (global-set-key (kbd "C-l") nil)
 (global-set-key (kbd "C-l") 'c-l)
-;; (global-set-key (kbd "C-x f") nil)
+
 (load-file "~/.config/emacs/grep-project.el")
 
 ;; Projectile keybinds
 (define-key 'c-l (kbd "p p") 'projectile-switch-project)
-(define-key 'c-l (kbd "f f") 'projectile-switch-project)
+(define-key 'c-l (kbd "f f") 'projectile-find-file)
 
 ;; Open terminal in current project
 (defun my-open-terminal()
