@@ -48,6 +48,9 @@
 (global-set-key (kbd "C-S-n") (lambda () (interactive) (forward-line 20)))
 (global-set-key (kbd "C-S-p") (lambda () (interactive) (forward-line -20)))
 
+(load-file "~/.config/emacs/codeium.el/codeium.el")
+(add-to-list 'completion-at-point-functions 'codeium-completion-at-point)
+
 ;; Enable emojify
 (require 'emojify)
 (add-hook 'after-init-hook #'global-emojify-mode)
