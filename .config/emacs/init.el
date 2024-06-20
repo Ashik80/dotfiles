@@ -8,7 +8,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(python-black js2-mode prettier-js lsp-pyright python-mode typescript-mode evil cmake-mode)))
+   '(ghub magit python-black js2-mode prettier-js lsp-pyright python-mode typescript-mode evil cmake-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -29,7 +29,10 @@
 (setq inhibit-startup-screen t)
 ;; Convert tabs to spaces
 (setq-default indent-tabs-mode nil)
+;; Enable downcase
+(put 'downcase-region 'disabled nil)
 ;; Font
+(add-to-list 'default-frame-alist '(font . "FiraMono Nerd Font"))
 (set-face-attribute 'default nil :font "FiraMono Nerd Font" :height 140)
 (when (member "Noto Color Emoji" (font-family-list))
   (set-fontset-font
@@ -87,22 +90,26 @@
   (let ((project-root (projectile-project-root)))
     (if project-root
         (let ((default-directory project-root))
-          (ansi-term (getenv "SHELL"))))))
+          (eshell (getenv "SHELL"))))))
 (define-key 'c-l (kbd "M-t") 'my-open-terminal)
 
 ;; Recentf keybinds
-(define-key 'c-l (kbd "f r") 'recentf)
+(define-key 'c-l (kbd "f r") 'recentf-open-files)
 
 (load-file "~/.config/emacs/lsp-setup.el")
 
 ;; Set the path to the Node.js binary
-(let ((node-path "/home/shuvo/.nvm/versions/node/v20.11.1/bin"))
+(let ((node-path "/home/ashik/.nvm/versions/node/v20.12.1/bin"))
   (setq exec-path (append exec-path (list node-path)))
   (setenv "PATH" (concat node-path ":" (getenv "PATH"))))
 
 (load-file "~/.config/emacs/typescript-setup.el")
 
 (load-file "~/.config/emacs/javascript-setup.el")
+
+;; Use ESLint with Flycheck
+(flycheck-add-mode 'javascript-eslint 'js2-mode)
+(flycheck-add-mode 'javascript-eslint 'typescript-mode)
 
 (load-file "~/.config/emacs/python-setup.el")
 
