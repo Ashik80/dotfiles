@@ -45,6 +45,13 @@
 ;; Download prettier-js
 (unless (package-installed-p 'prettier-js)
   (package-install 'prettier-js))
+;; Download magit
+(unless (package-installed-p 'ghub)
+  (package-install 'ghub))
+(unless (package-installed-p 'treepy)
+  (package-install 'treepy))
+(unless (package-installed-p 'magit)
+  (package-install 'magit))
 
 ;;; packages.el ends here
 
