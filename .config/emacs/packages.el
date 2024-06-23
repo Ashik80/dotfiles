@@ -12,9 +12,9 @@
 (package-initialize)
 ;; (package-refresh-contents)
 
-;; Download Evil
-(unless (package-installed-p 'evil)
-  (package-install 'evil))
+;; Download vterm
+(unless (package-installed-p 'vterm)
+  (package-install 'vterm))
 ;; Download Projectile
 (unless (package-installed-p 'projectile)
   (package-install 'projectile))
