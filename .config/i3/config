@@ -234,6 +234,7 @@ bar {
 # open firefox with keybind
 bindsym $mod+b exec --no-startup-id firefox -p
 
+# set wallpaper
 exec --no-startup-id feh ~/.config/i3/japanese_pedestrian_street.png --bg-fill
 
 # take screenshots
@@ -242,3 +243,8 @@ bindsym --release Shift+Print exec --no-startup-id xfce4-screenshooter -f -s "$H
 bindsym --release Ctrl+Print exec --no-startup-id xfce4-screenshooter -r -s /dev/stdout | xclip -i -selection clipboard -t image/png
 bindsym --release Ctrl+Shift+Print exec --no-startup-id xfce4-screenshooter -f -s /dev/stdout | xclip -i -selection clipboard -t image/png
 bindsym --release $mod+Shift+Print exec --no-startup-id xfce4-screenshooter
+
+# start emacs daemon
+exec_always --no-startup-id emacs --daemon
+# start emacs client
+bindsym $mod+t exec emacsclient -c
