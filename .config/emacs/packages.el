@@ -49,6 +49,9 @@
   (package-install 'treepy))
 (unless (package-installed-p 'magit)
   (package-install 'magit))
+;; Download doom modeline
+(unless (package-installed-p 'doom-modeline)
+  (package-install 'doom-modeline))
 
 ;;; packages.el ends here
 

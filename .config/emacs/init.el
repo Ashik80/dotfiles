@@ -8,7 +8,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(ghub magit python-black js2-mode prettier-js lsp-pyright python-mode typescript-mode evil cmake-mode)))
+   '(lsp-pyright doom-modeline ghub magit python-black js2-mode prettier-js python-mode typescript-mode evil cmake-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -47,7 +47,9 @@
   (package-install 'autothemer))
 (load-file "~/.config/emacs/kanagawa-theme.el")
 (load-theme 'kanagawa t)
-;; (load-theme 'wombat t)
+(require 'doom-modeline)
+(doom-modeline-mode 1)
+
 ;; Go 20 lines down
 (global-set-key (kbd "C-S-n") (lambda () (interactive) (forward-line 20)))
 (global-set-key (kbd "C-S-p") (lambda () (interactive) (forward-line -20)))
@@ -110,9 +112,9 @@
 
 ;; Use ESLint with Flycheck
 (flycheck-add-mode 'javascript-eslint 'js2-mode)
+(flycheck-add-mode 'javascript-eslint 'js-jsx-mode)
 (flycheck-add-mode 'javascript-eslint 'typescript-mode)
 
 (load-file "~/.config/emacs/python-setup.el")
 
 ;;; init.el ends here
-

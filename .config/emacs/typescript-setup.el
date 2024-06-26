@@ -23,10 +23,14 @@
 	      (setq js2-basic-offset 2)))
 
 ;; Set keyboard shortcuts
-(add-hook 'typescript-mode-hook
-          (lambda ()
-            (define-key 'leader (kbd "f p") 'prettier-js)
-            (define-key 'leader (kbd "f e") 'lsp-eslint-apply-all-fixes)))
+(defun my-formatting-bindings ()
+  "Keybindings for typescript/jsx modes."
+  ()
+  (define-key 'leader (kbd "f p") 'prettier-js)
+  (define-key 'leader (kbd "f e") 'lsp-eslint-apply-all-fixes))
+
+(add-hook 'typescript-mode-hook 'my-formatting-bindings)
+(add-hook 'js-jsx-mode-hook 'my-formatting-bindings)
 
 ;; uncomment this if you want prettier on save
 ;; (add-hook 'typescript-mode-hook 'prettier-js-mode)
