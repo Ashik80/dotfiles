@@ -1,0 +1,8 @@
+dbaeumer.vscode-eslint
+esbenp.prettier-vscode
+ms-python.debugpy
+ms-python.python
+ms-python.vscode-pylance
+pascalsenn.keyboard-quickfix
+sainnhe.everforest
+vscodevim.vim
