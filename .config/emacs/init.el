@@ -117,4 +117,6 @@
 
 (load-file "~/.config/emacs/python-setup.el")
 
+(load-file "~/.config/emacs/rust-setup.el")
+
 ;;; init.el ends here

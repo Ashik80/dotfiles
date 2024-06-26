@@ -12,6 +12,9 @@
 (package-initialize)
 ;; (package-refresh-contents)
 
+;; Download evil
+(unless (package-installed-p 'evil)
+  (package-install 'evil))
 ;; Download vterm
 (unless (package-installed-p 'vterm)
   (package-install 'vterm))
