@@ -32,8 +32,9 @@
 ;; Enable downcase
 (put 'downcase-region 'disabled nil)
 ;; Font
-(add-to-list 'default-frame-alist '(font . "FiraMono Nerd Font"))
-(set-face-attribute 'default nil :font "FiraMono Nerd Font" :height 140)
+(defvar my-font "FiraMono Nerd Font")
+(add-to-list 'default-frame-alist `(font . ,my-font))
+(set-face-attribute 'default nil :font my-font :height 140)
 (when (member "Noto Color Emoji" (font-family-list))
   (set-fontset-font
     t 'symbol (font-spec :family "Noto Color Emoji") nil 'prepend))
@@ -70,15 +71,15 @@
 (require 'flycheck)
 (global-flycheck-mode 1)
 
-(define-prefix-command 'c-l)
+(define-prefix-command 'leader)
 (global-set-key (kbd "C-l") nil)
-(global-set-key (kbd "C-l") 'c-l)
+(global-set-key (kbd "C-l") 'leader)
 
 (load-file "~/.config/emacs/grep-project.el")
 
 ;; Projectile keybinds
-(define-key 'c-l (kbd "p p") 'projectile-switch-project)
-(define-key 'c-l (kbd "f f") 'projectile-find-file)
+(define-key 'leader (kbd "p p") 'projectile-switch-project)
+(define-key 'leader (kbd "f f") 'projectile-find-file)
 
 ;; Open terminal in current project
 (defun my-open-terminal()
@@ -88,10 +89,13 @@
     (if project-root
         (let ((default-directory project-root))
           (vterm (getenv "SHELL"))))))
-(define-key 'c-l (kbd "M-t") 'my-open-terminal)
+(define-key 'leader (kbd "M-t") 'my-open-terminal)
 
 ;; Recentf keybinds
-(define-key 'c-l (kbd "f r") 'recentf-open-files)
+(define-key 'leader (kbd "f r") 'recentf-open-files)
+
+;; Git blame
+(define-key 'leader (kbd "g b") 'magit-blame)
 
 (load-file "~/.config/emacs/lsp-setup.el")
 

@@ -13,13 +13,20 @@
 (add-hook 'typescript-mode-hook
 	  #'(lambda ()
               (lsp-deferred)
-	     (setq typescript-indent-level 2)))
+	      (setq typescript-indent-level 2)))
+
+(require 'js2-mode)
+(add-hook 'auto-mode-alist '("\\.tsx\\'" . js-jsx-mode))
+(add-hook 'js-jsx-mode-hook
+	  #'(lambda ()
+              (lsp-deferred)
+	      (setq js2-basic-offset 2)))
 
 ;; Set keyboard shortcuts
 (add-hook 'typescript-mode-hook
           (lambda ()
-            (define-key 'c-l (kbd "f p") 'prettier-js)
-            (define-key 'c-l (kbd "f e") 'lsp-eslint-apply-all-fixes)))
+            (define-key 'leader (kbd "f p") 'prettier-js)
+            (define-key 'leader (kbd "f e") 'lsp-eslint-apply-all-fixes)))
 
 ;; uncomment this if you want prettier on save
 ;; (add-hook 'typescript-mode-hook 'prettier-js-mode)

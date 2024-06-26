@@ -19,8 +19,8 @@
 ;; Set keyboard shortcuts
 (add-hook 'js2-mode-hook
           (lambda ()
-            (define-key 'c-l (kbd "f p") 'prettier-js)
-            (define-key 'c-l (kbd "f e") 'lsp-eslint-apply-all-fixes)))
+            (define-key 'leader (kbd "f p") 'prettier-js)
+            (define-key 'leader (kbd "f e") 'lsp-eslint-apply-all-fixes)))
 
 (require 'prettier-js)
 ;; uncomment this if you want prettier on save

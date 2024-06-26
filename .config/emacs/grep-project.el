@@ -19,8 +19,8 @@
     (grep (concat "grep --exclude=" exclude-files-grep " --exclude-dir=" exclude-dirs-grep " --color -Ri -w -nH --null -e \"" search-term "\" " base-directory))))
 
 ;; Grepping shortcut
-(define-key 'c-l (kbd "f g") 'my-grep-whole-project)
-(define-key 'c-l (kbd "f w") 'my-grep-whole-project-full-word)
+(define-key 'leader (kbd "f g") 'my-grep-whole-project)
+(define-key 'leader (kbd "f w") 'my-grep-whole-project-full-word)
 
 ;;; grep-project.el ends here
 

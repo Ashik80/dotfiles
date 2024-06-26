@@ -36,9 +36,6 @@
 ;; Download yasnippet (lsp-mode dependency)
 (unless (package-installed-p 'yasnippet)
   (package-install 'yasnippet))
-;; Download lsp-ui
-(unless (package-installed-p 'lsp-ui)
-  (package-install 'lsp-ui))
 ;; Download emojify
 (unless (package-installed-p 'emojify)
   (package-install 'emojify))
