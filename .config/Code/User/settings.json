@@ -1,0 +1,119 @@
+{
+  "workbench.colorTheme": "Everforest Dark",
+  "everforest.darkContrast": "hard",
+  "editor.fontFamily": "'FiraMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
+  "breadcrumbs.enabled": false,
+  "editor.stickyScroll.enabled": false,
+  "editor.minimap.enabled": false,
+  "workbench.activityBar.location": "hidden",
+  "workbench.startupEditor": "none",
+  "window.menuBarVisibility": "toggle",
+  "window.enableMenuBarMnemonics": false,
+  "window.restoreWindows": "none",
+  "files.hotExit": "off",
+  "editor.guides.indentation": false,
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.matchBrackets": "near",
+  "editor.occurrencesHighlight": "off",
+  // vim settings
+  "vim.leader": " ",
+  "vim.normalModeKeyBindings": [
+    {
+      "before": ["leader", "f", "f"],
+      "after": [],
+      "commands": [
+        {
+          "command": "workbench.action.quickOpen"
+        }
+      ]
+    },
+    {
+      "before": ["leader", "f", "b"],
+      "after": [],
+      "commands": [
+        {
+          "command": ":ls"
+        }
+      ]
+    },
+    {
+      "before": ["leader", "f", "p"],
+      "after": [],
+      "commands": [
+        {
+          "command": "editor.action.formatDocument"
+        }
+      ]
+    },
+    {
+      "before": ["leader", "f", "e"],
+      "after": [],
+      "commands": [
+        {
+          "command": "eslint.executeAutofix"
+        }
+      ]
+    },
+    {
+      "before": ["tab"],
+      "after": [],
+      "commands": [
+        {
+          "command": ":bnext"
+        }
+      ]
+    },
+    {
+      "before": ["shift+tab"],
+      "after": [],
+      "commands": [
+        {
+          "command": ":bprev"
+        }
+      ]
+    },
+    {
+      "before": ["K"],
+      "after": [],
+      "commands": [
+        {
+          "command": "editor.action.showHover"
+        }
+      ]
+    },
+    {
+      "before": ["leader", "g", "d"],
+      "after": [],
+      "commands": [
+        {
+          "command": "editor.action.revealDefinition"
+        }
+      ]
+    },
+    {
+      "before": ["leader", "g", "r"],
+      "after": [],
+      "commands": [
+        {
+          "command": "editor.action.goToReferences"
+        }
+      ]
+    },
+    {
+      "before": ["leader", "c", "a"],
+      "after": [],
+      "commands": [
+        {
+          // "command": "editor.action.quickFix"
+          "command": "keyboard-quickfix.openQuickFix"
+        }
+      ]
+    }
+  ],
+  "security.workspace.trust.untrustedFiles": "open"
+}
