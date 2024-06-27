@@ -8,7 +8,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(rust-mode lsp-pyright doom-modeline ghub magit python-black js2-mode prettier-js python-mode typescript-mode evil cmake-mode)))
+   '(evil-collection undo-fu rust-mode lsp-pyright doom-modeline ghub magit python-black js2-mode prettier-js python-mode typescript-mode evil cmake-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -43,10 +43,12 @@
 ;; Disable backup file
 (setq make-backup-files nil)
 ;; Set theme
-(unless (package-installed-p 'autothemer)
-  (package-install 'autothemer))
-(load-file "~/.config/emacs/kanagawa-theme.el")
-(load-theme 'kanagawa t)
+;; (unless (package-installed-p 'autothemer)
+;;   (package-install 'autothemer))
+;; (load-file "~/.config/emacs/kanagawa-theme.el")
+;; (load-theme 'kanagawa t)
+(load-file "~/.config/emacs/everforest-hard-dark-theme.el")
+(load-theme 'everforest-hard-dark t)
 (require 'doom-modeline)
 (doom-modeline-mode 1)
 
@@ -72,6 +74,12 @@
 ;; Enable flycheck
 (require 'flycheck)
 (global-flycheck-mode 1)
+;; Enable evil mode
+(require 'evil)
+(evil-mode 1)
+;; Enable undo for evil
+(require 'undo-fu)
+(setq evil-undo-system 'undo-fu)
 
 (define-prefix-command 'leader)
 (global-set-key (kbd "C-l") nil)
@@ -81,7 +89,10 @@
 
 ;; Projectile keybinds
 (define-key 'leader (kbd "p p") 'projectile-switch-project)
+(define-key evil-normal-state-map (kbd "SPC p p") 'projectile-switch-project)
+
 (define-key 'leader (kbd "f f") 'projectile-find-file)
+(define-key evil-normal-state-map (kbd "SPC f f") 'projectile-find-file)
 
 ;; Open terminal in current project
 (defun my-open-terminal()
@@ -92,12 +103,15 @@
         (let ((default-directory project-root))
           (vterm (getenv "SHELL"))))))
 (define-key 'leader (kbd "M-t") 'my-open-terminal)
+(define-key evil-normal-state-map (kbd "M-t") 'my-open-terminal)
 
 ;; Recentf keybinds
 (define-key 'leader (kbd "f r") 'recentf-open-files)
+(define-key evil-normal-state-map (kbd "SPC f r") 'recentf-open-files)
 
 ;; Git blame
 (define-key 'leader (kbd "g b") 'magit-blame)
+(define-key evil-normal-state-map (kbd "SPC g b") 'magit-blame)
 
 (load-file "~/.config/emacs/lsp-setup.el")
 

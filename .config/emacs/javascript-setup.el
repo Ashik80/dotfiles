@@ -16,11 +16,15 @@
               (lsp-deferred)
 	      (setq js2-basic-offset 2)))
 
+(require 'evil)
 ;; Set keyboard shortcuts
 (add-hook 'js2-mode-hook
           (lambda ()
             (define-key 'leader (kbd "f p") 'prettier-js)
-            (define-key 'leader (kbd "f e") 'lsp-eslint-apply-all-fixes)))
+            (define-key 'leader (kbd "f e") 'lsp-eslint-apply-all-fixes)
+            ;; evil bindings
+            (define-key evil-normal-state-map (kbd "SPC f p") 'prettier-js)
+            (define-key evil-normal-state-map (kbd "SPC f e") 'lsp-eslint-apply-all-fixes)))
 
 (require 'prettier-js)
 ;; uncomment this if you want prettier on save

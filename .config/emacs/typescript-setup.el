@@ -22,12 +22,16 @@
               (lsp-deferred)
 	      (setq js2-basic-offset 2)))
 
+(require 'evil)
 ;; Set keyboard shortcuts
 (defun my-formatting-bindings ()
   "Keybindings for typescript/jsx modes."
   ()
   (define-key 'leader (kbd "f p") 'prettier-js)
-  (define-key 'leader (kbd "f e") 'lsp-eslint-apply-all-fixes))
+  (define-key 'leader (kbd "f e") 'lsp-eslint-apply-all-fixes)
+  ;; evil bindings
+  (define-key evil-normal-state-map (kbd "SPC f p") 'prettier-js)
+  (define-key evil-normal-state-map (kbd "SPC f e") 'lsp-eslint-apply-all-fixes))
 
 (add-hook 'typescript-mode-hook 'my-formatting-bindings)
 (add-hook 'js-jsx-mode-hook 'my-formatting-bindings)

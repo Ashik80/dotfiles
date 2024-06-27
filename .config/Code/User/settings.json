@@ -18,8 +18,12 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "editor.matchBrackets": "near",
   "editor.occurrencesHighlight": "off",
+  "security.workspace.trust.untrustedFiles": "open",
   // vim settings
   "vim.leader": " ",
   "vim.normalModeKeyBindings": [
@@ -115,5 +119,4 @@
       ]
     }
   ],
-  "security.workspace.trust.untrustedFiles": "open"
 }

@@ -15,6 +15,9 @@
 ;; Download evil
 (unless (package-installed-p 'evil)
   (package-install 'evil))
+;; Download undo-fu (evil dependency)
+(unless (package-installed-p 'undo-fu)
+  (package-install 'undo-fu))
 ;; Download vterm
 (unless (package-installed-p 'vterm)
   (package-install 'vterm))
@@ -36,6 +39,9 @@
 ;; Download lsp-mode
 (unless (package-installed-p 'lsp-mode)
   (package-install 'lsp-mode))
+;; Download lsp-ui
+(unless (package-installed-p 'lsp-ui)
+  (package-install 'lsp-ui))
 ;; Download yasnippet (lsp-mode dependency)
 (unless (package-installed-p 'yasnippet)
   (package-install 'yasnippet))
