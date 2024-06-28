@@ -22,6 +22,10 @@
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true
+  },
   "editor.matchBrackets": "near",
   "editor.occurrencesHighlight": "off",
   "security.workspace.trust.untrustedFiles": "open",
@@ -52,7 +56,7 @@
       "after": [],
       "commands": [
         {
-          "command": "editor.action.formatDocument"
+          "command": "editor.action.formatDocument",
         }
       ]
     },
@@ -65,24 +69,24 @@
         }
       ]
     },
-    {
-      "before": ["tab"],
-      "after": [],
-      "commands": [
-        {
-          "command": ":bnext"
-        }
-      ]
-    },
-    {
-      "before": ["shift+tab"],
-      "after": [],
-      "commands": [
-        {
-          "command": ":bprev"
-        }
-      ]
-    },
+    // {
+    //   "before": ["tab"],
+    //   "after": [],
+    //   "commands": [
+    //     {
+    //       "command": ":bnext"
+    //     }
+    //   ]
+    // },
+    // {
+    //   "before": ["shift+tab"],
+    //   "after": [],
+    //   "commands": [
+    //     {
+    //       "command": ":bprev"
+    //     }
+    //   ]
+    // },
     {
       "before": ["K"],
       "after": [],
