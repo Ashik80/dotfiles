@@ -12,7 +12,7 @@ vim.opt.number = true
 vim.opt.mouse = 'a'
 vim.opt.showmode = false
 
-vim.opt.guicursor = ""
+-- vim.opt.guicursor = ""
 
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -190,9 +190,6 @@ require('lazy').setup({
     'nvim-lualine/lualine.nvim',
     config = function ()
       require 'lualine'.setup({
-        options = {
-          section_separators = ""
-        },
         sections = {
           lualine_c = {
             { 'filename', path = 1 }
@@ -585,5 +582,18 @@ require('lazy').setup({
       "sindrets/diffview.nvim",
     },
     config = true
+  },
+
+  {
+    "stevearc/oil.nvim",
+    config = function ()
+      require("oil").setup({
+        view_options = {
+          show_hidden = true
+        }
+      })
+
+      vim.keymap.set("n", "ge", "<cmd>Oil<cr>", { desc = "Open parent directory" })
+    end
   }
 })
