@@ -69,24 +69,24 @@
         }
       ]
     },
-    // {
-    //   "before": ["tab"],
-    //   "after": [],
-    //   "commands": [
-    //     {
-    //       "command": ":bnext"
-    //     }
-    //   ]
-    // },
-    // {
-    //   "before": ["shift+tab"],
-    //   "after": [],
-    //   "commands": [
-    //     {
-    //       "command": ":bprev"
-    //     }
-    //   ]
-    // },
+    {
+      "before": ["g", "n"],
+      "after": [],
+      "commands": [
+        {
+          "command": ":bnext"
+        }
+      ]
+    },
+    {
+      "before": ["g", "p"],
+      "after": [],
+      "commands": [
+        {
+          "command": ":bprev"
+        }
+      ]
+    },
     {
       "before": ["K"],
       "after": [],
