@@ -25,6 +25,7 @@
   "editor.matchBrackets": "near",
   "editor.occurrencesHighlight": "off",
   "security.workspace.trust.untrustedFiles": "open",
+  "git.confirmSync": false,
   // vim settings
   "vim.leader": " ",
   "vim.normalModeKeyBindings": [

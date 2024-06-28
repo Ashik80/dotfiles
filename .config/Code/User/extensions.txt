@@ -1,3 +1,4 @@
+codeium.codeium
 dbaeumer.vscode-eslint
 esbenp.prettier-vscode
 ms-python.debugpy
