@@ -1,6 +1,8 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+vim.opt.termguicolors = true
+
 if vim.g.neovide then
   vim.o.guifont = 'FiraCode Nerd Font:h9'
   vim.g.neovide_cursor_animation_length = 0.03

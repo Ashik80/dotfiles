@@ -2,6 +2,7 @@
   "workbench.colorTheme": "Everforest Dark",
   "everforest.darkContrast": "hard",
   "editor.fontFamily": "'FiraMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
+  "editor.fontSize": 15,
   "breadcrumbs.enabled": false,
   "editor.stickyScroll.enabled": false,
   "editor.minimap.enabled": false,

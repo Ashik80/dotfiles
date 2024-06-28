@@ -16,7 +16,7 @@
             (define-key evil-normal-state-map (kbd "SPC g d") 'lsp-find-definition)
             (define-key evil-normal-state-map (kbd "SPC c a") 'lsp-execute-code-action)
             (define-key evil-normal-state-map (kbd "SPC g r") 'lsp-find-references)
-            (define-key evil-normal-state-map (kbd "SPC K") 'lsp-describe-thing-at-point)))
+            (define-key evil-normal-state-map (kbd "K") 'lsp-describe-thing-at-point)))
 
 ;; Enable lsp ui
 (require 'lsp-ui)
