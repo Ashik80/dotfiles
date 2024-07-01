@@ -33,7 +33,8 @@
 (put 'downcase-region 'disabled nil)
 ;; Font
 (defvar my-font "FiraMono Nerd Font")
-(add-to-list 'default-frame-alist `(font . ,my-font))
+(defvar my-font-height 14)
+(add-to-list 'default-frame-alist `(font . ,(format "%s-%d" my-font (/ my-font-height 10))))
 (set-face-attribute 'default nil :font my-font :height 140)
 (when (member "Noto Color Emoji" (font-family-list))
   (set-fontset-font
@@ -43,18 +44,11 @@
 ;; Disable backup file
 (setq make-backup-files nil)
 ;; Set theme
-;; (unless (package-installed-p 'autothemer)
-;;   (package-install 'autothemer))
-;; (load-file "~/.config/emacs/kanagawa-theme.el")
-;; (load-theme 'kanagawa t)
 (load-file "~/.config/emacs/everforest-hard-dark-theme.el")
 (load-theme 'everforest-hard-dark t)
+;; Set modeline
 (require 'doom-modeline)
 (doom-modeline-mode 1)
-
-;; Go 20 lines down
-(global-set-key (kbd "C-S-n") (lambda () (interactive) (forward-line 20)))
-(global-set-key (kbd "C-S-p") (lambda () (interactive) (forward-line -20)))
 
 ;; Enable emojify
 (require 'emojify)
@@ -84,6 +78,9 @@
 (define-prefix-command 'leader)
 (global-set-key (kbd "C-l") nil)
 (global-set-key (kbd "C-l") 'leader)
+
+;; enable scroll up on evil mode
+(define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
 
 (load-file "~/.config/emacs/grep-project.el")
 
