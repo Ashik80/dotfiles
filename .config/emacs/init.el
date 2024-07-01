@@ -8,7 +8,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(evil-collection undo-fu rust-mode lsp-pyright doom-modeline ghub magit python-black js2-mode prettier-js python-mode typescript-mode evil cmake-mode)))
+   '(undo-fu rust-mode lsp-pyright doom-modeline ghub magit python-black js2-mode prettier-js python-mode typescript-mode evil cmake-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -33,7 +33,7 @@
 (put 'downcase-region 'disabled nil)
 ;; Font
 (defvar my-font "FiraMono Nerd Font")
-(defvar my-font-height 14)
+(defvar my-font-height 140)
 (add-to-list 'default-frame-alist `(font . ,(format "%s-%d" my-font (/ my-font-height 10))))
 (set-face-attribute 'default nil :font my-font :height 140)
 (when (member "Noto Color Emoji" (font-family-list))
