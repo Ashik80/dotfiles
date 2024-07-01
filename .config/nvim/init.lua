@@ -595,5 +595,17 @@ require('lazy').setup({
 
       vim.keymap.set("n", "ge", "<cmd>Oil<cr>", { desc = "Open parent directory" })
     end
+  },
+
+  {
+    'nvim-orgmode/orgmode',
+    event = 'VeryLazy',
+    ft = { 'org' },
+    config = function()
+      require('orgmode').setup({
+        -- org_agenda_files = '~/orgfiles/**/*',
+        -- org_default_notes_file = '~/orgfiles/refile.org',
+      })
+    end,
   }
 })
