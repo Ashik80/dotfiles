@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+if [[ ! -e ~/make-builds ]]; then
+    mkdir -p ~/make-builds
+fi
+
+if [[ ! -d $HOME/make-builds/tmux ]]; then
+    echo "Downloading tmux"
+    git clone https://github.com/tmux/tmux.git ~/make-builds/tmux
+fi
+
+echo "Installing dependencies..."
+sudo apt install libevent-dev ncurses-dev bison pkg-config
+
+cd $HOME/make-builds/tmux
+
+echo "Generating configuration file..."
+if [[ ! -f ./configure ]]; then
+    sh autogen.sh
+fi
+
+echo "Cleaning..."
+make clean
+
+echo "Configuring..."
+./configure
+
+sudo make install
