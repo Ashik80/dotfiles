@@ -61,6 +61,9 @@
 ;; Download doom modeline
 (unless (package-installed-p 'doom-modeline)
   (package-install 'doom-modeline))
+;; Download toggle term
+(unless (package-installed-p 'toggle-term)
+  (package-install 'toggle-term))
 
 ;;; packages.el ends here
 

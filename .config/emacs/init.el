@@ -8,7 +8,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(undo-fu rust-mode lsp-pyright doom-modeline ghub magit python-black js2-mode prettier-js python-mode typescript-mode evil cmake-mode)))
+   '(toggle-term undo-fu rust-mode lsp-pyright doom-modeline ghub magit python-black js2-mode prettier-js python-mode typescript-mode evil cmake-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -91,16 +91,10 @@
 (define-key 'leader (kbd "f f") 'projectile-find-file)
 (define-key evil-normal-state-map (kbd "SPC f f") 'projectile-find-file)
 
-;; Open terminal in current project
-(defun my-open-terminal()
-  "Opens terminal at the current project root."
-  (interactive)
-  (let ((project-root (projectile-project-root)))
-    (if project-root
-        (let ((default-directory project-root))
-          (vterm (getenv "SHELL"))))))
-(define-key 'leader (kbd "M-t") 'my-open-terminal)
-(define-key evil-normal-state-map (kbd "M-t") 'my-open-terminal)
+;; Enable toggle-term
+(require 'toggle-term)
+(setq toggle-term-size 50)
+(define-key evil-normal-state-map (kbd "M-t") 'toggle-term-vterm)
 
 ;; Recentf keybinds
 (define-key 'leader (kbd "f r") 'recentf-open-files)
