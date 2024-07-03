@@ -558,7 +558,7 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'lua', 'markdown', 'javascript', 'vimdoc', 'typescript', 'python', 'rust' },
+      ensure_installed = { 'lua', 'markdown', 'javascript', 'vimdoc', 'typescript', 'tsx', 'python', 'rust' },
       highlight = {
         enable = true,
         additional_vim_regex_highlighting = false,
