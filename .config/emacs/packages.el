@@ -64,6 +64,9 @@
 ;; Download toggle term
 (unless (package-installed-p 'toggle-term)
   (package-install 'toggle-term))
+;; Download git gutter
+(unless (package-installed-p 'git-gutter)
+  (package-install 'git-gutter))
 
 ;;; packages.el ends here
 

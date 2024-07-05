@@ -44,11 +44,7 @@
 ;; Disable backup file
 (setq make-backup-files nil)
 ;; Set theme
-(load-file "~/.config/emacs/everforest-hard-dark-theme.el")
-(load-theme 'everforest-hard-dark t)
-;; Set modeline
-(require 'doom-modeline)
-(doom-modeline-mode 1)
+(load-theme 'leuven-dark t)
 
 ;; Enable emojify
 (require 'emojify)
@@ -74,6 +70,9 @@
 ;; Enable undo for evil
 (require 'undo-fu)
 (setq evil-undo-system 'undo-fu)
+;; Enable git gutter
+(require 'git-gutter)
+(global-git-gutter-mode t)
 
 (define-prefix-command 'leader)
 (global-set-key (kbd "C-l") nil)
