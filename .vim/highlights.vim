@@ -14,3 +14,17 @@ hi CommandDisp ctermfg=0 ctermbg=11
 hi GitDisp ctermfg=11 ctermbg=239
 hi FileDisp ctermfg=white ctermbg=237
 "=====================================================
+
+"============== for everforest colorscheme ==============
+if has('termguicolors')
+    set termguicolors
+endif
+
+let g:everforest_background = 'hard'
+let g:everforest_better_performance = 1
+colorscheme everforest
+
+" statusline
+hi CommandDisp ctermfg=235 ctermbg=142 guifg=#272e33 guibg=#a7c080
+hi GitDisp ctermfg=142 ctermbg=237 guifg=#a7c080 guibg=#374145
+hi FileDisp ctermfg=245 ctermbg=236 guifg=#859289 guibg=#2e383c
