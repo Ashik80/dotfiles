@@ -19,6 +19,7 @@ set scrolloff=8
 set cursorline
 set autoread
 set noshowmode
+set mouse=a
 
 " Change cursor style
 " let &t_SI = \"\e[6 q"
@@ -161,6 +162,9 @@ call matchadd("BugComment", " ERROR:")
 hi NoteComment term=bold cterm=bold ctermfg=0 ctermbg=121
 call matchadd("NoteComment", " NOTE:")
 
+" netrw settings
+let g:netrw_banner = 0
+
 " mappings
 
 " clipboard mapping
@@ -206,6 +210,8 @@ vnoremap <leader>} c{<c-r>"}<esc>
 vnoremap <leader>] c[<c-r>"]<esc>
 " create file in current directory
 nnoremap <leader>cf :e %:h
+" open file tree
+nnoremap ge <cmd>Ex<CR>
 
 
 " ale settings
