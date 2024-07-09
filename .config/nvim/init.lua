@@ -23,10 +23,6 @@ vim.opt.wildignorecase = true
 
 vim.opt.signcolumn = 'yes'
 
--- Configure how new splits should be opened
-vim.opt.splitright = true
-vim.opt.splitbelow = true
-
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
 
@@ -575,14 +571,7 @@ require('lazy').setup({
     event = 'BufEnter'
   },
 
-  {
-    "NeogitOrg/neogit",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "sindrets/diffview.nvim",
-    },
-    config = true
-  },
+  { "tpope/vim-fugitive" },
 
   {
     "stevearc/oil.nvim",
@@ -650,5 +639,5 @@ require('lazy').setup({
         hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif", "*.svg" }, -- render image files as images when opened
       })
     end
-  }
+  },
 })
