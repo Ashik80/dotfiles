@@ -44,6 +44,7 @@
 ;; Keybinds
 (define-key 'leader (kbd "p p") 'projectile-switch-project)
 (define-key 'leader (kbd "f f") 'projectile-find-file)
+(define-key 'leader (kbd "C-t") 'projectile-run-command-in-root)
 
 ;; Recentf settings
 (recentf-mode)
@@ -142,3 +143,6 @@
 (unless (package-installed-p 'kanagawa-theme)
   (package-install 'kanagawa-theme))
 (load-theme 'kanagawa t)
+
+;; Grep command settings
+(setq grep-command "grep -Rin --exclude-dir={node_modules,.git} ")
