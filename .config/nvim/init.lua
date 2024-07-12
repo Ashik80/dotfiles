@@ -123,7 +123,7 @@ function ToggleTerminal()
     local buffer_type = vim.api.nvim_get_option_value('buftype', { buf = buffer })
     if buffer_type == "terminal" then
       if vim.fn.bufwinnr(buffer) < 0 then
-        vim.cmd.split()
+        vim.cmd("bel split")
         vim.cmd.b(buffer)
         vim.cmd.norm("i")
       else
@@ -135,7 +135,7 @@ function ToggleTerminal()
   end
 
   if terminal_exists == false then
-    vim.cmd.split()
+    vim.cmd("bel split")
     vim.cmd.terminal()
     vim.cmd.norm("i")
   end
