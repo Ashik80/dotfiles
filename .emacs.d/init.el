@@ -75,6 +75,9 @@
   (package-install 'magit))
 (define-key 'leader (kbd "B") 'magit-blame)
 
+;; Codeium settings
+(load-file "~/.emacs.d/codeium.el/codeium.el")
+
 ;; Completion settings
 (unless (package-installed-p 'corfu)
   (package-install 'corfu))
@@ -82,6 +85,7 @@
 (setq corfu-auto t
       corfu-cycle t
       corfu-auto-prefix 1
+      corfu-separator ?\s
       corfu-quit-no-match t
       corfu-scroll-margin 5
       completion-styles '(basic))
@@ -92,7 +96,7 @@
   (package-install 'cape))
 
 (defalias 'my-cape-values
-  (cape-capf-super #'cape-dabbrev #'cape-file #'cape-elisp-block #'cape-keyword #'lsp-completion-at-point))
+  (cape-capf-super #'cape-dabbrev #'cape-file #'cape-elisp-block #'cape-keyword 'codeium-completion-at-point #'lsp-completion-at-point))
 (add-to-list 'completion-at-point-functions #'my-cape-values)
 
 ;; Lsp settings
