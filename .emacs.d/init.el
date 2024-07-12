@@ -29,11 +29,11 @@
 (unless (package-installed-p 'typescript-mode)
   (package-install 'typescript-mode))
 (require 'typescript-mode)
-(defvar tsjs-dirs-to-ignore "node_modules,.git,build,.build")
+(defvar tsjs-dirs-to-ignore "node_modules,.git,build,.build,.next")
 (add-hook 'typescript-mode-hook
 	  (lambda ()
 	    (setq typescript-indent-level 2)
-	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} "))))
+	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} --exclude=tsconfig.tsbuildinfo "))))
 
 ;; Python mode settings
 (defvar python-dirs-to-ignore "__pycache__,.git")
