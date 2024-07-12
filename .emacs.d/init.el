@@ -149,7 +149,7 @@
 (setq inhibit-startup-screen t)
 
 ;; Set font
-(set-face-attribute 'default nil :height 140)
+(set-face-attribute 'default nil :font "FiraMono Nerd Font" :height 140)
 
 ;; Enable line numbers
 (global-display-line-numbers-mode)
