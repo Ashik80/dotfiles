@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(python-black prettier-js lsp-pyright magit corfu lsp-ui flycheck lsp-mode typescript-mode projectile git-gutter)))
+   '(cape python-black prettier-js lsp-pyright magit corfu lsp-ui flycheck lsp-mode typescript-mode projectile git-gutter)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -29,8 +29,18 @@
 (unless (package-installed-p 'typescript-mode)
   (package-install 'typescript-mode))
 (require 'typescript-mode)
+(defvar tsjs-dirs-to-ignore "node_modules,.git,build,.build")
 (add-hook 'typescript-mode-hook
-	  (lambda () (setq typescript-indent-level 2)))
+	  (lambda ()
+	    (setq typescript-indent-level 2)
+	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} "))))
+
+;; Python mode settings
+(defvar python-dirs-to-ignore "__pycache__,.git")
+(add-hook 'python-mode-hook
+	  (lambda ()
+	    (define-key python-mode-map (kbd "C-c C-t") 'projectile-run-command-in-root)
+	    (setq grep-command (concat "grep -Rin --exclude-dir={" python-dirs-to-ignore "} "))))
 
 ;; Ivy settings
 (unless (package-installed-p 'ivy)
@@ -63,20 +73,27 @@
 ;; Magit settings
 (unless (package-installed-p 'magit)
   (package-install 'magit))
+(define-key 'leader (kbd "B") 'magit-blame)
 
 ;; Completion settings
 (unless (package-installed-p 'corfu)
   (package-install 'corfu))
 (require 'corfu)
 (setq corfu-auto t
+      corfu-cycle t
       corfu-auto-prefix 1
-      corfu-separator ?\s          ;; Orderless field separator
-      corfu-quit-at-boundary nil   ;; Never quit at completion boundary
-      corfu-on-exact-match nil     ;; Configure handling of exact matches
+      corfu-quit-no-match t
       corfu-scroll-margin 5
       completion-styles '(basic))
 (global-corfu-mode)
 (corfu-popupinfo-mode)
+
+(unless (package-installed-p 'cape)
+  (package-install 'cape))
+
+(defalias 'my-cape-values
+  (cape-capf-super #'cape-dabbrev #'cape-file #'cape-elisp-block #'cape-keyword #'lsp-completion-at-point))
+(add-to-list 'completion-at-point-functions #'my-cape-values)
 
 ;; Lsp settings
 (unless (package-installed-p 'lsp-mode)
@@ -103,7 +120,8 @@
 (add-hook 'lsp-mode-hook
 	  (lambda ()
 	    (define-key 'leader (kbd "c a") 'lsp-execute-code-action)
-	    (define-key 'leader (kbd "K") 'lsp-describe-thing-at-point)))
+	    (define-key 'leader (kbd "K") 'lsp-describe-thing-at-point)
+	    (define-key 'leader (kbd "r n") 'lsp-rename)))
 
 ;; Formatters for typescript (LSP required)
 (unless (package-installed-p 'prettier-js)
@@ -145,4 +163,4 @@
 (load-theme 'kanagawa t)
 
 ;; Grep command settings
-(setq grep-command "grep -Rin --exclude-dir={node_modules,.git} ")
+(setq grep-command "grep -Rin ")
