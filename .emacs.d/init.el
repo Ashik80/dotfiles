@@ -35,6 +35,12 @@
 	    (setq typescript-indent-level 2)
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} --exclude=tsconfig.tsbuildinfo "))))
 
+;; Javascript mode settings
+(add-hook 'js-mode-hook
+	  (lambda ()
+	    (setq js-indent-level 2)
+	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} "))))
+
 ;; Python mode settings
 (defvar python-dirs-to-ignore "__pycache__,.git")
 (add-hook 'python-mode-hook
