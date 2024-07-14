@@ -118,12 +118,18 @@
 (require 'lsp-mode)
 (setq lsp-enable-symbol-highlighting nil) ;; Disbale annoying highlighting of word under cursor
 
-(defvar node-version "20.12.1") ;; Set node version
-(let ((node-path (concat (getenv "HOME") "/.nvm/versions/node/v" node-version "/bin")))
-  (setq exec-path (append exec-path (list node-path)))
-  (setenv "PATH" (concat node-path ":" (getenv "PATH"))))
+;;; To make node work either uncomment this or make soft links for node and npm
+;; (defvar node-version "20.15.1") ;; Set node version
+;; (let ((node-path (concat (getenv "HOME") "/.nvm/versions/node/v" node-version "/bin")))
+;;   (setq exec-path (append exec-path (list node-path)))
+;;   (setenv "PATH" (concat node-path ":" (getenv "PATH"))))
+;;; Or ...
+;; sudo ln -s $(which node) /usr/bin/node
+;; sudo ln -s $(which npm) /usr/bin/npm
 
 (add-hook 'typescript-mode-hook 'lsp-deferred) ;; Enable lsp for typescript
+
+(add-hook 'js-mode-hook 'lsp-deferred) ;; Enable lsp for javascript
 
 (unless (package-installed-p 'lsp-pyright) ;; Install reqruired pyright client
   (package-install 'lsp-pyright))
