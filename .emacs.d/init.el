@@ -164,7 +164,10 @@
 (setq inhibit-startup-screen t)
 
 ;; Set font
-(set-face-attribute 'default nil :font "FiraMono Nerd Font" :height 140)
+(defvar my-font "IosevkaTerm Nerd Font")
+(defvar my-font-height 150)
+(set-face-attribute 'default nil :font my-font :height my-font-height)
+(set-face-attribute 'markdown-code-face nil :font my-font :height my-font-height)
 
 ;; Enable line numbers
 (global-display-line-numbers-mode)
