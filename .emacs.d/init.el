@@ -105,8 +105,8 @@
 ;; Tabnine settings
 (unless (package-installed-p 'tabnine)
   (package-install 'tabnine))
-(require 'tabnine)
-(global-tabnine-mode)
+;; (require 'tabnine)
+;; (global-tabnine-mode)
 
 ;; Lsp settings
 (unless (package-installed-p 'lsp-mode)
@@ -164,12 +164,18 @@
 ;; Disable scrollbar
 (scroll-bar-mode -1)
 
+;; Disable menu bar
+(menu-bar-mode -1)
+
+;; Disbable tool bar
+(tool-bar-mode -1)
+
 ;; Disable startup screen
 (setq inhibit-startup-screen t)
 
 ;; Set font
 (defvar my-font "IosevkaTerm Nerd Font")
-(defvar my-font-height 150)
+(defvar my-font-height 160)
 (set-face-attribute 'default nil :font my-font :height my-font-height)
 (set-face-attribute 'markdown-code-face nil :font my-font :height my-font-height)
 
