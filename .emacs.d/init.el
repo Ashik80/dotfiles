@@ -155,6 +155,7 @@
   (package-install 'python-black))
 (add-hook 'python-mode-hook 'python-black-on-save-mode)
 
+;; Increase GC threshold to improve LSP performace
 (setq gc-cons-threshold (* 100 1024 1024)
       read-process-output-max (* 1024 1024)
       lsp-idle-delay 0.1)
@@ -192,7 +193,7 @@
 ;; Set theme
 (unless (package-installed-p 'kanagawa-theme)
   (package-install 'kanagawa-theme))
-(load-theme 'kanagawa t)
+;; (load-theme 'kanagawa t)
 
 ;; Grep command settings
 (setq grep-command "grep -Rin ")
