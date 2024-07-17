@@ -193,6 +193,9 @@
 ;; Set theme
 (unless (package-installed-p 'kanagawa-theme)
   (package-install 'kanagawa-theme))
+(require 'kanagawa-theme)
+(setq kanagawa-theme-comment-italic nil)
+(setq kanagawa-theme-keyword-italic nil)
 ;; (load-theme 'kanagawa t)
 
 ;; Grep command settings
