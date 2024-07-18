@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(cape python-black prettier-js lsp-pyright magit corfu lsp-ui flycheck lsp-mode typescript-mode projectile git-gutter)))
+   '(treesit-auto cape python-black prettier-js lsp-pyright magit corfu lsp-ui flycheck lsp-mode typescript-mode projectile git-gutter)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -25,6 +25,14 @@
 
 
 ;;; Packages
+;; Treesitter settings
+(unless (package-installed-p 'treesit-auto)
+  (package-install 'treesit-auto))
+(require 'treesit-auto)
+(setq treesit-auto-install 'prompt)
+(treesit-auto-add-to-auto-mode-alist 'all)
+(global-treesit-auto-mode)
+
 ;; Typescript mode settings
 (unless (package-installed-p 'typescript-mode)
   (package-install 'typescript-mode))
@@ -34,11 +42,20 @@
 	  (lambda ()
 	    (setq typescript-indent-level 2)
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} --exclude=tsconfig.tsbuildinfo "))))
+(add-hook 'typescript-ts-mode-hook
+	  (lambda ()
+	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} --exclude=tsconfig.tsbuildinfo "))))
+(add-hook 'tsx-ts-mode-hook
+	  (lambda ()
+	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} --exclude=tsconfig.tsbuildinfo "))))
 
 ;; Javascript mode settings
 (add-hook 'js-mode-hook
 	  (lambda ()
 	    (setq js-indent-level 2)
+	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} "))))
+(add-hook 'js-ts-mode-hook
+	  (lambda ()
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} "))))
 
 ;; Python mode settings
@@ -46,6 +63,10 @@
 (add-hook 'python-mode-hook
 	  (lambda ()
 	    (define-key python-mode-map (kbd "C-c C-t") 'projectile-run-command-in-root)
+	    (setq grep-command (concat "grep -Rin --exclude-dir={" python-dirs-to-ignore "} "))))
+(add-hook 'python-ts-mode-hook
+	  (lambda ()
+	    (define-key python-ts-mode-map (kbd "C-c C-t") 'projectile-run-command-in-root)
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" python-dirs-to-ignore "} "))))
 
 ;; Ivy settings
@@ -128,12 +149,16 @@
 ;; sudo ln -s $(which npm) /usr/bin/npm
 
 (add-hook 'typescript-mode-hook 'lsp-deferred) ;; Enable lsp for typescript
+(add-hook 'typescript-ts-mode-hook 'lsp-deferred)
+(add-hook 'tsx-ts-mode-hook 'lsp-deferred)
 
 (add-hook 'js-mode-hook 'lsp-deferred) ;; Enable lsp for javascript
+(add-hook 'js-ts-mode-hook 'lsp-deferred)
 
 (unless (package-installed-p 'lsp-pyright) ;; Install reqruired pyright client
   (package-install 'lsp-pyright))
 (add-hook 'python-mode-hook 'lsp-deferred) ;; Enable lsp for python
+(add-hook 'python-ts-mode-hook 'lsp-deferred)
 
 ;; Keybinds
 (add-hook 'lsp-mode-hook
@@ -150,10 +175,19 @@
 	  (lambda ()
 	    (define-key 'leader (kbd "f e") 'lsp-eslint-fix-all)
 	    (define-key 'leader (kbd "f p") 'prettier-js)))
+(add-hook 'typescript-ts-mode-hook
+	  (lambda ()
+	    (define-key 'leader (kbd "f e") 'lsp-eslint-fix-all)
+	    (define-key 'leader (kbd "f p") 'prettier-js)))
+(add-hook 'tsx-ts-mode-hook
+	  (lambda ()
+	    (define-key 'leader (kbd "f e") 'lsp-eslint-fix-all)
+	    (define-key 'leader (kbd "f p") 'prettier-js)))
 ;; Formatters for python
 (unless (package-installed-p 'python-black)
   (package-install 'python-black))
 (add-hook 'python-mode-hook 'python-black-on-save-mode)
+(add-hook 'python-ts-mode-hook 'python-black-on-save-mode)
 
 ;; Increase GC threshold to improve LSP performace
 (setq gc-cons-threshold (* 100 1024 1024)
@@ -197,6 +231,9 @@
 (setq kanagawa-theme-comment-italic nil)
 (setq kanagawa-theme-keyword-italic nil)
 ;; (load-theme 'kanagawa t)
+
+;; Convert tab to spaces
+(setq-default indent-tabs-mode nil)
 
 ;; Grep command settings
 (setq grep-command "grep -Rin ")
