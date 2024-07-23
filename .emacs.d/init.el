@@ -10,6 +10,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+
+ ;; Uncomment when using kanagawa theme
+ ;; '(font-lock-string-face ((t (:foreground "#98BB6C" :slant normal)))))
  )
 
 ;;; Package archive configurations
@@ -56,6 +59,7 @@
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} "))))
 (add-hook 'js-ts-mode-hook
 	  (lambda ()
+	    (setq js-indent-level 2)
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} "))))
 
 ;; Python mode settings
@@ -72,11 +76,13 @@
 ;; Ivy settings
 (unless (package-installed-p 'ivy)
   (package-install 'ivy))
+(require 'ivy)
 (ivy-mode)
 
 ;; Projectile settings
 (unless (package-installed-p 'projectile)
   (package-install 'projectile))
+(require 'projectile)
 (projectile-mode)
 ;; Keybinds
 (define-key 'leader (kbd "p p") 'projectile-switch-project)
@@ -90,16 +96,19 @@
 ;; Git gutter settings
 (unless (package-installed-p 'git-gutter)
   (package-install 'git-gutter))
+(require 'git-gutter)
 (global-git-gutter-mode)
 
 ;; Flycheck settings
 (unless (package-installed-p 'flycheck)
   (package-install 'flycheck))
+(require 'flycheck)
 (global-flycheck-mode)
 
 ;; Magit settings
 (unless (package-installed-p 'magit)
   (package-install 'magit))
+(require 'magit)
 (define-key 'leader (kbd "B") 'magit-blame)
 
 ;; Completion settings
@@ -115,10 +124,11 @@
       completion-styles '(basic))
 (global-corfu-mode)
 (corfu-popupinfo-mode)
+(setq global-corfu-modes '((not fundamental-mode) t))
 
 (unless (package-installed-p 'cape)
   (package-install 'cape))
-
+(require 'cape)
 (defalias 'my-cape-values
   (cape-capf-super #'cape-dabbrev #'cape-file #'cape-elisp-block #'cape-keyword #'lsp-completion-at-point))
 (add-to-list 'completion-at-point-functions #'my-cape-values)
@@ -134,6 +144,7 @@
   (package-install 'lsp-mode))
 (unless (package-installed-p 'lsp-ui)
   (package-install 'lsp-ui))
+(require 'lsp-ui)
 (lsp-ui-mode)
 
 (require 'lsp-mode)
@@ -228,8 +239,8 @@
 (unless (package-installed-p 'kanagawa-theme)
   (package-install 'kanagawa-theme))
 (require 'kanagawa-theme)
-(setq kanagawa-theme-comment-italic nil)
-(setq kanagawa-theme-keyword-italic nil)
+(setq kanagawa-theme-comment-italic nil
+      kanagawa-theme-keyword-italic nil)
 ;; (load-theme 'kanagawa t)
 
 ;; Convert tab to spaces
@@ -237,3 +248,12 @@
 
 ;; Grep command settings
 (setq grep-command "grep -Rin ")
+
+;; Open Journal
+(defun open-journal()
+  "Open journal with the current month."
+  (interactive)
+  (let ((file-of-month (substring (shell-command-to-string "date +%B,%Y 2>/dev/null") 0 -1)))
+    (find-file (concat (getenv "HOME") "/Documents/Journal/" file-of-month))))
+
+(define-key 'leader (kbd "J") 'open-journal)
