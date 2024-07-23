@@ -124,7 +124,7 @@
       completion-styles '(basic))
 (global-corfu-mode)
 (corfu-popupinfo-mode)
-(setq global-corfu-modes '((not fundamental-mode) t))
+(setq global-corfu-modes '((not fundamental-mode text-mode) t))
 
 (unless (package-installed-p 'cape)
   (package-install 'cape))
