@@ -4,15 +4,12 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(treesit-auto cape python-black prettier-js lsp-pyright magit corfu lsp-ui flycheck lsp-mode typescript-mode projectile git-gutter)))
+   '(rainbow-mode treesit-auto cape python-black prettier-js lsp-pyright magit corfu lsp-ui flycheck lsp-mode typescript-mode projectile git-gutter)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
-
- ;; Uncomment when using kanagawa theme
- ;; '(font-lock-string-face ((t (:foreground "#98BB6C" :slant normal)))))
  )
 
 ;;; Package archive configurations
@@ -111,6 +108,10 @@
 (require 'magit)
 (define-key 'leader (kbd "B") 'magit-blame)
 
+;; Rainbow mode settings
+(unless (package-installed-p 'rainbow-mode)
+  (package-install 'rainbow-mode))
+
 ;; Completion settings
 (unless (package-installed-p 'corfu)
   (package-install 'corfu))
@@ -170,6 +171,8 @@
   (package-install 'lsp-pyright))
 (add-hook 'python-mode-hook 'lsp-deferred) ;; Enable lsp for python
 (add-hook 'python-ts-mode-hook 'lsp-deferred)
+
+(add-hook 'rust-ts-mode-hook 'lsp-deferred) ;; Enable lsp for rust
 
 ;; Keybinds
 (add-hook 'lsp-mode-hook
@@ -241,7 +244,8 @@
 (require 'kanagawa-theme)
 (setq kanagawa-theme-comment-italic nil
       kanagawa-theme-keyword-italic nil)
-;; (load-theme 'kanagawa t)
+(load-theme 'kanagawa t)
+(set-face-italic 'font-lock-string-face nil)
 
 ;; Convert tab to spaces
 (setq-default indent-tabs-mode nil)
