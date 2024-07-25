@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-current_version=0.0.60
+current_version=0.0.61
 
 if [ -L /usr/bin/Discord ]; then
     sudo unlink /usr/bin/Discord
