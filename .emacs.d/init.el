@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(rainbow-mode treesit-auto cape python-black prettier-js lsp-pyright magit corfu lsp-ui flycheck lsp-mode typescript-mode projectile git-gutter)))
+   '(rainbow-mode treesit-auto python-black prettier-js lsp-pyright magit corfu lsp-ui flycheck lsp-mode typescript-mode git-gutter)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -63,11 +63,9 @@
 (defvar python-dirs-to-ignore "__pycache__,.git")
 (add-hook 'python-mode-hook
 	  (lambda ()
-	    (define-key python-mode-map (kbd "C-c C-t") 'projectile-run-command-in-root)
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" python-dirs-to-ignore "} "))))
 (add-hook 'python-ts-mode-hook
 	  (lambda ()
-	    (define-key python-ts-mode-map (kbd "C-c C-t") 'projectile-run-command-in-root)
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" python-dirs-to-ignore "} "))))
 
 ;; Ivy settings
@@ -75,16 +73,6 @@
   (package-install 'ivy))
 (require 'ivy)
 (ivy-mode)
-
-;; Projectile settings
-(unless (package-installed-p 'projectile)
-  (package-install 'projectile))
-(require 'projectile)
-(projectile-mode)
-;; Keybinds
-(define-key 'leader (kbd "p p") 'projectile-switch-project)
-(define-key 'leader (kbd "f f") 'projectile-find-file)
-(define-key 'leader (kbd "C-t") 'projectile-run-command-in-root)
 
 ;; Recentf settings
 (recentf-mode)
@@ -126,19 +114,6 @@
 (global-corfu-mode)
 (corfu-popupinfo-mode)
 (setq global-corfu-modes '((not fundamental-mode text-mode) t))
-
-(unless (package-installed-p 'cape)
-  (package-install 'cape))
-(require 'cape)
-(defalias 'my-cape-values
-  (cape-capf-super #'cape-dabbrev #'cape-file #'cape-elisp-block #'cape-keyword #'lsp-completion-at-point))
-(add-to-list 'completion-at-point-functions #'my-cape-values)
-
-;; Tabnine settings
-(unless (package-installed-p 'tabnine)
-  (package-install 'tabnine))
-;; (require 'tabnine)
-;; (global-tabnine-mode)
 
 ;; Lsp settings
 (unless (package-installed-p 'lsp-mode)
@@ -251,7 +226,7 @@
 (setq-default indent-tabs-mode nil)
 
 ;; Grep command settings
-(setq grep-command "grep -Rin ")
+(setq-default grep-command "grep -Rin ")
 
 ;; Open Journal
 (defun open-journal()
