@@ -50,6 +50,7 @@
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} --exclude=tsconfig.tsbuildinfo "))))
 
 ;; Javascript mode settings
+(defvar js-indent-level)
 (add-hook 'js-mode-hook
 	  (lambda ()
 	    (setq js-indent-level 2)
@@ -107,13 +108,15 @@
 (setq corfu-auto t
       corfu-cycle t
       corfu-auto-prefix 1
-      corfu-separator ?\s
-      corfu-quit-no-match t
-      corfu-scroll-margin 5
-      completion-styles '(basic))
+      corfu-auto-delay 0.8
+      corfu-preview-current 'insert
+      corfu-on-exact-match 'nil
+      corfu-quit-no-match t)
 (global-corfu-mode)
+(declare-function corfu-popupinfo-mode "corfu")
 (corfu-popupinfo-mode)
 (setq global-corfu-modes '((not fundamental-mode text-mode) t))
+(add-hook 'after-save-hook 'corfu-quit)
 
 ;; Lsp settings
 (unless (package-installed-p 'lsp-mode)
