@@ -216,6 +216,9 @@
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
+;; Enable narrow region
+(put 'narrow-to-region 'disabled nil)
+
 ;; Set theme
 (unless (package-installed-p 'kanagawa-theme)
   (package-install 'kanagawa-theme))
@@ -233,6 +236,21 @@
 
 ;; Stop blinking cursor
 (blink-cursor-mode 0)
+
+;; Keybind for newlines
+(global-set-key (kbd "M-o")
+                (lambda ()
+                  (interactive)
+                  (move-end-of-line 1)
+                  (newline)))
+(global-set-key (kbd "M-O")
+                (lambda ()
+                  (interactive)
+                  (back-to-indentation)
+                  (newline)
+                  (indent-for-tab-command)
+                  (forward-line -1)
+                  (indent-for-tab-command)))
 
 ;; Open Journal
 (defun open-journal()
