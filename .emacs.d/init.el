@@ -231,6 +231,9 @@
 ;; Grep command settings
 (setq-default grep-command "grep -Rin ")
 
+;; Stop blinking cursor
+(blink-cursor-mode 0)
+
 ;; Open Journal
 (defun open-journal()
   "Open journal with the current month."
