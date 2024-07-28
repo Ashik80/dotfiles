@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+version="emacs-29.4"
+
+cd $HOME/make-builds/
+
+if [[ ! -e $HOME/make-builds/emacs ]]; then
+    echo "Cloning emacs..."
+    git clone https://github.com/emacs-mirror/emacs
+    cd emacs
+    git checkout $version
+else
+    cd emacs
+    echo "Switching to version $version"
+    git checkout $version
+fi
+
+gcc_version=$(gcc --version | head -n 1 | awk '{print $4}' | sed 's/^\([0-9]*\)\..*/\1/')
+
+echo "Installing dependencies..."
+sudo apt install libgccjit-$gcc_version-dev libtree-sitter-dev libjansson-dev imagemagick
+
+if [[ ! -e $HOME/make-builds/emacs/configure ]]; then
+    ./autogen.sh
+fi
+
+echo "Configuring..."
+./configure --with-native-compilation --with-tree-sitter --with-json --with-imagemagick --without-pop
+
+echo "Installing..."
+make -j$(nproc)
+
+sudo make install
+
+echo "Cleaning up..."
+
+make clean
+make distclean
+
+echo "Emacs $version installed"

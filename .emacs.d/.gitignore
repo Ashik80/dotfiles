@@ -7,3 +7,6 @@ transient
 auto-save-list
 eln-cache
 *.elc
+bookmarks
+projects
+tree-sitter
