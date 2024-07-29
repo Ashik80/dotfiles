@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(rainbow-mode treesit-auto python-black prettier-js lsp-pyright magit corfu lsp-ui flycheck lsp-mode typescript-mode git-gutter)))
+   '(flymake-eslint rainbow-mode treesit-auto python-black prettier-js magit corfu flycheck typescript-mode git-gutter)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -85,12 +85,6 @@
 (require 'git-gutter)
 (global-git-gutter-mode)
 
-;; Flycheck settings
-(unless (package-installed-p 'flycheck)
-  (package-install 'flycheck))
-(require 'flycheck)
-(global-flycheck-mode)
-
 ;; Magit settings
 (unless (package-installed-p 'magit)
   (package-install 'magit))
@@ -119,15 +113,6 @@
 (add-hook 'after-save-hook 'corfu-quit)
 
 ;; Lsp settings
-(unless (package-installed-p 'lsp-mode)
-  (package-install 'lsp-mode))
-(unless (package-installed-p 'lsp-ui)
-  (package-install 'lsp-ui))
-(require 'lsp-ui)
-(lsp-ui-mode)
-
-(require 'lsp-mode)
-(setq lsp-enable-symbol-highlighting nil) ;; Disbale annoying highlighting of word under cursor
 
 ;;; To make node work either uncomment this or make soft links for node and npm
 ;; (defvar node-version "20.15.1") ;; Set node version
@@ -138,42 +123,52 @@
 ;; sudo ln -s $(which node) /usr/bin/node
 ;; sudo ln -s $(which npm) /usr/bin/npm
 
-(add-hook 'typescript-mode-hook 'lsp-deferred) ;; Enable lsp for typescript
-(add-hook 'typescript-ts-mode-hook 'lsp-deferred)
-(add-hook 'tsx-ts-mode-hook 'lsp-deferred)
+(require 'eglot)
+(add-hook 'typescript-mode-hook 'eglot-ensure) ;; Enable lsp for typescript
+(add-hook 'typescript-ts-mode-hook 'eglot-ensure)
+(add-hook 'tsx-ts-mode-hook 'eglot-ensure)
 
-(add-hook 'js-mode-hook 'lsp-deferred) ;; Enable lsp for javascript
-(add-hook 'js-ts-mode-hook 'lsp-deferred)
+(add-hook 'js-mode-hook 'eglot-ensure) ;; Enable lsp for javascript
+(add-hook 'js-ts-mode-hook 'eglot-ensure)
 
-(unless (package-installed-p 'lsp-pyright) ;; Install reqruired pyright client
-  (package-install 'lsp-pyright))
-(add-hook 'python-mode-hook 'lsp-deferred) ;; Enable lsp for python
-(add-hook 'python-ts-mode-hook 'lsp-deferred)
+(add-hook 'python-mode-hook 'eglot-ensure) ;; Enable lsp for python
+(add-hook 'python-ts-mode-hook 'eglot-ensure)
 
-(add-hook 'rust-ts-mode-hook 'lsp-deferred) ;; Enable lsp for rust
+(add-hook 'rust-ts-mode-hook 'eglot-ensure) ;; Enable lsp for rust
 
 ;; Keybinds
-(add-hook 'lsp-mode-hook
+(add-hook 'eglot-managed-mode-hook
 	  (lambda ()
-	    (define-key 'leader (kbd "c a") 'lsp-execute-code-action)
-	    (define-key 'leader (kbd "K") 'lsp-describe-thing-at-point)
-	    (define-key 'leader (kbd "r n") 'lsp-rename)))
+	    (define-key 'leader (kbd "c a") 'eglot-code-actions)
+	    (define-key 'leader (kbd "r n") 'eglot-rename)))
 
 ;; Formatters for typescript (LSP required)
 (unless (package-installed-p 'prettier-js)
   (package-install 'prettier-js))
 (require 'prettier-js)
+(unless (package-installed-p 'flymake-eslint)
+  (package-install 'flymake-eslint))
+(require 'flymake-eslint)
+(setq flymake-eslint-executable-name "eslint_d")
+(add-hook 'eglot-managed-mode-hook (lambda ()
+                                     (when (derived-mode-p 'tsx-ts-mode 'typescript-ts-mode 'js-ts-mode)
+                                       (flymake-eslint-enable))))
+(defun my-eslint-fix-all()
+  (interactive)
+  (let ((current-file-name (buffer-file-name)))
+    (shell-command (concat "eslint_d --fix " current-file-name))))
+
 (add-hook 'typescript-mode-hook
 	  (lambda ()
-	    (define-key 'leader (kbd "f e") 'lsp-eslint-fix-all)
+	    (define-key 'leader (kbd "f e") #'my-eslint-fix-all)
 	    (define-key 'leader (kbd "f p") 'prettier-js)))
 (add-hook 'typescript-ts-mode-hook
 	  (lambda ()
-	    (define-key 'leader (kbd "f e") 'lsp-eslint-fix-all)
+            (define-key 'leader (kbd "f e") #'my-eslint-fix-all)
 	    (define-key 'leader (kbd "f p") 'prettier-js)))
 (add-hook 'tsx-ts-mode-hook
 	  (lambda ()
-	    (define-key 'leader (kbd "f e") 'lsp-eslint-fix-all)
+            (define-key 'leader (kbd "f e") #'my-eslint-fix-all)
 	    (define-key 'leader (kbd "f p") 'prettier-js)))
 ;; Formatters for python
 (unless (package-installed-p 'python-black)
@@ -183,8 +178,7 @@
 
 ;; Increase GC threshold to improve LSP performace
 (setq gc-cons-threshold (* 100 1024 1024)
-      read-process-output-max (* 1024 1024)
-      lsp-idle-delay 0.1)
+      read-process-output-max (* 1024 1024))
 
 
 ;;; General settings
@@ -204,6 +198,10 @@
 (defvar my-font "IosevkaTerm Nerd Font")
 (defvar my-font-height 160)
 (set-face-attribute 'default nil :font my-font :height my-font-height)
+(defface markdown-code-face
+  `((t :font ,my-font :height ,my-font-height))
+  "Face for markdown code blocks."
+  :group 'markdown-faces)
 (set-face-attribute 'markdown-code-face nil :font my-font :height my-font-height)
 
 ;; Enable line numbers
@@ -251,6 +249,9 @@
                   (indent-for-tab-command)
                   (forward-line -1)
                   (indent-for-tab-command)))
+
+;; Disable all sounds
+(setq ring-bell-function 'ignore)
 
 ;; Open Journal
 (defun open-journal()
