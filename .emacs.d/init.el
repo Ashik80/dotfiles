@@ -40,23 +40,28 @@
 (defvar tsjs-dirs-to-ignore "node_modules,.git,build,.build,.next")
 (add-hook 'typescript-mode-hook
 	  (lambda ()
+            (setq tab-width 2)
 	    (setq typescript-indent-level 2)
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} --exclude=tsconfig.tsbuildinfo "))))
 (add-hook 'typescript-ts-mode-hook
 	  (lambda ()
+            (setq tab-width 2)
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} --exclude=tsconfig.tsbuildinfo "))))
 (add-hook 'tsx-ts-mode-hook
 	  (lambda ()
+            (setq tab-width 2)
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} --exclude=tsconfig.tsbuildinfo "))))
 
 ;; Javascript mode settings
 (defvar js-indent-level)
 (add-hook 'js-mode-hook
 	  (lambda ()
+            (setq tab-width 2)
 	    (setq js-indent-level 2)
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} "))))
 (add-hook 'js-ts-mode-hook
 	  (lambda ()
+            (setq tab-width 2)
 	    (setq js-indent-level 2)
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} "))))
 
@@ -64,10 +69,17 @@
 (defvar python-dirs-to-ignore "__pycache__,.git")
 (add-hook 'python-mode-hook
 	  (lambda ()
+            (setq tab-width 4)
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" python-dirs-to-ignore "} "))))
 (add-hook 'python-ts-mode-hook
 	  (lambda ()
+            (setq tab-width 4)
 	    (setq grep-command (concat "grep -Rin --exclude-dir={" python-dirs-to-ignore "} "))))
+
+;; Rust settings
+(add-hook 'rust-ts-mode-hook
+          (lambda ()
+            (setq tab-width 4)))
 
 ;; Ivy settings
 (unless (package-installed-p 'ivy)
@@ -109,7 +121,6 @@
 (global-corfu-mode)
 (declare-function corfu-popupinfo-mode "corfu")
 (corfu-popupinfo-mode)
-(setq global-corfu-modes '((not fundamental-mode text-mode) t))
 (add-hook 'after-save-hook 'corfu-quit)
 
 ;; Lsp settings
@@ -156,7 +167,8 @@
 (defun my-eslint-fix-all()
   (interactive)
   (let ((current-file-name (buffer-file-name)))
-    (shell-command (concat "eslint_d --fix " current-file-name))))
+    (shell-command (concat "eslint_d --fix " current-file-name))
+    (revert-buffer-quick)))
 
 (add-hook 'typescript-mode-hook
 	  (lambda ()
@@ -228,6 +240,9 @@
 (load-theme 'kanagawa t)
 (set-face-italic 'font-lock-string-face nil)
 
+;; Default tab width
+(setq tab-width 4)
+
 ;; Convert tab to spaces
 (setq-default indent-tabs-mode nil)
 
@@ -251,6 +266,9 @@
                   (indent-for-tab-command)
                   (forward-line -1)
                   (indent-for-tab-command)))
+
+;; Enable auto revert mode
+(setq global-auto-revert-mode t)
 
 ;; Disable all sounds
 (setq ring-bell-function 'ignore)
