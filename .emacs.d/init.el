@@ -267,8 +267,8 @@
                   (forward-line -1)
                   (indent-for-tab-command)))
 
-;; Enable auto revert mode
-(setq global-auto-revert-mode t)
+;; Copy/Move files to another split dired
+(setq dired-dwim-target t)
 
 ;; Disable all sounds
 (setq ring-bell-function 'ignore)
