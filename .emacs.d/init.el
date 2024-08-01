@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(flymake-eslint rainbow-mode treesit-auto python-black prettier-js magit corfu flycheck typescript-mode git-gutter)))
+   '(exec-path-from-shell flymake-eslint rainbow-mode treesit-auto python-black prettier-js magit corfu flycheck typescript-mode git-gutter)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -25,6 +25,13 @@
 
 
 ;;; Packages
+;; Exec path from shell
+(unless (package-installed-p 'exec-path-from-shell)
+  (package-install 'exec-path-from-shell))
+(require 'exec-path-from-shell)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+
 ;; Treesitter settings
 (unless (package-installed-p 'treesit-auto)
   (package-install 'treesit-auto))
@@ -38,43 +45,30 @@
   (package-install 'typescript-mode))
 (require 'typescript-mode)
 (defvar tsjs-dirs-to-ignore "node_modules,.git,build,.build,.next")
-(add-hook 'typescript-mode-hook
-	  (lambda ()
-            (setq tab-width 2)
-	    (setq typescript-indent-level 2)
-	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} --exclude=tsconfig.tsbuildinfo "))))
-(add-hook 'typescript-ts-mode-hook
-	  (lambda ()
-            (setq tab-width 2)
-	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} --exclude=tsconfig.tsbuildinfo "))))
-(add-hook 'tsx-ts-mode-hook
-	  (lambda ()
-            (setq tab-width 2)
-	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} --exclude=tsconfig.tsbuildinfo "))))
+(defun my-ts-config()
+  (setq tab-width 2)
+  (setq typescript-indent-level 2)
+  (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} --exclude=tsconfig.tsbuildinfo ")))
+(add-hook 'typescript-mode-hook #'my-ts-config)
+(add-hook 'typescript-ts-mode-hook #'my-ts-config)
+(add-hook 'tsx-ts-mode-hook #'my-ts-config)
 
 ;; Javascript mode settings
 (defvar js-indent-level)
-(add-hook 'js-mode-hook
-	  (lambda ()
-            (setq tab-width 2)
-	    (setq js-indent-level 2)
-	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} "))))
-(add-hook 'js-ts-mode-hook
-	  (lambda ()
-            (setq tab-width 2)
-	    (setq js-indent-level 2)
-	    (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} "))))
+(defun my-js-config()
+  (setq tab-width 2)
+  (setq js-indent-level 2)
+  (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} ")))
+(add-hook 'js-mode-hook #'my-js-config)
+(add-hook 'js-ts-mode-hook #'my-js-config)
 
 ;; Python mode settings
 (defvar python-dirs-to-ignore "__pycache__,.git")
-(add-hook 'python-mode-hook
-	  (lambda ()
-            (setq tab-width 4)
-	    (setq grep-command (concat "grep -Rin --exclude-dir={" python-dirs-to-ignore "} "))))
-(add-hook 'python-ts-mode-hook
-	  (lambda ()
-            (setq tab-width 4)
-	    (setq grep-command (concat "grep -Rin --exclude-dir={" python-dirs-to-ignore "} "))))
+(defun my-python-config()
+  (setq tab-width 4)
+  (setq grep-command (concat "grep -Rin --exclude-dir={" python-dirs-to-ignore "} ")))
+(add-hook 'python-mode-hook #'my-python-config)
+(add-hook 'python-ts-mode-hook #'my-python-config)
 
 ;; Rust settings
 (add-hook 'rust-ts-mode-hook
@@ -124,16 +118,6 @@
 (add-hook 'after-save-hook 'corfu-quit)
 
 ;; Lsp settings
-
-;;; To make node work either uncomment this or make soft links for node and npm
-;; (defvar node-version "20.15.1") ;; Set node version
-;; (let ((node-path (concat (getenv "HOME") "/.nvm/versions/node/v" node-version "/bin")))
-;;   (setq exec-path (append exec-path (list node-path)))
-;;   (setenv "PATH" (concat node-path ":" (getenv "PATH"))))
-;;; Or ...
-;; sudo ln -s $(which node) /usr/bin/node
-;; sudo ln -s $(which npm) /usr/bin/npm
-
 (require 'eglot)
 (add-hook 'typescript-mode-hook 'eglot-ensure) ;; Enable lsp for typescript
 (add-hook 'typescript-ts-mode-hook 'eglot-ensure)
@@ -169,7 +153,6 @@
   (let ((current-file-name (buffer-file-name)))
     (shell-command (concat "eslint_d --fix " current-file-name))
     (revert-buffer-quick)))
-
 (add-hook 'typescript-mode-hook
 	  (lambda ()
 	    (define-key 'leader (kbd "f e") #'my-eslint-fix-all)
