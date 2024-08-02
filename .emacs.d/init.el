@@ -40,6 +40,8 @@
 (treesit-auto-add-to-auto-mode-alist 'all)
 (global-treesit-auto-mode)
 
+(setq treesit-font-lock-level 4)
+
 ;; Typescript mode settings
 (unless (package-installed-p 'typescript-mode)
   (package-install 'typescript-mode))
@@ -255,6 +257,9 @@
 
 ;; Disable all sounds
 (setq ring-bell-function 'ignore)
+
+;; Disable annoying electric indent
+(setq electric-indent-mode nil)
 
 ;; Open Journal
 (defun open-journal()
