@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(exec-path-from-shell flymake-eslint rainbow-mode treesit-auto python-black prettier-js magit corfu git-gutter)))
+   '(exec-path-from-shell flymake-eslint rainbow-mode treesit-auto python-black prettier-js magit git-gutter)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -72,12 +72,6 @@
           (lambda ()
             (setq tab-width 4)))
 
-;; Ivy settings
-(unless (package-installed-p 'ivy)
-  (package-install 'ivy))
-(require 'ivy)
-(ivy-mode)
-
 ;; Recentf settings
 (recentf-mode)
 (define-key 'leader (kbd "f r") 'recentf)
@@ -97,22 +91,6 @@
 ;; Rainbow mode settings
 (unless (package-installed-p 'rainbow-mode)
   (package-install 'rainbow-mode))
-
-;; Completion settings
-(unless (package-installed-p 'corfu)
-  (package-install 'corfu))
-(require 'corfu)
-(setq corfu-auto t
-      corfu-cycle t
-      corfu-auto-prefix 1
-      corfu-auto-delay 0.8
-      corfu-preview-current 'insert
-      corfu-on-exact-match 'nil
-      corfu-quit-no-match t)
-(global-corfu-mode)
-(declare-function corfu-popupinfo-mode "corfu")
-(corfu-popupinfo-mode)
-(add-hook 'after-save-hook 'corfu-quit)
 
 ;; Lsp settings
 (require 'eglot)
@@ -233,7 +211,8 @@
                 (lambda ()
                   (interactive)
                   (move-end-of-line 1)
-                  (newline)))
+                  (newline)
+                  (indent-for-tab-command)))
 (global-set-key (kbd "M-O")
                 (lambda ()
                   (interactive)
@@ -251,6 +230,9 @@
 
 ;; Disable annoying electric indent
 (setq electric-indent-mode nil)
+
+;; Turn on ido mode
+(ido-mode t)
 
 ;; Open Journal
 (defun open-journal()
