@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(exec-path-from-shell flymake-eslint rainbow-mode treesit-auto python-black prettier-js magit corfu flycheck typescript-mode git-gutter)))
+   '(exec-path-from-shell flymake-eslint rainbow-mode treesit-auto python-black prettier-js magit corfu git-gutter)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -43,15 +43,10 @@
 (setq treesit-font-lock-level 4)
 
 ;; Typescript mode settings
-(unless (package-installed-p 'typescript-mode)
-  (package-install 'typescript-mode))
-(require 'typescript-mode)
 (defvar tsjs-dirs-to-ignore "node_modules,.git,build,.build,.next")
 (defun my-ts-config()
   (setq tab-width 2)
-  (setq typescript-indent-level 2)
   (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} --exclude=tsconfig.tsbuildinfo ")))
-(add-hook 'typescript-mode-hook #'my-ts-config)
 (add-hook 'typescript-ts-mode-hook #'my-ts-config)
 (add-hook 'tsx-ts-mode-hook #'my-ts-config)
 
@@ -121,8 +116,7 @@
 
 ;; Lsp settings
 (require 'eglot)
-(add-hook 'typescript-mode-hook 'eglot-ensure) ;; Enable lsp for typescript
-(add-hook 'typescript-ts-mode-hook 'eglot-ensure)
+(add-hook 'typescript-ts-mode-hook 'eglot-ensure) ;; Enable lsp for typescript
 (add-hook 'tsx-ts-mode-hook 'eglot-ensure)
 
 (add-hook 'js-mode-hook 'eglot-ensure) ;; Enable lsp for javascript
@@ -139,7 +133,13 @@
 	    (define-key 'leader (kbd "c a") 'eglot-code-actions)
 	    (define-key 'leader (kbd "r n") 'eglot-rename)))
 
-;; Formatters for typescript (LSP required)
+;; Increase GC threshold to improve LSP performace
+(setq gc-cons-threshold (* 100 1024 1024)
+      read-process-output-max (* 1024 1024)
+      eglot-events-buffer-size 0
+      eglot-autoshutdown t)
+
+;; Formatters for typescript
 (unless (package-installed-p 'prettier-js)
   (package-install 'prettier-js))
 (require 'prettier-js)
@@ -155,29 +155,16 @@
   (let ((current-file-name (buffer-file-name)))
     (shell-command (concat "eslint_d --fix " current-file-name))
     (revert-buffer-quick)))
-(add-hook 'typescript-mode-hook
-	  (lambda ()
-	    (define-key 'leader (kbd "f e") #'my-eslint-fix-all)
-	    (define-key 'leader (kbd "f p") 'prettier-js)))
-(add-hook 'typescript-ts-mode-hook
-	  (lambda ()
-            (define-key 'leader (kbd "f e") #'my-eslint-fix-all)
-	    (define-key 'leader (kbd "f p") 'prettier-js)))
-(add-hook 'tsx-ts-mode-hook
-	  (lambda ()
-            (define-key 'leader (kbd "f e") #'my-eslint-fix-all)
-	    (define-key 'leader (kbd "f p") 'prettier-js)))
+(defun my-typescript-keybindings ()
+  (define-key 'leader (kbd "f e") 'my-eslint-fix-all)
+  (define-key 'leader (kbd "f p") 'prettier-js))
+(add-hook 'typescript-ts-mode-hook #'my-typescript-keybindings)
+(add-hook 'tsx-ts-mode-hook #'my-typescript-keybindings)
 ;; Formatters for python
 (unless (package-installed-p 'python-black)
   (package-install 'python-black))
 (add-hook 'python-mode-hook 'python-black-on-save-mode)
 (add-hook 'python-ts-mode-hook 'python-black-on-save-mode)
-
-;; Increase GC threshold to improve LSP performace
-(setq gc-cons-threshold (* 100 1024 1024)
-      read-process-output-max (* 1024 1024)
-      eglot-events-buffer-size 0
-      eglot-autoshutdown t)
 
 
 ;;; General settings
