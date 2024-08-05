@@ -99,6 +99,10 @@
 
 (add-hook 'js-mode-hook 'eglot-ensure) ;; Enable lsp for javascript
 (add-hook 'js-ts-mode-hook 'eglot-ensure)
+(add-hook 'eglot-managed-mode-hook
+          (lambda ()
+            (when (derived-mode-p 'js-ts-mode 'js-mode)
+              (local-set-key (kbd "M-.") 'xref-find-definitions))))
 
 (add-hook 'python-mode-hook 'eglot-ensure) ;; Enable lsp for python
 (add-hook 'python-ts-mode-hook 'eglot-ensure)
