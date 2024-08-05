@@ -186,13 +186,10 @@
 (put 'narrow-to-region 'disabled nil)
 
 ;; Set theme
-(unless (package-installed-p 'kanagawa-theme)
-  (package-install 'kanagawa-theme))
-(require 'kanagawa-theme)
-(setq kanagawa-theme-comment-italic nil
-      kanagawa-theme-keyword-italic nil)
-(load-theme 'kanagawa t)
-(set-face-italic 'font-lock-string-face nil)
+(unless (package-installed-p 'gruber-darker-theme)
+  (package-install 'gruber-darker-theme))
+(require 'gruber-darker-theme)
+(load-theme 'gruber-darker t)
 
 ;; Default tab width
 (setq tab-width 4)
