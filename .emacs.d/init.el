@@ -231,6 +231,9 @@
 ;; Turn on ido mode
 (ido-mode t)
 
+;; Allow project to recognize directories
+(setq project-vc-extra-root-markers '(".projectel"))
+
 ;; Open Journal
 (defun open-journal()
   "Open journal with the current month."
