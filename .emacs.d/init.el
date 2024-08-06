@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(exec-path-from-shell flymake-eslint rainbow-mode treesit-auto python-black prettier-js magit git-gutter)))
+   '(exec-path-from-shell flymake-eslint rainbow-mode python-black prettier-js magit git-gutter)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -33,12 +33,18 @@
   (exec-path-from-shell-initialize))
 
 ;; Treesitter settings
-(unless (package-installed-p 'treesit-auto)
-  (package-install 'treesit-auto))
-(require 'treesit-auto)
-(setq treesit-auto-install 'prompt)
-(treesit-auto-add-to-auto-mode-alist 'all)
-(global-treesit-auto-mode)
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js-ts-mode))
+(setq major-mode-remap-alist
+      '((python-mode . python-ts-mode)
+        (js-mode . js-ts-mode)
+        (sh-mode . bash-ts-mode)
+        (css-mode . css-ts-mode)
+        (scss-mode . css-ts-mode)
+        (conf-toml-mode . toml-ts-mode)
+        (js-json-mode . json-ts-mode)))
 
 (setq treesit-font-lock-level 4)
 
