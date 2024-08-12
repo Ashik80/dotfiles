@@ -25,12 +25,11 @@
 
 
 ;;; Packages
-;; Exec path from shell
-(unless (package-installed-p 'exec-path-from-shell)
-  (package-install 'exec-path-from-shell))
-(require 'exec-path-from-shell)
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
+(use-package exec-path-from-shell
+  :ensure t
+  :if (memq window-system '(mac ns x))
+  :config (exec-path-from-shell-initialize))
+
 
 ;; Treesitter settings
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
@@ -46,7 +45,6 @@
         (scss-mode . css-ts-mode)
         (conf-toml-mode . toml-ts-mode)
         (js-json-mode . json-ts-mode)))
-
 (setq treesit-font-lock-level 4)
 
 ;; Typescript mode settings
@@ -80,47 +78,42 @@
             (setq tab-width 4)))
 
 ;; Recentf settings
-(add-hook 'after-init-hook 'recentf-mode)
-(define-key 'leader (kbd "f r") 'recentf)
+(use-package recentf
+  :hook (after-init . recentf-mode)
+  :config (define-key 'leader (kbd "f r") 'recentf))
 
 ;; Git gutter settings
-(unless (package-installed-p 'git-gutter)
-  (package-install 'git-gutter))
-(require 'git-gutter)
-(add-hook 'after-init-hook 'global-git-gutter-mode)
+(use-package git-gutter
+  :ensure t
+  :hook (after-init . global-git-gutter-mode))
 
 ;; Magit settings
-(unless (package-installed-p 'magit)
-  (package-install 'magit))
-(require 'magit)
-(define-key 'leader (kbd "B") 'magit-blame)
+(use-package magit
+  :ensure t
+  :defer t
+  :init (define-key 'leader (kbd "B") 'magit-blame))
 
 ;; Rainbow mode settings
-(unless (package-installed-p 'rainbow-mode)
-  (package-install 'rainbow-mode))
+(use-package rainbow-mode
+  :defer t
+  :ensure t)
 
 ;; Lsp settings
 (require 'eglot)
-(add-hook 'typescript-ts-mode-hook 'eglot-ensure) ;; Enable lsp for typescript
-(add-hook 'tsx-ts-mode-hook 'eglot-ensure)
-
-(add-hook 'js-mode-hook 'eglot-ensure) ;; Enable lsp for javascript
-(add-hook 'js-ts-mode-hook 'eglot-ensure)
-(add-hook 'eglot-managed-mode-hook
-          (lambda ()
-            (when (derived-mode-p 'js-ts-mode 'js-mode)
-              (local-set-key (kbd "M-.") 'xref-find-definitions))))
-
-(add-hook 'python-mode-hook 'eglot-ensure) ;; Enable lsp for python
-(add-hook 'python-ts-mode-hook 'eglot-ensure)
-
-(add-hook 'rust-ts-mode-hook 'eglot-ensure) ;; Enable lsp for rust
-
-;; Keybinds
-(add-hook 'eglot-managed-mode-hook
-	  (lambda ()
-	    (define-key 'leader (kbd "c a") 'eglot-code-actions)
-	    (define-key 'leader (kbd "r n") 'eglot-rename)))
+(use-package eglot
+  :hook ((typescript-ts-mode . eglot-ensure)
+         (tsx-ts-mode . eglot-ensure)
+         (js-mode . eglot-ensure)
+         (js-ts-mode . eglot-ensure)
+         (python-mode . eglot-ensure)
+         (python-ts-mode . eglot-ensure)
+         (rust-ts-mode . eglot-ensure)
+         (eglot-managed-mode . (lambda ()
+                                 (when (derived-mode-p 'js-ts-mode 'js-mode)
+                                   (local-set-key (kbd "M-.") 'xref-find-definitions)))))
+  :config
+  (define-key 'leader (kbd "c a") 'eglot-code-actions)
+  (define-key 'leader (kbd "r n") 'eglot-rename))
 
 ;; Increase GC threshold to improve LSP performace
 (setq gc-cons-threshold most-positive-fixnum)
@@ -132,21 +125,20 @@
       eglot-autoshutdown t)
 
 ;; Formatters for typescript
-(unless (package-installed-p 'prettier-js)
-  (package-install 'prettier-js))
-(require 'prettier-js)
-(unless (package-installed-p 'flymake-eslint)
-  (package-install 'flymake-eslint))
-(require 'flymake-eslint)
-(setq flymake-eslint-executable-name "eslint_d")
 (defun my-eslint-config-file ()
   (or (locate-dominating-file (buffer-file-name) ".eslintrc.json")
       (locate-dominating-file (buffer-file-name) ".eslintrc.js")
       (locate-dominating-file (buffer-file-name) ".eslintrc")))
-(add-hook 'eglot-managed-mode-hook (lambda ()
-                                     (when (derived-mode-p 'tsx-ts-mode 'typescript-ts-mode 'js-ts-mode)
-                                       (let ((root (my-eslint-config-file)))
-                                         (when root (flymake-eslint-enable))))))
+(use-package prettier-js
+  :ensure t)
+(use-package flymake-eslint
+  :ensure t
+  :after eglot
+  :init (setq flymake-eslint-executable-name "eslint_d")
+  :hook (eglot-managed-mode . (lambda ()
+                                (when (derived-mode-p 'tsx-ts-mode 'typescript-ts-mode 'js-ts-mode)
+                                  (let ((root (my-eslint-config-file)))
+                                    (when root (flymake-eslint-enable)))))))
 (defun my-eslint-fix-all()
   (interactive)
   (let ((default-directory (my-eslint-config-file)))
@@ -158,10 +150,10 @@
 (add-hook 'typescript-ts-mode-hook #'my-typescript-keybindings)
 (add-hook 'tsx-ts-mode-hook #'my-typescript-keybindings)
 ;; Formatters for python
-(unless (package-installed-p 'python-black)
-  (package-install 'python-black))
-(add-hook 'python-mode-hook 'python-black-on-save-mode)
-(add-hook 'python-ts-mode-hook 'python-black-on-save-mode)
+(use-package python-black
+  :ensure t
+  :hook ((python-mode . python-black-on-save-mode)
+         (python-ts-mode . python-black-on-save-mode)))
 
 
 ;;; General settings
@@ -201,10 +193,9 @@
 (put 'narrow-to-region 'disabled nil)
 
 ;; Set theme
-(unless (package-installed-p 'gruber-darker-theme)
-  (package-install 'gruber-darker-theme))
-(require 'gruber-darker-theme)
-(load-theme 'gruber-darker t)
+(use-package gruber-darker-theme
+  :ensure t
+  :config (load-theme 'gruber-darker t))
 
 ;; Default tab width
 (setq tab-width 4)
@@ -244,9 +235,15 @@
 (setq electric-indent-mode nil)
 
 ;; Turn on ido mode
+(use-package ido
+  :defer t
+  :hook (after-init . ido-mode))
 (add-hook 'after-init-hook 'ido-mode)
 
 ;; Allow project to recognize directories
+(use-package project
+  :defer t
+  :init (setq project-vc-extra-root-markers '(".projectel")))
 (setq project-vc-extra-root-markers '(".projectel"))
 
 ;; Open Journal
