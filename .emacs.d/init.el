@@ -100,6 +100,7 @@
 
 ;; Lsp settings
 (use-package eglot
+  :defer t
   :init (setq eglot-events-buffer-size 0
               eglot-autoshutdown t)
   :hook ((typescript-ts-mode . eglot-ensure)
