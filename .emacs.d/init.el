@@ -99,8 +99,9 @@
   :ensure t)
 
 ;; Lsp settings
-(require 'eglot)
 (use-package eglot
+  :init (setq eglot-events-buffer-size 0
+              eglot-autoshutdown t)
   :hook ((typescript-ts-mode . eglot-ensure)
          (tsx-ts-mode . eglot-ensure)
          (js-mode . eglot-ensure)
@@ -112,6 +113,12 @@
                                  (when (derived-mode-p 'js-ts-mode 'js-mode)
                                    (local-set-key (kbd "M-.") 'xref-find-definitions)))))
   :config
+  (defun my-go-do-definition-at-mouse(event)
+    (interactive "event")
+    (message "%s" event)
+    (mouse-set-point event)
+    (xref-find-definitions-at-mouse event))
+  (local-set-key [C-down-mouse-1] 'my-go-do-definition-at-mouse)
   (define-key 'leader (kbd "c a") 'eglot-code-actions)
   (define-key 'leader (kbd "r n") 'eglot-rename))
 
@@ -120,9 +127,7 @@
 (add-hook 'emacs-startup-hook
           (lambda ()
             (setq gc-cons-threshold (* 16 1024 1024))))
-(setq read-process-output-max (* 256 1024)
-      eglot-events-buffer-size 0
-      eglot-autoshutdown t)
+(setq read-process-output-max (* 256 1024))
 
 ;; Formatters for typescript
 (defun my-eslint-config-file ()
