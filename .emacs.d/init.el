@@ -80,14 +80,14 @@
             (setq tab-width 4)))
 
 ;; Recentf settings
-(recentf-mode)
+(add-hook 'after-init-hook 'recentf-mode)
 (define-key 'leader (kbd "f r") 'recentf)
 
 ;; Git gutter settings
 (unless (package-installed-p 'git-gutter)
   (package-install 'git-gutter))
 (require 'git-gutter)
-(global-git-gutter-mode)
+(add-hook 'after-init-hook 'global-git-gutter-mode)
 
 ;; Magit settings
 (unless (package-installed-p 'magit)
@@ -123,8 +123,11 @@
 	    (define-key 'leader (kbd "r n") 'eglot-rename)))
 
 ;; Increase GC threshold to improve LSP performace
-(setq gc-cons-threshold (* 100 1024 1024)
-      read-process-output-max (* 1024 1024)
+(setq gc-cons-threshold most-positive-fixnum)
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq gc-cons-threshold (* 16 1024 1024))))
+(setq read-process-output-max (* 256 1024)
       eglot-events-buffer-size 0
       eglot-autoshutdown t)
 
@@ -241,7 +244,7 @@
 (setq electric-indent-mode nil)
 
 ;; Turn on ido mode
-(ido-mode t)
+(add-hook 'after-init-hook 'ido-mode)
 
 ;; Allow project to recognize directories
 (setq project-vc-extra-root-markers '(".projectel"))
