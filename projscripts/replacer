@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+if [ -z "$1" ]; then
+    echo "String to replace was not provided"
+    exit 1
+fi
+
+if [ -z "$2" ]; then
+    echo "String to replace with was not provided"
+    exit 1
+fi
+
+for f in $(ls); do
+    sed -i "s/$1/$2/g" $f
+    cat $f
+done
+
+echo "Replacing done..."
