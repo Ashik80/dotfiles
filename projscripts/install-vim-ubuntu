@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-version="9.1.0414"
+version="9.1.0679"
 
 if [[ ! -e ~/make-builds ]]; then
     mkdir -p ~/make-builds
@@ -23,10 +23,6 @@ sudo apt install libxt-dev libncurses-dev
 
 cd vim-$version
 
-echo "Cleaning..."
-make distclean
-make clean
-
 echo "Configuring..."
 ./configure \
     --with-features=huge \
@@ -35,4 +31,10 @@ echo "Configuring..."
     --with-x \
     --disable-gui
 
+echo "Compiling..."
+make -j$(nproc)
 sudo make install
+
+echo "Cleaning..."
+make clean
+make distclean
