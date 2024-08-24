@@ -30,6 +30,19 @@
   :if (memq window-system '(mac ns x))
   :config (exec-path-from-shell-initialize))
 
+;; Evil mode settings
+(use-package evil
+  :ensure t
+  :config
+  (evil-mode)
+  (setq evil-insert-state-cursor nil)         ; Use block cursor
+  (evil-set-initial-state 'dired-mode 'emacs) ; Use emacs mode in dired
+  (evil-set-initial-state 'xref--xref-buffer-mode 'emacs) ; Use emacs mode in xref
+  (define-key evil-insert-state-map (kbd "C-e") 'move-end-of-line)
+  (define-key evil-insert-state-map (kbd "C-a") 'move-beginning-of-line)
+  (define-key evil-insert-state-map (kbd "C-n") 'next-line)
+  (define-key evil-insert-state-map (kbd "C-p") 'previous-line)
+  (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up))
 
 ;; Treesitter settings
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
