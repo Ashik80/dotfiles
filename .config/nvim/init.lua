@@ -39,6 +39,16 @@ local function RunCustomServer(namespace, command, pattern, groups, severity_map
   })
 end
 
+vim.keymap.set("n", "<leader>e", ":lua vim.diagnostic.open_float()<CR>")
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function (args)
+    vim.keymap.set("n", "<leader>fr", ":lua vim.lsp.buf.references()<CR>")
+    vim.keymap.set("n", "<leader>gd", ":lua vim.lsp.buf.definition()<CR>")
+    vim.keymap.set("n", "<leader>ca", ":lua vim.lsp.buf.code_action()<CR>")
+    vim.keymap.set("n", "<leader>rn", ":lua vim.lsp.buf.code_action()<CR>")
+  end
+})
+
 local function RunESLint()
   local filename = vim.fn.expand("%")
   RunCustomServer(
@@ -74,20 +84,6 @@ vim.api.nvim_create_autocmd("FileType", {
   end
 })
 
-local function RunPyright()
-  local filename = vim.fn.expand("%")
-  RunCustomServer(
-    "Pyright",
-    { "bash", "-c", "pyright " .. filename .. " | head -n -1 | tail -n +2 | sed \'s/^\\s*//\'" },
-    ":(%d+):(%d+) %- (%w+): (.+)",
-    { "lnum", "col", "severity", "message" },
-    {
-      warning = vim.diagnostic.severity.WARN,
-      error = vim.diagnostic.severity.ERROR
-    }
-  )
-end
-
 local function FormatWithBlack()
   local filename = vim.fn.expand("%")
   vim.cmd("silent !black " .. filename)
@@ -96,20 +92,27 @@ end
 vim.api.nvim_create_autocmd({"BufEnter", "BufWritePost"}, {
   pattern = "*.py",
   callback = function(args)
-    RunPyright()
     FormatWithBlack()
   end
 })
 
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "python",
+vim.api.nvim_create_autocmd("BufEnter", {
+  pattern = "*.py",
   callback = function(args)
     vim.lsp.start({
-      name = "pyright",
+      name = "pyright-langserver",
       cmd = {"pyright-langserver", "--stdio"},
-      single_file_support = true,
+      settings = {
+        python = {
+          analysis = {
+            autoSearchPaths = true,
+            diagnosticMode = "openFilesOnly",
+            useLibraryCodeForTypes = true
+          }
+        }
+      },
+      root_dir = vim.fs.root(args.buf, {"requirements.txt"}), 
+      single_file_support = true
     })
-    -- Disable LSP diagnostics
-    vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
   end
 })
