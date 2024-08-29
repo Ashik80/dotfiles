@@ -11,7 +11,7 @@ vim.o.signcolumn = 'yes'
 vim.cmd.colorscheme "habamax"
 
 vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
-  pattern = {"*.js", "*.jsx", "*.ts", "*.tsx", "*.json", "*.lua"},
+  pattern = {"*.js", "*.jsx", "*.ts", "*.tsx", "*.json", "*.rb", "*.yml", "*.lua"},
   callback = function()
     vim.o.shiftwidth = 2
     vim.o.tabstop = 2

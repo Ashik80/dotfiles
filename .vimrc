@@ -16,6 +16,6 @@ let &t_EI = "\e[2 q"
 
 colorscheme habamax
 
-autocmd! BufEnter *.js,*.jsx,*.ts,*.tsx,*.json {
+autocmd! BufEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml {
     set shiftwidth=2 tabstop=2
 }
