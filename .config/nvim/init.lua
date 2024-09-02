@@ -49,6 +49,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end
 })
 
+-- Eslint settings
 local function RunESLint()
   local filename = vim.fn.expand("%")
   RunCustomServer(
@@ -73,6 +74,7 @@ vim.api.nvim_create_autocmd({"BufEnter", "BufWritePost"}, {
   end
 })
 
+-- JavaScript/TypeScript settings
 vim.api.nvim_create_autocmd("FileType", {
   pattern = {"javascript", "javascriptreact", "typescript", "typescriptreact"},
   callback = function(args)
@@ -84,6 +86,7 @@ vim.api.nvim_create_autocmd("FileType", {
   end
 })
 
+-- Python settings
 local function FormatWithBlack()
   local filename = vim.fn.expand("%")
   vim.cmd("silent !black " .. filename)
@@ -114,6 +117,28 @@ vim.api.nvim_create_autocmd("BufEnter", {
       root_dir = vim.fs.root(args.buf, {"requirements.txt"}), 
       single_file_support = true
     })
+  end
+})
+
+-- C# settings
+vim.api.nvim_create_autocmd({"BufEnter", "BufWritePost"}, {
+  pattern = "*.cs",
+  callback = function(args)
+    RunCustomServer(
+      "CsharpServer",
+      {"bash", "-c", "dotnet build -v q | sed -n '/Build/,/FAILED/p' | grep -E \'\\([0-9]+,[0-9]+\\):\'"},
+      "%((%d+),(%d+)%): (%w+) (.+)",
+      {"lnum", "col", "severity", "message"},
+      {
+        error = vim.diagnostic.severity.ERROR,
+        warning = vim.diagnostic.severity.WARN,
+      }
+    )
+    -- vim.lsp.start({
+    --   name = "csharp-ls",
+    --   cmd = {"csharp-ls"},
+    --   root_dir = vim.fs.root(args.buf, "*.csproj")
+    -- })
   end
 })
 

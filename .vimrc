@@ -19,3 +19,34 @@ colorscheme habamax
 autocmd! BufEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml {
     set shiftwidth=2 tabstop=2
 }
+
+" TypeScript LSP-like
+function! RunTSServer(job, status)
+    set efm=%f(%l\\,%c):%m
+    execute "cgetfile /tmp/output"
+    cw
+endfunction
+
+autocmd! BufEnter,BufWritePost *.ts,*.tsx {
+    job_start(["bash", "-c", "tsc -b -i > /tmp/output"], {
+        \ exit_cb: "RunTSServer"
+        \ })
+}
+
+" Python LSP-like
+function! RunPyrightServer(job, status)
+    set efm=%f:%l:%c\ %m
+    execute "cgetfile /tmp/output"
+    cw
+endfunction
+
+autocmd! BufEnter,BufWritePost *.py {
+    b:cmd = 'pyright ' .. expand("%:h") .. ' | grep -E ":[0-9]+:[0-9]+" | sed "s/^\s*//" > /tmp/output'
+    job_start(["bash", "-c", b:cmd], {
+        \ exit_cb: "RunPyrightServer"
+        \ })
+}
+
+autocmd! BufWritePost *.py {
+    execute "!black %"
+}
