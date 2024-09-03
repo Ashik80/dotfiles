@@ -16,37 +16,42 @@ let &t_EI = "\e[2 q"
 
 colorscheme habamax
 
-autocmd! BufEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml {
+autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml {
     set shiftwidth=2 tabstop=2
 }
 
-" TypeScript LSP-like
-function! RunTSServer(job, status)
-    set efm=%f(%l\\,%c):%m
-    execute "cgetfile /tmp/output"
-    cw
+" Error checker server
+function! StartServer(cmd, efm)
+    let s:full_cmd = a:cmd . ' > /tmp/output'
+    execute 'set efm=' . a:efm
+
+    function! SetCompiledErrors(job, status)
+        execute 'cgetfile /tmp/output'
+    endfunction
+
+    call job_start(['bash', '-c', s:full_cmd], #{
+        \ exit_cb: 'SetCompiledErrors'
+        \ })
 endfunction
 
+" TypeScript settings
 autocmd! BufEnter,BufWritePost *.ts,*.tsx {
-    job_start(["bash", "-c", "tsc -b -i > /tmp/output"], {
-        \ exit_cb: "RunTSServer"
-        \ })
+    call StartServer('tsc -b -i', '%f(%l\\,%c):%m')
 }
 
-" Python LSP-like
-function! RunPyrightServer(job, status)
-    set efm=%f:%l:%c\ %m
-    execute "cgetfile /tmp/output"
-    cw
+" Python settings
+function! RunPyrightServer()
+    let s:cmd = 'pyright ' . expand("%") . ' | grep -E ":[0-9]+:[0-9]+" | sed "s/^\s*//"'
+    call StartServer(s:cmd, '%f:%l:%c\ %m')
 endfunction
 
 autocmd! BufEnter,BufWritePost *.py {
-    b:cmd = 'pyright ' .. expand("%:h") .. ' | grep -E ":[0-9]+:[0-9]+" | sed "s/^\s*//" > /tmp/output'
-    job_start(["bash", "-c", b:cmd], {
-        \ exit_cb: "RunPyrightServer"
-        \ })
+    call RunPyrightServer()
 }
 
-autocmd! BufWritePost *.py {
-    execute "!black %"
-}
+function! FormatWithBlack()
+    execute "silent !black %"
+    execute "redraw!"
+endfunction
+
+autocmd! BufWritePost *.py call FormatWithBlack()

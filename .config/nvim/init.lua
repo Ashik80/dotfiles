@@ -99,8 +99,8 @@ vim.api.nvim_create_autocmd({"BufEnter", "BufWritePost"}, {
   end
 })
 
-vim.api.nvim_create_autocmd("BufEnter", {
-  pattern = "*.py",
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "python",
   callback = function(args)
     vim.lsp.start({
       name = "pyright-langserver",
