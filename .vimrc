@@ -9,6 +9,7 @@ set noswapfile
 set laststatus=2
 set ttimeoutlen=0
 set backspace=indent,eol,start
+set autoread
 
 let &t_SI = "\e[6 q"
 let &t_SR = "\e[4 q"
@@ -45,7 +46,7 @@ function! RunPyrightServer()
     call StartServer(s:cmd, '%f:%l:%c\ %m')
 endfunction
 
-autocmd! BufEnter,BufWritePost *.py {
+autocmd! BufEnter,BufWinEnter *.py {
     call RunPyrightServer()
 }
 
@@ -54,4 +55,7 @@ function! FormatWithBlack()
     execute "redraw!"
 endfunction
 
-autocmd! BufWritePost *.py call FormatWithBlack()
+autocmd! BufWritePost *.py {
+    call FormatWithBlack()
+    call RunPyrightServer()
+}
