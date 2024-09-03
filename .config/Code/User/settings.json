@@ -1,8 +1,9 @@
 {
-  "workbench.colorTheme": "Everforest Dark",
+  "workbench.colorTheme": "Habamax",
   "everforest.darkContrast": "hard",
-  "editor.fontFamily": "'FiraMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
-  "editor.fontSize": 15,
+  "editor.fontFamily": "'JetBrainsMono Nerd Font', 'FiraMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
+  "editor.fontSize": 16,
+  "editor.renderLineHighlight": "none",
   "breadcrumbs.enabled": false,
   "editor.stickyScroll.enabled": false,
   "editor.minimap.enabled": false,
@@ -33,21 +34,13 @@
   "security.workspace.trust.untrustedFiles": "open",
   "git.confirmSync": false,
   // vim settings
-  "vim.leader": " ",
+  "vim.leader": "\\",
   "vim.normalModeKeyBindings": [
     {
       "before": ["leader", "f", "f"],
       "commands": [
         {
           "command": "workbench.action.quickOpen"
-        }
-      ]
-    },
-    {
-      "before": ["leader", "f", "b"],
-      "commands": [
-        {
-          "command": ":ls"
         }
       ]
     },
@@ -68,22 +61,6 @@
       ]
     },
     {
-      "before": ["g", "n"],
-      "commands": [
-        {
-          "command": ":bnext"
-        }
-      ]
-    },
-    {
-      "before": ["g", "p"],
-      "commands": [
-        {
-          "command": ":bprev"
-        }
-      ]
-    },
-    {
       "before": ["K"],
       "commands": [
         {
@@ -100,7 +77,7 @@
       ]
     },
     {
-      "before": ["leader", "g", "r"],
+      "before": ["leader", "f", "r"],
       "commands": [
         {
           "command": "editor.action.goToReferences"

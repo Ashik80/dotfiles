@@ -1,4 +1,5 @@
 codeium.codeium
+codelogix.habamax
 dbaeumer.vscode-eslint
 esbenp.prettier-vscode
 ms-python.black-formatter
@@ -6,6 +7,5 @@ ms-python.debugpy
 ms-python.python
 ms-python.vscode-pylance
 pascalsenn.keyboard-quickfix
-sainnhe.everforest
 vscodevim.vim
 waderyan.gitblame

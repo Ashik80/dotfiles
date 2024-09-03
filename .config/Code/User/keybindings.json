@@ -6,7 +6,7 @@
         "when": "editorTextFocus && vim.active !inDebugRepl"
     },
     {
-        "key": "space f f",
+        "key": "\\ f f",
         "command": "workbench.action.quickOpen",
         "when": "!editorFocus && !inputFocus"
     },
