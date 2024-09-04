@@ -1,8 +1,7 @@
 {
   "workbench.colorTheme": "Habamax",
-  "everforest.darkContrast": "hard",
   "editor.fontFamily": "'JetBrainsMono Nerd Font', 'FiraMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
-  "editor.fontSize": 16,
+  "editor.fontSize": 22,
   "editor.renderLineHighlight": "none",
   "breadcrumbs.enabled": false,
   "editor.stickyScroll.enabled": false,
