@@ -11,9 +11,9 @@ set ttimeoutlen=0
 set backspace=indent,eol,start
 set autoread
 
-let &t_SI = "\e[6 q"
-let &t_SR = "\e[4 q"
-let &t_EI = "\e[2 q"
+" let &t_SI = "\e[6 q"
+" let &t_SR = "\e[4 q"
+" let &t_EI = "\e[2 q"
 
 colorscheme habamax
 
