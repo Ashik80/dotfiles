@@ -59,3 +59,13 @@ autocmd! BufWritePost *.py {
     call FormatWithBlack()
     call RunPyrightServer()
 }
+
+" Ruby settings
+function! StartRubocopServer()
+    let s:cmd = 'rubocop ' . expand("%")
+    call StartServer(s:cmd, '%f:%l:%c:\ %m')
+endfunction
+
+autocmd! BufEnter,BufWritePost *.rb {
+    call StartRubocopServer()
+}
