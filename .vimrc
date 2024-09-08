@@ -22,8 +22,9 @@ autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml {
 }
 
 " Error checker server
-function! StartServer(cmd, efm)
-    let s:full_cmd = a:cmd . ' > /tmp/output'
+function! StartServer(cmd, efm, is_stderr=v:false)
+    let s:full_cmd = a:is_stderr ? a:cmd : a:cmd . ' > /tmp/output'
+
     execute 'set efm=' . a:efm
 
     function! SetCompiledErrors(job, status)
@@ -68,4 +69,14 @@ endfunction
 
 autocmd! BufEnter,BufWritePost *.rb {
     call StartRubocopServer()
+}
+
+" Go settings
+autocmd! BufEnter,BufWritePost *.go {
+    call StartServer('go build 2> /tmp/output', '%f:%l:%c:\ %m', v:true)
+}
+
+" Rust settings
+autocmd! BufEnter,BufWritePost *.rs {
+    call StartServer('cargo clippy 2> /tmp/output', '%A\ -->\ %f:%l:%c,%Z%m', v:true)
 }
