@@ -120,25 +120,16 @@ vim.api.nvim_create_autocmd("FileType", {
   end
 })
 
--- C# settings
-vim.api.nvim_create_autocmd({"BufEnter", "BufWritePost"}, {
-  pattern = "*.cs",
+-- Go settings
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = {"go", "gomod"},
   callback = function(args)
-    RunCustomServer(
-      "CsharpServer",
-      {"bash", "-c", "dotnet build -v q | sed -n '/Build/,/FAILED/p' | grep -E \'\\([0-9]+,[0-9]+\\):\'"},
-      "%((%d+),(%d+)%): (%w+) (.+)",
-      {"lnum", "col", "severity", "message"},
-      {
-        error = vim.diagnostic.severity.ERROR,
-        warning = vim.diagnostic.severity.WARN,
-      }
-    )
-    -- vim.lsp.start({
-    --   name = "csharp-ls",
-    --   cmd = {"csharp-ls"},
-    --   root_dir = vim.fs.root(args.buf, "*.csproj")
-    -- })
+    vim.lsp.start({
+      name = "gopls",
+      cmd = {"gopls"},
+      root_dir = vim.fs.root(args.buf, {"go.mod"}),
+      single_file_support = true
+    })
   end
 })
 
