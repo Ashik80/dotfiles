@@ -12,7 +12,7 @@ fi
 
 for f in $(ls | grep $1); do
     echo "Renaming $f to $(echo $f | sed "s/$1/$2/")"
-    mv $f $(echo $f | sed "s/$1/$2/g")
+    mv $f $(echo $f | sed "s/$1/$2/")
 done
 
 echo "Renaming done..."
