@@ -1,3 +1,4 @@
+vim.g.mapleader = " "
 vim.o.number = true
 vim.o.expandtab = true
 vim.o.shiftwidth = 4
@@ -7,6 +8,7 @@ vim.o.smartcase = true
 vim.o.hlsearch = false
 vim.o.swapfile = false
 vim.o.signcolumn = 'yes'
+vim.o.guicursor = ''
 
 vim.cmd.colorscheme "habamax"
 

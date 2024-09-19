@@ -1,3 +1,5 @@
+let g:mapleader = " "
+
 syntax on
 set number
 set expandtab
