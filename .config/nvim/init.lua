@@ -88,13 +88,25 @@ vim.api.nvim_create_autocmd("FileType", {
   end
 })
 
+local function FormatWithPrettier()
+  local filename = vim.fn.expand("%")
+  vim.cmd("silent !prettier -w " .. filename)
+end
+
+vim.api.nvim_create_autocmd("BufWritePost", {
+  pattern = {"*.js", "*.jsx", "*.ts", "*.tsx"},
+  callback = function()
+    FormatWithPrettier()
+  end
+})
+
 -- Python settings
 local function FormatWithBlack()
   local filename = vim.fn.expand("%")
   vim.cmd("silent !black " .. filename)
 end
 
-vim.api.nvim_create_autocmd({"BufEnter", "BufWritePost"}, {
+vim.api.nvim_create_autocmd({"BufWritePost"}, {
   pattern = "*.py",
   callback = function(args)
     FormatWithBlack()
@@ -132,6 +144,18 @@ vim.api.nvim_create_autocmd("FileType", {
       root_dir = vim.fs.root(args.buf, {"go.mod"}),
       single_file_support = true
     })
+  end
+})
+
+local function FormatGo()
+  local filename = vim.fn.expand("%")
+  vim.cmd("silent !gofmt -w " .. filename)
+end
+
+vim.api.nvim_create_autocmd("BufWritePost", {
+  pattern = {"*.go"},
+  callback = function()
+    FormatGo()
   end
 })
 

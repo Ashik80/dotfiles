@@ -43,6 +43,15 @@ autocmd! BufEnter,BufWritePost *.ts,*.tsx {
     call StartServer('tsc -b -i', '%f(%l\\,%c):%m')
 }
 
+function! FormatWithPrettier()
+    execute "silent !prettier -w %"
+    execute "redraw!"
+endfunction
+
+autocmd! BufWritePost *.ts,*.tsx,*.js,*.jsx {
+    call FormatWithPrettier()
+}
+
 " Python settings
 function! RunPyrightServer()
     let s:cmd = 'pyright ' . expand("%") . ' | grep -E ":[0-9]+:[0-9]+" | sed "s/^\s*//"'
@@ -76,6 +85,15 @@ autocmd! BufEnter,BufWritePost *.rb {
 " Go settings
 autocmd! BufEnter,BufWritePost *.go {
     call StartServer('go build 2> /tmp/output', '%f:%l:%c:\ %m', v:true)
+}
+
+function! FormatGo()
+    execute "silent !gofmt -w %"
+    execute "redraw!"
+endfunction
+
+autocmd! BufWritePost *.go {
+    call FormatGo()
 }
 
 " Rust settings
