@@ -10,7 +10,7 @@ vim.o.swapfile = false
 vim.o.signcolumn = 'yes'
 vim.o.guicursor = ''
 
-vim.cmd.colorscheme "habamax"
+vim.cmd.colorscheme "base16-classic-dark"
 
 vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
   pattern = {"*.js", "*.jsx", "*.ts", "*.tsx", "*.json", "*.rb", "*.yml", "*.lua"},
@@ -141,6 +141,11 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.lsp.start({
       name = "gopls",
       cmd = {"gopls"},
+      settings = {
+        gopls = {
+          semanticTokens = true,
+        },
+      },
       root_dir = vim.fs.root(args.buf, {"go.mod"}),
       single_file_support = true
     })
@@ -160,6 +165,6 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 })
 
 -- Disable all lsp highlightings
-for _, group in ipairs(vim.fn.getcompletion("@lsp", "highlight")) do
-  vim.api.nvim_set_hl(0, group, {})
-end
+-- for _, group in ipairs(vim.fn.getcompletion("@lsp", "highlight")) do
+--   vim.api.nvim_set_hl(0, group, {})
+-- end
