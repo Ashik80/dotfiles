@@ -29,7 +29,7 @@ echo "Configuring..."
     --enable-python3interp \
     --with-python3-command=/usr/bin/python3 \
     --with-x \
-    --disable-gui
+    --enable-gui
 
 echo "Compiling..."
 make -j$(nproc)
