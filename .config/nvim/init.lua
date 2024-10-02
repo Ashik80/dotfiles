@@ -20,6 +20,18 @@ vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
   end
 })
 
+-- File fuzzy finder
+function FuzzyFindFile()
+  vim.fn.termopen('fzf | sed "s/$/:0:0/" > /tmp/filefind', {
+    on_exit = function()
+      vim.o.efm = '%f:%l:%c'
+      vim.cmd('silent cfile /tmp/filefind')
+    end
+  })
+  vim.cmd('startinsert')
+end
+vim.keymap.set('n', '<leader>ff', ':lua FuzzyFindFile()<CR>')
+
 -- Taken inspiration from Erik's blog (https://blog.erikwastaken.dev/posts/2023-05-06-a-case-for-neovim-without-plugins.html)
 local function RunCustomServer(namespace, command, pattern, groups, severity_map)
   vim.fn.jobstart(command, {
