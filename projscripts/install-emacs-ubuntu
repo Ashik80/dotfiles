@@ -4,7 +4,7 @@ version="29.4"
 
 cd $HOME/make-builds/
 
-if [[ ! -e $HOME/make-builds/emacs ]]; then
+if [[ ! -e $HOME/make-builds/emacs-emacs-$version ]]; then
     echo "Downloading emacs..."
     curl -o emacs-$version.tar.gz https://codeload.github.com/emacs-mirror/emacs/tar.gz/refs/tags/emacs-$version
 
