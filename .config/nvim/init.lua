@@ -20,11 +20,25 @@ vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
   end
 })
 
+-- Handmade compiler
+function Compile(cmd)
+  local command = cmd .. ' | tee /tmp/output'
+  vim.fn.jobstart(command, {
+    on_exit = function()
+      vim.cmd('!cat /tmp/output')
+      vim.cmd('cgetfile /tmp/output')
+      vim.cmd('cw')
+    end
+  })
+end
+
 -- File fuzzy finder
 function FuzzyFindFile()
+  vim.cmd("enew")
   vim.fn.termopen('fzf | sed "s/$/:0:0/" > /tmp/filefind', {
     on_exit = function()
       vim.o.efm = '%f:%l:%c'
+      vim.cmd("bd!")
       vim.cmd('silent cfile /tmp/filefind')
     end
   })
@@ -128,6 +142,7 @@ vim.api.nvim_create_autocmd({"BufWritePost"}, {
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "python",
   callback = function(args)
+    vim.o.efm = "%f:%l:%c %m"
     vim.lsp.start({
       name = "pyright-langserver",
       cmd = {"pyright-langserver", "--stdio"},
@@ -150,6 +165,7 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("FileType", {
   pattern = {"go", "gomod"},
   callback = function(args)
+    vim.o.efm = '%f:%l:%c: %m'
     vim.lsp.start({
       name = "gopls",
       cmd = {"gopls"},

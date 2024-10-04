@@ -12,6 +12,8 @@ set laststatus=2
 set ttimeoutlen=0
 set backspace=indent,eol,start
 set autoread
+set termguicolors
+set guifont=CommitMono\ 16
 
 " let &t_SI = "\e[6 q"
 " let &t_SR = "\e[4 q"
