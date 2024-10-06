@@ -22,12 +22,18 @@ vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
 
 -- Handmade compiler
 function Compile(cmd)
-  local command = cmd .. ' | tee /tmp/output'
-  vim.fn.jobstart(command, {
-    on_exit = function()
-      vim.cmd('!cat /tmp/output')
-      vim.cmd('cgetfile /tmp/output')
-      vim.cmd('cw')
+  vim.fn.jobstart(cmd, {
+    stdout_buffered = true,
+    on_stdout = function(_, data, _)
+      local lines = {}
+      if data then
+        for _, line in ipairs(data) do
+          if line and line ~= "" then
+            table.insert(lines, line)
+          end
+        end
+      end
+      vim.fn.setqflist({}, 'r', { lines = lines })
     end
   })
 end
@@ -106,6 +112,7 @@ vim.api.nvim_create_autocmd({"BufEnter", "BufWritePost"}, {
 vim.api.nvim_create_autocmd("FileType", {
   pattern = {"javascript", "javascriptreact", "typescript", "typescriptreact"},
   callback = function(args)
+    vim.o.efm = "%f(%l\\,%c): %m"
     vim.lsp.start({
       name = "tsserver",
       cmd = {"typescript-language-server", "--stdio"},
