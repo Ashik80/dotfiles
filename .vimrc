@@ -1,5 +1,6 @@
 let g:mapleader = " "
 
+filetype plugin indent on
 syntax on
 set number
 set expandtab
@@ -19,11 +20,39 @@ set guifont=CommitMono\ 16
 " let &t_SR = "\e[4 q"
 " let &t_EI = "\e[2 q"
 
-colorscheme habamax
+colorscheme base16-classic-dark
 
 autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml {
     set shiftwidth=2 tabstop=2
 }
+
+" Fuzzy file finder
+function! FuzzyFileFinder()
+    execute "silent !fzf | sed 's/$/:0:0/' > /tmp/filefind"
+    set efm=%f:%l:%c
+    silent cfile /tmp/filefind
+    redraw!
+endfunction
+nnoremap <leader>ff :call FuzzyFileFinder()<CR>
+
+" Handmade compiler
+function! Compile(cmd)
+    let s:output = []
+    function! GetCompiledErrors(channel, message)
+        call add(s:output, a:message)
+    endfunction
+
+    function! PopulateQuickfixList(job, status)
+        execute 'lgetexpr s:output'
+        execute 'lw'
+    endfunction
+
+    call job_start(['bash', '-c', a:cmd], #{
+        \ out_cb: 'GetCompiledErrors',
+        \ err_cb: 'GetCompiledErrors',
+        \ exit_cb: 'PopulateQuickfixList'
+        \ })
+endfunction
 
 " Error checker server
 function! StartServer(cmd, efm, is_stderr=v:false)
@@ -42,7 +71,7 @@ endfunction
 
 " TypeScript settings
 autocmd! BufEnter,BufWritePost *.ts,*.tsx {
-    call StartServer('tsc -b -i', '%f(%l\\,%c):%m')
+    call StartServer('tsc -b -i', '%f(%l\\,%c):\ %m')
 }
 
 function! FormatWithPrettier()
@@ -100,5 +129,5 @@ autocmd! BufWritePost *.go {
 
 " Rust settings
 autocmd! BufEnter,BufWritePost *.rs {
-    call StartServer('cargo clippy 2> /tmp/output', '%A\ -->\ %f:%l:%c,%Z%m', v:true)
+    call StartServer('cargo clippy 2>&1 | sed "s/  --> //" > /tmp/output', '%f:%l:%c', v:true)
 }
