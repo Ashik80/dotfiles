@@ -1,275 +1,70 @@
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(exec-path-from-shell flymake-eslint rainbow-mode python-black prettier-js magit git-gutter)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(setq custom-file "~/.emacs.d/emacs-custom.el")
+(load custom-file)
 
-;;; Package archive configurations
-(require 'package)
 (add-to-list 'package-archives
-	     '("melpa" . "https://melpa.org/packages/"))
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (package-initialize)
 
+(defun ar/require(hook)
+  (unless (package-installed-p hook)
+    (package-install hook))
+  (require hook))
 
-;;; Leader key
-(define-prefix-command 'leader)
-(global-set-key (kbd "C-c") 'leader)
+(require 'project)
 
-
-;;; Packages
-(use-package exec-path-from-shell
-  :ensure t
-  :if (memq window-system '(mac ns x))
-  :config (exec-path-from-shell-initialize))
-
-;; Evil mode settings
-(use-package evil
-  :ensure t
-  :config
-  (evil-mode)
-  (setq evil-insert-state-cursor nil)         ; Use block cursor
-  (evil-set-initial-state 'dired-mode 'emacs) ; Use emacs mode in dired
-  (evil-set-initial-state 'xref--xref-buffer-mode 'emacs) ; Use emacs mode in xref
-  (define-key evil-insert-state-map (kbd "C-e") 'move-end-of-line)
-  (define-key evil-insert-state-map (kbd "C-a") 'move-beginning-of-line)
-  (define-key evil-insert-state-map (kbd "C-n") 'next-line)
-  (define-key evil-insert-state-map (kbd "C-p") 'previous-line)
-  (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up))
-
-;; Treesitter settings
-(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-ts-mode))
-(setq major-mode-remap-alist
-      '((python-mode . python-ts-mode)
-        (js-mode . js-ts-mode)
-        (sh-mode . bash-ts-mode)
-        (css-mode . css-ts-mode)
-        (scss-mode . css-ts-mode)
-        (conf-toml-mode . toml-ts-mode)
-        (js-json-mode . json-ts-mode)))
-(setq treesit-font-lock-level 4)
-
-;; Typescript mode settings
-(defvar tsjs-dirs-to-ignore "node_modules,.git,build,.build,.next")
-(defun my-ts-config()
-  (setq tab-width 2)
-  (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} --exclude=tsconfig.tsbuildinfo ")))
-(add-hook 'typescript-ts-mode-hook #'my-ts-config)
-(add-hook 'tsx-ts-mode-hook #'my-ts-config)
-
-;; Javascript mode settings
-(defvar js-indent-level)
-(defun my-js-config()
-  (setq tab-width 2)
-  (setq js-indent-level 2)
-  (setq grep-command (concat "grep -Rin --exclude-dir={" tsjs-dirs-to-ignore "} ")))
-(add-hook 'js-mode-hook #'my-js-config)
-(add-hook 'js-ts-mode-hook #'my-js-config)
-
-;; Python mode settings
-(defvar python-dirs-to-ignore "__pycache__,.git")
-(defun my-python-config()
-  (setq tab-width 4)
-  (setq grep-command (concat "grep -Rin --exclude-dir={" python-dirs-to-ignore "} ")))
-(add-hook 'python-mode-hook #'my-python-config)
-(add-hook 'python-ts-mode-hook #'my-python-config)
-
-;; Rust settings
-(add-hook 'rust-ts-mode-hook
-          (lambda ()
-            (setq tab-width 4)))
-
-;; Recentf settings
-(use-package recentf
-  :hook (after-init . recentf-mode)
-  :config (define-key 'leader (kbd "f r") 'recentf))
-
-;; Git gutter settings
-(use-package git-gutter
-  :ensure t
-  :hook (after-init . global-git-gutter-mode))
-
-;; Magit settings
-(use-package magit
-  :ensure t
-  :defer t
-  :init (define-key 'leader (kbd "B") 'magit-blame))
-
-;; Rainbow mode settings
-(use-package rainbow-mode
-  :defer t
-  :ensure t)
-
-;; Lsp settings
-(use-package eglot
-  :defer t
-  :init (setq eglot-events-buffer-size 0
-              eglot-autoshutdown t)
-  :hook ((typescript-ts-mode . eglot-ensure)
-         (tsx-ts-mode . eglot-ensure)
-         (js-mode . eglot-ensure)
-         (js-ts-mode . eglot-ensure)
-         (python-mode . eglot-ensure)
-         (python-ts-mode . eglot-ensure)
-         (rust-ts-mode . eglot-ensure)
-         (eglot-managed-mode . (lambda ()
-                                 (when (derived-mode-p 'js-ts-mode 'js-mode)
-                                   (local-set-key (kbd "M-.") 'xref-find-definitions)))))
-  :config
-  (defun my-go-do-definition-at-mouse(event)
-    (interactive "event")
-    (message "%s" event)
-    (mouse-set-point event)
-    (xref-find-definitions-at-mouse event))
-  (local-set-key [C-down-mouse-1] 'my-go-do-definition-at-mouse)
-  (define-key 'leader (kbd "c a") 'eglot-code-actions)
-  (define-key 'leader (kbd "r n") 'eglot-rename))
-
-;; Increase GC threshold to improve LSP performace
-(setq gc-cons-threshold most-positive-fixnum)
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (setq gc-cons-threshold (* 16 1024 1024))))
-(setq read-process-output-max (* 256 1024))
-
-;; Formatters for typescript
-(defun my-eslint-config-file ()
-  (or (locate-dominating-file (buffer-file-name) ".eslintrc.json")
-      (locate-dominating-file (buffer-file-name) ".eslintrc.js")
-      (locate-dominating-file (buffer-file-name) ".eslintrc")))
-(use-package prettier-js
-  :ensure t)
-(use-package flymake-eslint
-  :ensure t
-  :after eglot
-  :init (setq flymake-eslint-executable-name "eslint_d")
-  :hook (eglot-managed-mode . (lambda ()
-                                (when (derived-mode-p 'tsx-ts-mode 'typescript-ts-mode 'js-ts-mode)
-                                  (let ((root (my-eslint-config-file)))
-                                    (when root (flymake-eslint-enable)))))))
-(defun my-eslint-fix-all()
-  (interactive)
-  (let ((default-directory (my-eslint-config-file)))
-    (shell-command (concat "eslint_d --fix " (file-relative-name (buffer-file-name) default-directory)))
-    (revert-buffer-quick)))
-(defun my-typescript-keybindings ()
-  (define-key 'leader (kbd "f e") 'my-eslint-fix-all)
-  (define-key 'leader (kbd "f p") 'prettier-js))
-(add-hook 'typescript-ts-mode-hook #'my-typescript-keybindings)
-(add-hook 'tsx-ts-mode-hook #'my-typescript-keybindings)
-;; Formatters for python
-(use-package python-black
-  :ensure t
-  :hook ((python-mode . python-black-on-save-mode)
-         (python-ts-mode . python-black-on-save-mode)))
-
-
-;;; General settings
-;; Disable scrollbar
 (scroll-bar-mode -1)
-
-;; Disable menu bar
 (menu-bar-mode -1)
-
-;; Disbable tool bar
 (tool-bar-mode -1)
+(ido-mode 1)
+(ido-everywhere 1)
+(global-display-line-numbers-mode 1)
+(recentf-mode 1)
 
-;; Disable startup screen
-(setq inhibit-startup-screen t)
+(ar/require 'base16-theme)
+(load-theme 'base16-default-dark t)
 
-;; Set font
-(defvar my-font "IosevkaTerm Nerd Font")
+(setq-default inhibit-splash-screen t)
+(setq-default make-backup-files nil)
+(setq-default dired-dwim-target t)
+(setq-default ring-bell-function 'ignore)
+(setq-default electric-indent-mode nil
+              indent-tabs-mode nil
+              tab-width 4)
+
+(defvar my-font "CommitMono")
 (defvar my-font-height 160)
 (set-face-attribute 'default nil :font my-font :height my-font-height)
-(defface markdown-code-face
-  `((t :font ,my-font :height ,my-font-height))
-  "Face for markdown code blocks."
-  :group 'markdown-faces)
-(set-face-attribute 'markdown-code-face nil :font my-font :height my-font-height)
 
-;; Enable line numbers
-(global-display-line-numbers-mode)
+(defun ar/format-on-save(mode cmd)
+  (when (eq major-mode mode)
+    (shell-command (concat cmd " " (buffer-name))))
+  (revert-buffer-quick))
 
-;; Disable backup files
-(setq make-backup-files nil)
+(ar/require 'go-mode)
+(add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
+(defun ar/format-go-on-save()
+  (ar/format-on-save 'go-mode "gofmt -w"))
+(add-hook 'after-save-hook #'ar/format-go-on-save)
 
-;; Enable downcasing and upcasing text
-(put 'downcase-region 'disabled nil)
-(put 'upcase-region 'disabled nil)
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+(defun typescript-settings()
+  (setq tab-width 2))
+(add-hook 'tsx-ts-mode-hook #'typescript-settings)
+(add-hook 'typescript-ts-mode-hook #'typescript-settings)
+(defun ar/format-with-prettier-on-save()
+  (ar/format-on-save 'tsx-ts-mode "prettier -w")
+  (ar/format-on-save 'typescript-ts-mode "prettier -w"))
+(add-hook 'after-save-hook #'ar/format-with-prettier-on-save)
 
-;; Enable narrow region
-(put 'narrow-to-region 'disabled nil)
+(defun python-settings()
+  (setq tab-width 4))
+(setq major-mode-remap-alist '((python-mode . python-ts-mode)))
+(add-hook 'python-ts-mode-hook #'python-settings)
+(defun ar/format-python-on-save()
+  (ar/format-on-save 'python-ts-mode "black"))
+(add-hook 'after-save-hook #'ar/format-python-on-save)
 
-;; Set theme
-(use-package gruber-darker-theme
-  :ensure t
-  :config (load-theme 'gruber-darker t))
-
-;; Default tab width
-(setq tab-width 4)
-
-;; Convert tab to spaces
-(setq-default indent-tabs-mode nil)
-
-;; Grep command settings
-(setq-default grep-command "grep -Rin ")
-
-;; Stop blinking cursor
-(blink-cursor-mode 0)
-
-;; Keybind for newlines
-(global-set-key (kbd "M-o")
-                (lambda ()
-                  (interactive)
-                  (move-end-of-line 1)
-                  (newline)
-                  (indent-for-tab-command)))
-(global-set-key (kbd "M-O")
-                (lambda ()
-                  (interactive)
-                  (back-to-indentation)
-                  (newline)
-                  (indent-for-tab-command)
-                  (forward-line -1)
-                  (indent-for-tab-command)))
-
-;; Copy/Move files to another split dired
-(setq dired-dwim-target t)
-
-;; Disable all sounds
-(setq ring-bell-function 'ignore)
-
-;; Disable annoying electric indent
-(setq electric-indent-mode nil)
-
-;; Turn on ido mode
-(use-package ido
-  :defer t
-  :hook (after-init . ido-mode))
-(add-hook 'after-init-hook 'ido-mode)
-
-;; Allow project to recognize directories
-(use-package project
-  :defer t
-  :init (setq project-vc-extra-root-markers '(".projectel")))
-(setq project-vc-extra-root-markers '(".projectel"))
-
-;; Open Journal
-(defun open-journal()
-  "Open journal with the current month."
-  (interactive)
-  (let ((file-of-month (substring (shell-command-to-string "date +%B,%Y 2>/dev/null") 0 -1)))
-    (find-file (concat (getenv "HOME") "/Documents/Journal/" file-of-month))))
-
-(define-key 'leader (kbd "J") 'open-journal)
+(ar/require 'exec-path-from-shell)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))

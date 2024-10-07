@@ -1,0 +1,13 @@
+.cache
+.lsp-session*
+elpa
+projectile-bookmarks.eld
+recentf
+transient
+auto-save-list
+eln-cache
+*.elc
+bookmarks
+projects
+tree-sitter
+ido.*
