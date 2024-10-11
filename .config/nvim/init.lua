@@ -34,6 +34,7 @@ function Compile(cmd)
         end
       end
       vim.fn.setqflist({}, 'r', { lines = lines })
+      vim.cmd("cw")
     end
   })
 end
