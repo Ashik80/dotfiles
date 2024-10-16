@@ -20,6 +20,14 @@ vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
   end
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = {"sh"},
+  callback = function()
+    vim.o.shiftwidth = 4
+    vim.o.tabstop = 4
+  end
+})
+
 -- Handmade compiler
 function Compile(cmd)
   vim.fn.jobstart(cmd, {
@@ -128,7 +136,7 @@ local function FormatWithPrettier()
 end
 
 vim.api.nvim_create_autocmd("BufWritePost", {
-  pattern = {"*.js", "*.jsx", "*.ts", "*.tsx"},
+  pattern = {"*.js", "*.jsx", "*.ts", "*.tsx", "*.html", "*.css"},
   callback = function()
     FormatWithPrettier()
   end

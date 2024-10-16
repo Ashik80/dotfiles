@@ -7,3 +7,6 @@ ido.last
 projects
 recentf
 tree-sitter/
+.lsp-session-v1
+projectile-bookmarks.eld
+transient/
