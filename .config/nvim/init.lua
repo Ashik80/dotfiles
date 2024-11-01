@@ -8,9 +8,9 @@ vim.o.smartcase = true
 vim.o.hlsearch = false
 vim.o.swapfile = false
 vim.o.signcolumn = 'yes'
-vim.o.guicursor = ''
+-- vim.o.guicursor = ''
 
-vim.cmd.colorscheme "base16-classic-dark"
+-- vim.cmd.colorscheme "base16-classic-dark"
 
 vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
   pattern = {"*.js", "*.jsx", "*.ts", "*.tsx", "*.json", "*.rb", "*.yml", "*.lua"},
