@@ -9,6 +9,7 @@ vim.o.hlsearch = false
 vim.o.swapfile = false
 vim.o.signcolumn = 'yes'
 -- vim.o.guicursor = ''
+vim.o.termguicolors = true
 
 -- vim.cmd.colorscheme "base16-classic-dark"
 
