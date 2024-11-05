@@ -15,12 +15,13 @@ set backspace=indent,eol,start
 set autoread
 set termguicolors
 set guifont=CommitMono\ 16
+set mouse=a
 
-" let &t_SI = "\e[6 q"
-" let &t_SR = "\e[4 q"
-" let &t_EI = "\e[2 q"
+let &t_SI = "\e[6 q"
+let &t_SR = "\e[4 q"
+let &t_EI = "\e[2 q"
 
-colorscheme base16-classic-dark
+" colorscheme base16-classic-dark
 
 autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml {
     set shiftwidth=2 tabstop=2
@@ -79,7 +80,7 @@ function! FormatWithPrettier()
     execute "redraw!"
 endfunction
 
-autocmd! BufWritePost *.ts,*.tsx,*.js,*.jsx {
+autocmd! BufWritePost *.ts,*.tsx,*.js,*.jsx,*.html,*.json {
     call FormatWithPrettier()
 }
 
