@@ -80,7 +80,7 @@ function! FormatWithPrettier()
     execute "redraw!"
 endfunction
 
-autocmd! BufWritePost *.ts,*.tsx,*.js,*.jsx,*.html,*.json {
+autocmd! BufWritePost *.ts,*.tsx,*.js,*.jsx,*.html,*.json,*.css {
     call FormatWithPrettier()
 }
 
