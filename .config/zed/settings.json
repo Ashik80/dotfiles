@@ -8,7 +8,7 @@
 // command palette
 {
   "vim_mode": true,
-  "ui_font_size": 16,
+  "ui_font_size": 18,
   "use_autoclose": false,
   "restore_on_startup": "none",
   "soft_wrap": "editor_width",
@@ -17,9 +17,6 @@
   },
   "buffer_font_size": 20,
   "buffer_font_family": "FiraCode Nerd Font",
-  "buffer_font_features": {
-    "calt": false
-  },
   "theme": {
     "mode": "system",
     "light": "Base16 Ayu Dark",
