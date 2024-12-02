@@ -15,7 +15,7 @@ return {
 
   {
     "hrsh7th/nvim-cmp",
-    opts = function (_, opts)
+    opts = function(_, opts)
       local cmp = require("cmp")
       opts.mapping = cmp.mapping.preset.insert({
         ["<C-y>"] = cmp.mapping.confirm({ select = true })
@@ -24,16 +24,16 @@ return {
   },
 
   {
-  	"nvim-treesitter/nvim-treesitter",
-  	opts = {
-  		ensure_installed = {
+    "nvim-treesitter/nvim-treesitter",
+    opts = {
+      ensure_installed = {
         "html",
         "go",
         "typescript",
         "tsx",
         "python",
-  		},
-  	},
+      },
+    },
   },
 
   {

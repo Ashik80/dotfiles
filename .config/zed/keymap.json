@@ -13,7 +13,10 @@
       "g e": "workspace::ToggleLeftDock",
       "space r n": "editor::Rename",
       "space f r": "editor::FindAllReferences",
-      "ctrl-j": "workspace::ToggleBottomDock"
+      "ctrl-j": "workspace::ToggleBottomDock",
+      "tab": "pane::ActivateNextItem",
+      "shift-tab": "pane::ActivatePrevItem",
+      "ctrl-t": "pane::GoBack"
     }
   },
   {

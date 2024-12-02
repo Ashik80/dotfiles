@@ -21,5 +21,16 @@
     "mode": "system",
     "light": "Base16 Ayu Dark",
     "dark": "Base16 Ayu Dark"
+  },
+  "languages": {
+    "Python": {
+      "format_on_save": "on",
+      "formatter": {
+        "external": {
+          "command": "/usr/bin/black",
+          "arguments": ["-"]
+        }
+      }
+    }
   }
 }
