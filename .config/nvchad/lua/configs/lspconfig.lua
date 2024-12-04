@@ -12,7 +12,7 @@ local custom_mappings = function(client, bufnr)
   local map = vim.keymap.set
 
   map("n", "gd", "<Nop>", { buffer = bufnr })
-  map("n", "gd", "yiwgg/<C-r>0<CR><ESC><ESC>", { noremap = true, buffer = bufnr })
+  map("n", "gd", "yiwgg/<C-r>0<CR>:noh<CR>", { noremap = true, buffer = bufnr })
   map("n", "<leader>fr", vim.lsp.buf.references, { desc = "LSP find references", buffer = bufnr })
   map("n", "<leader>rn", vim.lsp.buf.rename, { desc = "LSP rename symbol", buffer = bufnr })
 end
