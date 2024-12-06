@@ -32,6 +32,8 @@ return {
         "typescript",
         "tsx",
         "python",
+        "javascript",
+        "bash",
       },
     },
   },
