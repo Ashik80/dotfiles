@@ -2,9 +2,9 @@
 require("nvchad.configs.lspconfig").defaults()
 
 local lspconfig = require "lspconfig"
+local nvlsp = require "nvchad.configs.lspconfig"
 
 local servers = { "html", "cssls", "gopls", "vtsls", "eslint", "pyright" }
-local nvlsp = require "nvchad.configs.lspconfig"
 
 local custom_mappings = function(client, bufnr)
   nvlsp.on_attach(client, bufnr)
