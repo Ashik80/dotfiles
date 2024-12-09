@@ -5,7 +5,6 @@ return {
     opts = require "configs.conform",
   },
 
-  -- These are some examples, uncomment them if you want to see them work!
   {
     "neovim/nvim-lspconfig",
     config = function()
@@ -25,23 +24,19 @@ return {
 
   {
     "nvim-treesitter/nvim-treesitter",
-    opts = {
-      ensure_installed = {
-        "html",
-        "go",
-        "typescript",
-        "tsx",
-        "python",
-        "javascript",
-        "bash",
-      },
-    },
+    opts = require "configs.treesitter"
   },
 
   {
     "windwp/nvim-ts-autotag",
     lazy = false,
     opts = {}
+  },
+
+  {
+    'mrcjkb/rustaceanvim',
+    version = '^5',
+    lazy = false,
   },
 
   -- disable indentation guides
