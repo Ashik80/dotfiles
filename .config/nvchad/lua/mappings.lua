@@ -12,7 +12,11 @@ map("n", "<leader>fg", telescope_builtin.live_grep, { desc = "telescope live gre
 nomap("n", "<leader>e")
 nomap("n", "<C-w>d")
 nomap("n", "<C-w><C-d>")
-map("n", "<leader>e", vim.diagnostic.open_float, { desc = "show diagnostics under the cursor" })
+map("n", "<leader>e", vim.diagnostic.open_float, { desc = "diagnostics under the cursor" })
 
 -- lsp
 nomap("n", "<leader>rn")
+
+-- general
+map("x", ">", ">gv")
+map("x", "<", "<gv")
