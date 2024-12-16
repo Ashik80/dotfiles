@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+function create_session_and_window() {
+    tmux new -ds AdminPortal -c $HOME/src/ManzilApp/AdminPortal
+}
+
+function switch_to_window() {
+    if [[ -z $TMUX ]]; then
+        tmux a -t AdminPortal
+    else
+        tmux switch-client -t AdminPortal
+    fi
+}
+
+tmux has-session -t AdminPortal 2>/dev/null
+if [[ $? == 1 ]]; then
+    create_session_and_window
+fi
+switch_to_window
