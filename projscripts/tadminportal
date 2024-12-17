@@ -4,6 +4,15 @@ function create_session_and_window() {
     tmux new -ds AdminPortal -c $HOME/src/ManzilApp/AdminPortal
 }
 
+function create_new_window() {
+    tmux new-window -t AdminPortal -n $1 -c $HOME/src/ManzilApp/AdminPortal
+}
+
+function change_node_version() {
+    tmux send-keys -t AdminPortal:$1 "nvm use 18" C-m
+    tmux send-keys -t AdminPortal:$1 "clear" C-m
+}
+
 function switch_to_window() {
     if [[ -z $TMUX ]]; then
         tmux a -t AdminPortal
@@ -15,5 +24,9 @@ function switch_to_window() {
 tmux has-session -t AdminPortal 2>/dev/null
 if [[ $? == 1 ]]; then
     create_session_and_window
+    create_new_window be-server
+    create_new_window fe-server
+    change_node_version be-server
+    change_node_version fe-server
 fi
 switch_to_window

@@ -14,3 +14,4 @@ opt.signcolumn = 'yes'
 opt.termguicolors = true
 opt.showmode = false
 opt.fillchars = 'eob: '
+opt.clipboard = 'unnamedplus'
