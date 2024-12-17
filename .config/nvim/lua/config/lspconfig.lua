@@ -22,8 +22,8 @@ local function on_attach()
 end
 
 map('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic in hover' })
-map('n', '<leader>be', vim.diagnostic.setloclist, { desc = 'Send buffer diagnostics to location list' })
-map('n', '<leader>ba', vim.diagnostic.setqflist, { desc = 'Send all diagnostics to quickfix list' })
+map('n', '<leader>de', vim.diagnostic.setloclist, { desc = 'Send buffer diagnostics to location list' })
+map('n', '<leader>da', vim.diagnostic.setqflist, { desc = 'Send all diagnostics to quickfix list' })
 
 for _, server in ipairs(servers) do
   lspconfig[server].setup {
