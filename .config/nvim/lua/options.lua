@@ -15,3 +15,5 @@ opt.termguicolors = true
 opt.showmode = false
 opt.fillchars = 'eob: '
 opt.clipboard = 'unnamedplus'
+opt.ignorecase = true
+opt.smartcase = true
