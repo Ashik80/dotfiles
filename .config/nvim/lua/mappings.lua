@@ -5,6 +5,7 @@ map('x', '<', '<gv', { desc = 'Indent left' })
 map('n', '<Esc>', '<cmd>noh<CR>', { desc = 'Remove highlight' })
 
 map('n', '<C-n>', '<cmd>NvimTreeToggle<CR>', { desc = 'Toggle file tree' })
+map('n', 'ge', '<cmd>Oil<CR>', { desc = 'Open oil' })
 
 map('n', '<C-h>', '<C-W>h')
 map('n', '<C-j>', '<C-W>j')
