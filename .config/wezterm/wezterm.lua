@@ -10,6 +10,9 @@ config.line_height = 1.3
 config.audible_bell = 'Disabled'
 config.hide_tab_bar_if_only_one_tab = true
 config.window_padding = {
+    top = 0,
+    left = 0,
+    right = 0,
     bottom = 0
 }
 

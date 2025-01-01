@@ -6,12 +6,12 @@ function create_session_and_window() {
 }
 
 function create_new_window() {
-    tmux new-window -t platform -n $1 -c $HOME/src/ManzilApp/platform-$1
+    tmux new-window -t platform -n $2 -c $HOME/src/ManzilApp/platform-$1
 }
 
 function activate_virtualenv() {
-    tmux send-keys -t platform:be "pyenv activate platform-be" C-m
-    tmux send-keys -t platform:be "clear" C-m
+    tmux send-keys -t platform:$1 "pyenv activate platform-be" C-m
+    tmux send-keys -t platform:$1 "clear" C-m
 }
 
 function switch_to_window() {
@@ -26,20 +26,27 @@ if [[ -z $1 ]]; then
     tmux has-session -t platform 2>/dev/null
     if [[ $? == 1 ]]; then
         create_session_and_window be
-        activate_virtualenv
-        create_new_window fe
+        activate_virtualenv be
+        create_new_window fe fe
+        create_new_window be be-server
+        activate_virtualenv be-server
+        create_new_window fe fe-server
     fi
     switch_to_window be
 elif [[ $1 == "be" ]]; then
     tmux has-session -t platform 2>/dev/null
     if [[ $? == 1 ]]; then
         create_session_and_window be
-        activate_virtualenv
+        activate_virtualenv be
+        create_new_window be be-server
+        activate_virtualenv be-server
     fi
     switch_to_window be 2>/dev/null
     if [[ $? == 1 ]]; then
-        create_new_window be
-        activate_virtualenv
+        create_new_window be be
+        activate_virtualenv be
+        create_new_window be be-server
+        activate_virtualenv be-server
         switch_to_window be
     fi
 elif [[ $1 == "fe" ]]; then
@@ -49,7 +56,7 @@ elif [[ $1 == "fe" ]]; then
     fi
     switch_to_window fe 2/dev/null
     if [[ $? == 1 ]]; then
-        create_new_window fe
+        create_new_window fe fe
         switch_to_window fe
     fi
 else
