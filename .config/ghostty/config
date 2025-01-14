@@ -1,0 +1,6 @@
+theme = ayu
+font-family = FiraCode Nerd Font Med
+background = #0b0e14
+font-size = 8
+adjust-cell-height = 30%
+adjust-cursor-height = 30%
