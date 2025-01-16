@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+function create_session_and_window() {
+    tmux new -ds Documents -c $HOME/Documents
+}
+
+function switch_to_window() {
+    if [[ -z $TMUX ]]; then
+        tmux a -t Documents
+    else
+        tmux switch-client -t Documents
+    fi
+}
+
+tmux has-session -t Documents 2>/dev/null
+if [[ $? == 1 ]]; then
+    create_session_and_window
+fi
+switch_to_window

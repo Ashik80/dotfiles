@@ -17,3 +17,4 @@ opt.fillchars = 'eob: '
 opt.clipboard = 'unnamedplus'
 opt.ignorecase = true
 opt.smartcase = true
+opt.laststatus = 3
