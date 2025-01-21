@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+docker run \
+    --network dev \
+    -p 5432:5432 \
+    -e POSTGRES_PASSWORD=postgres \
+    --mount source=pgdata,target=/var/lib/postgresql/data \
+    --mount type=bind,source=$HOME/postgresql,target=/postgresql \
+    --name postgres \
+    -d postgres:17-alpine
