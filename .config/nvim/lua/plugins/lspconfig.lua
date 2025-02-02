@@ -11,7 +11,9 @@ return {
           "pyright",
           "vtsls",
           "eslint",
-          "gopls"
+          "gopls",
+          'cssls',
+          'tailwindcss'
         }
       })
     end

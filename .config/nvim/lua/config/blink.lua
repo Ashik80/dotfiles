@@ -22,6 +22,7 @@ return {
   keymap = { preset = 'default' },
   sources = {
     default = { 'lsp', 'path', 'snippets', 'buffer' },
+    cmdline = {},
   },
   signature = { enabled = true }
 }
