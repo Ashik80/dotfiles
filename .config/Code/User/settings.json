@@ -1,7 +1,8 @@
 {
-  "workbench.colorTheme": "Habamax",
+  "workbench.colorTheme": "Ayu Dark",
   "editor.fontFamily": "'JetBrainsMono Nerd Font', 'FiraMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
-  "editor.fontSize": 20,
+  "editor.fontSize": 18,
+  "editor.lineHeight": 1.7,
   "editor.renderLineHighlight": "none",
   "breadcrumbs.enabled": false,
   "editor.stickyScroll.enabled": false,
@@ -33,7 +34,7 @@
   "security.workspace.trust.untrustedFiles": "open",
   "git.confirmSync": false,
   // vim settings
-  "vim.leader": "\\",
+  "vim.leader": " ",
   "vim.normalModeKeyBindings": [
     {
       "before": ["leader", "f", "f"],
@@ -76,7 +77,7 @@
       ]
     },
     {
-      "before": ["leader", "f", "r"],
+      "before": ["g", "r", "r"],
       "commands": [
         {
           "command": "editor.action.goToReferences"
@@ -84,7 +85,7 @@
       ]
     },
     {
-      "before": ["leader", "c", "a"],
+      "before": ["g", "c", "a"],
       "commands": [
         {
           // "command": "editor.action.quickFix"
@@ -99,7 +100,71 @@
           "command": "workbench.view.explorer"
         }
       ]
-    }
+    },
+    {
+      "before": ["ctrl+h"],
+      "commands": [
+        {
+          "command": "workbench.action.navigateLeft"
+        }
+      ]
+    },
+    {
+      "before": ["ctrl+l"],
+      "commands": [
+        {
+          "command": "workbench.action.navigateRight"
+        }
+      ]
+    },
+    {
+      "before": ["ctrl+j"],
+      "commands": [
+        {
+          "command": "workbench.action.navigateDown"
+        }
+      ]
+    },
+    {
+      "before": ["ctrl+k"],
+      "commands": [
+        {
+          "command": "workbench.action.navigateUp"
+        }
+      ]
+    },
+    {
+      "before": ["]", "d"],
+      "commands": [
+        {
+          "command": "editor.action.marker.next"
+        }
+      ]
+    },
+    {
+      "before": ["[", "d"],
+      "commands": [
+        {
+          "command": "editor.action.marker.prev"
+        }
+      ]
+    },
+    {
+      "before": ["tab"],
+      "commands": [
+        {
+          "command": "workbench.action.nextEditor"
+        }
+      ]
+    },
+    {
+      "before": ["shift+tab"],
+      "commands": [
+        {
+          "command": "workbench.action.previousEditor"
+        }
+      ]
+    },
   ],
 
   "vim.insertModeKeyBindings": [

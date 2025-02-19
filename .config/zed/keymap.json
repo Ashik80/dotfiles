@@ -11,8 +11,8 @@
     "bindings": {
       "space f f": "file_finder::Toggle",
       "g e": "workspace::ToggleLeftDock",
-      "space r n": "editor::Rename",
-      "space f r": "editor::FindAllReferences",
+      "g r n": "editor::Rename",
+      "g f r": "editor::FindAllReferences",
       "ctrl-j": "workspace::ToggleBottomDock",
       "tab": "pane::ActivateNextItem",
       "shift-tab": "pane::ActivatePrevItem",
