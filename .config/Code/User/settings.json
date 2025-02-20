@@ -1,7 +1,8 @@
 {
   "workbench.colorTheme": "Ayu Dark",
   "editor.fontFamily": "'JetBrainsMono Nerd Font', 'FiraMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
-  "editor.fontSize": 18,
+  "window.zoomLevel": 1,
+  "editor.fontSize": 16,
   "editor.lineHeight": 1.7,
   "editor.renderLineHighlight": "none",
   "breadcrumbs.enabled": false,
@@ -14,6 +15,8 @@
   "window.restoreWindows": "none",
   "files.hotExit": "off",
   "editor.guides.indentation": false,
+  "codeium.enableCodeLens": false,
+  "editor.formatOnSave": true,
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -45,10 +48,18 @@
       ]
     },
     {
+      "before": ["leader", "f", "b"],
+      "commands": [
+        {
+          "command": "workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup"
+        }
+      ]
+    },
+    {
       "before": ["leader", "f", "p"],
       "commands": [
         {
-          "command": "editor.action.formatDocument",
+          "command": "editor.action.formatDocument"
         }
       ]
     },
@@ -85,6 +96,14 @@
       ]
     },
     {
+      "before": ["g", "r", "n"],
+      "commands": [
+        {
+          "command": "editor.action.rename"
+        }
+      ]
+    },
+    {
       "before": ["g", "c", "a"],
       "commands": [
         {
@@ -97,7 +116,7 @@
       "before": ["g", "e"],
       "commands": [
         {
-          "command": "workbench.view.explorer"
+          "command": "workbench.files.action.showActiveFileInExplorer"
         }
       ]
     },
@@ -164,7 +183,7 @@
           "command": "workbench.action.previousEditor"
         }
       ]
-    },
+    }
   ],
 
   "vim.insertModeKeyBindings": [
@@ -175,6 +194,6 @@
           "command": "acceptSelectedSuggestion"
         }
       ]
-    },
-  ],
+    }
+  ]
 }

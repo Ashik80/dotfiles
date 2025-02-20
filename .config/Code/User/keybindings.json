@@ -1,28 +1,47 @@
 // Place your key bindings in this file to override the defaults
 [
-    {
-        "key": "capslock",
-        "command": "extension.vim_escape",
-        "when": "editorTextFocus && vim.active !inDebugRepl"
-    },
-    {
-        "key": "space f f",
-        "command": "workbench.action.quickOpen",
-        "when": "!editorFocus && !inputFocus"
-    },
-    {
-        "key": "alt+t",
-        "command": "workbench.action.terminal.toggleTerminal",
-        "when": "terminal.active"
-    },
-    {
-        "key": "ctrl+n",
-        "command": "workbench.action.quickOpenSelectNext",
-        "when": "inQuickOpen"
-    },
-    {
-        "key": "ctrl+p",
-        "command": "workbench.action.quickOpenSelectPrevious",
-        "when": "inQuickOpen"
-    },
+  {
+    "key": "capslock",
+    "command": "extension.vim_escape",
+    "when": "editorTextFocus && vim.active !inDebugRepl"
+  },
+  {
+    "key": "space f f",
+    "command": "workbench.action.quickOpen",
+    "when": "!editorFocus && !inputFocus"
+  },
+  {
+    "key": "alt+t",
+    "command": "workbench.action.terminal.toggleTerminal",
+    "when": "terminal.active"
+  },
+  {
+    "key": "ctrl+n",
+    "command": "workbench.action.quickOpenSelectNext",
+    "when": "inQuickOpen"
+  },
+  {
+    "key": "ctrl+p",
+    "command": "workbench.action.quickOpenSelectPrevious",
+    "when": "inQuickOpen"
+  },
+  {
+    "key": "ctrl+a",
+    "command": "explorer.newFile",
+    "when": "explorerViewletFocus"
+  },
+  {
+    "key": "ctrl+d",
+    "command": "explorer.newFolder",
+    "when": "explorerViewletFocus"
+  },
+  {
+    "key": "ctrl+b",
+    "command": "workbench.action.toggleSidebarVisibility"
+  },
+  {
+    "key": "ctrl+l",
+    "command": "workbench.action.navigateRight",
+    "when": "explorerViewletFocus"
+  }
 ]
