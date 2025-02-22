@@ -7,7 +7,7 @@ return {
     },
     menu = {
       border = 'rounded',
-      winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,CursorLine:BlinkCmpDocCursorLine,Search:None",
+      -- winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,CursorLine:BlinkCmpDocCursorLine,Search:None",
       draw = {
         padding = { 1, 1 },
         treesitter = { 'lsp' },

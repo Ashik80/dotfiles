@@ -1,4 +1,4 @@
-vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46_cache/"
+-- vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46_cache/"
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
@@ -25,6 +25,6 @@ require("lazy").setup({
   change_detection = { enabled = false },
 })
 
-for _, v in ipairs(vim.fn.readdir(vim.g.base46_cache)) do
-  dofile(vim.g.base46_cache .. v)
-end
+-- for _, v in ipairs(vim.fn.readdir(vim.g.base46_cache)) do
+--   dofile(vim.g.base46_cache .. v)
+-- end

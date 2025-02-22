@@ -1,20 +1,7 @@
 return {
   {
-    'notken12/base46-colors',
-    lazy = false,
-    enabled = false,
-    priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'ayu_dark'
-      -- nvim tree colors
-      vim.cmd [[
-        hi NvimTreeWinSeparator guifg=bg
-      ]]
-    end
-  },
-
-  {
     "nvchad/ui",
+    enabled = false,
     config = function()
       require "nvchad"
     end
@@ -23,8 +10,21 @@ return {
   {
     "nvchad/base46",
     lazy = true,
+    enabled = false,
     build = function()
       require("base46").load_all_highlights()
     end,
   },
+
+  {
+    'sainnhe/everforest',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      vim.g.everforest_enable_italic = true
+      vim.g.everforest_background = 'hard'
+      vim.g.everforest_better_performance = 1
+      vim.cmd.colorscheme('everforest')
+    end
+  }
 }

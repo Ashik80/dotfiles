@@ -1,6 +1,6 @@
 return {
   'nvim-lualine/lualine.nvim',
-  enabled = false,
+  -- enabled = false,
   lazy = false,
   dependencies = { 'nvim-tree/nvim-web-devicons' },
   opts = {
@@ -10,6 +10,7 @@ return {
       ignore_focus = { 'NvimTree' },
       component_separators = { left = '╲', right = '╱' },
       section_separators = { left = '', right = '' },
-    }
+    },
+    sections = { lualine_c = { { 'filename', path = 1 } } }
   }
 }
