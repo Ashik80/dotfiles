@@ -1,6 +1,7 @@
 {
-  "workbench.colorTheme": "Ayu Dark",
-  "editor.fontFamily": "'JetBrainsMono Nerd Font', 'FiraMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
+  "workbench.colorTheme": "Everforest Dark",
+  "everforest.darkContrast": "hard",
+  "editor.fontFamily": "'Maple Mono', 'FiraMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
   "window.zoomLevel": 1,
   "editor.fontSize": 16,
   "editor.lineHeight": 1.7,

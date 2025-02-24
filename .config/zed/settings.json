@@ -16,11 +16,11 @@
     "enabled": false
   },
   "buffer_font_size": 18,
-  "buffer_font_family": "FiraCode Nerd Font",
+  "buffer_font_family": "Maple Mono",
   "theme": {
     "mode": "system",
     "light": "Base16 Ayu Dark",
-    "dark": "Base16 Ayu Dark"
+    "dark": "Everforest Dark"
   },
   "languages": {
     "Python": {

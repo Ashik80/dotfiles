@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-version="0.10.1"
+version="0.10.4"
 
 if [[ ! -e ~/make-builds ]]; then
     mkdir -p ~/make-builds
@@ -28,5 +28,4 @@ make -j$(nproc)
 sudo make install
 
 echo "Cleaning..."
-make distclean
-make clean
+sudo make distclean
