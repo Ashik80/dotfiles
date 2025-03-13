@@ -5,6 +5,9 @@
 ## everforest theme config
 theme = everforest-dark
 
+## retro theme config
+theme = retrobox-vim
+
 font-family = Maple Mono
 # font-family = FiraCode Nerd Font Med
 # font-family-bold = FiraCode Nerd Font Bold

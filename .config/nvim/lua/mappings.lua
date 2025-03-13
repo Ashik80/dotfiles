@@ -2,6 +2,8 @@ local map = vim.keymap.set
 
 map('x', '>', '>gv', { desc = 'Indent right' })
 map('x', '<', '<gv', { desc = 'Indent left' })
+map('x', 'J', ":move '>+1<CR>gv", { desc = 'Move line down' })
+map('x', 'K', ":move '>-2<CR>gv", { desc = 'Move line up' })
 map('n', '<Esc>', '<cmd>noh<CR>', { desc = 'Remove highlight' })
 
 map('n', '<C-n>', '<cmd>NvimTreeToggle<CR>', { desc = 'Toggle file tree' })

@@ -1,0 +1,199 @@
+{
+  "workbench.colorTheme": "Everforest Dark",
+  "everforest.darkContrast": "hard",
+  "editor.fontFamily": "'Maple Mono', 'FiraMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
+  "window.zoomLevel": 1,
+  "editor.fontSize": 16,
+  "editor.lineHeight": 1.7,
+  "editor.renderLineHighlight": "none",
+  "breadcrumbs.enabled": false,
+  "editor.stickyScroll.enabled": false,
+  "editor.minimap.enabled": false,
+  "workbench.activityBar.location": "default",
+  "workbench.startupEditor": "none",
+  "window.menuBarVisibility": "toggle",
+  "window.enableMenuBarMnemonics": false,
+  "window.restoreWindows": "none",
+  "files.hotExit": "off",
+  "editor.guides.indentation": false,
+  "editor.formatOnSave": true,
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true
+  },
+  "editor.matchBrackets": "near",
+  "editor.occurrencesHighlight": "off",
+  "security.workspace.trust.untrustedFiles": "open",
+  "git.confirmSync": false,
+  // vim settings
+  "vim.leader": " ",
+  "vim.normalModeKeyBindings": [
+    {
+      "before": ["leader", "f", "f"],
+      "commands": [
+        {
+          "command": "workbench.action.quickOpen"
+        }
+      ]
+    },
+    {
+      "before": ["leader", "f", "b"],
+      "commands": [
+        {
+          "command": "workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup"
+        }
+      ]
+    },
+    {
+      "before": ["leader", "f", "p"],
+      "commands": [
+        {
+          "command": "editor.action.formatDocument"
+        }
+      ]
+    },
+    {
+      "before": ["leader", "f", "e"],
+      "commands": [
+        {
+          "command": "eslint.executeAutofix"
+        }
+      ]
+    },
+    {
+      "before": ["K"],
+      "commands": [
+        {
+          "command": "editor.action.showHover"
+        }
+      ]
+    },
+    {
+      "before": ["leader", "g", "d"],
+      "commands": [
+        {
+          "command": "editor.action.revealDefinition"
+        }
+      ]
+    },
+    {
+      "before": ["g", "r", "r"],
+      "commands": [
+        {
+          "command": "editor.action.goToReferences"
+        }
+      ]
+    },
+    {
+      "before": ["g", "r", "n"],
+      "commands": [
+        {
+          "command": "editor.action.rename"
+        }
+      ]
+    },
+    {
+      "before": ["g", "c", "a"],
+      "commands": [
+        {
+          // "command": "editor.action.quickFix"
+          "command": "keyboard-quickfix.openQuickFix"
+        }
+      ]
+    },
+    {
+      "before": ["g", "e"],
+      "commands": [
+        {
+          "command": "workbench.files.action.showActiveFileInExplorer"
+        }
+      ]
+    },
+    {
+      "before": ["ctrl+h"],
+      "commands": [
+        {
+          "command": "workbench.action.navigateLeft"
+        }
+      ]
+    },
+    {
+      "before": ["ctrl+l"],
+      "commands": [
+        {
+          "command": "workbench.action.navigateRight"
+        }
+      ]
+    },
+    {
+      "before": ["ctrl+j"],
+      "commands": [
+        {
+          "command": "workbench.action.navigateDown"
+        }
+      ]
+    },
+    {
+      "before": ["ctrl+k"],
+      "commands": [
+        {
+          "command": "workbench.action.navigateUp"
+        }
+      ]
+    },
+    {
+      "before": ["]", "d"],
+      "commands": [
+        {
+          "command": "editor.action.marker.next"
+        }
+      ]
+    },
+    {
+      "before": ["[", "d"],
+      "commands": [
+        {
+          "command": "editor.action.marker.prev"
+        }
+      ]
+    },
+    {
+      "before": ["tab"],
+      "commands": [
+        {
+          "command": "workbench.action.nextEditor"
+        }
+      ]
+    },
+    {
+      "before": ["shift+tab"],
+      "commands": [
+        {
+          "command": "workbench.action.previousEditor"
+        }
+      ]
+    }
+  ],
+
+  "vim.insertModeKeyBindings": [
+    {
+      "before": ["ctrl+y"],
+      "commands": [
+        {
+          "command": "acceptSelectedSuggestion"
+        }
+      ]
+    }
+  ]
+}

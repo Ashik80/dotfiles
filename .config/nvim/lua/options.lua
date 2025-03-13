@@ -18,3 +18,8 @@ opt.clipboard = 'unnamedplus'
 opt.ignorecase = true
 opt.smartcase = true
 opt.laststatus = 3
+opt.guicursor = ''
+opt.splitright = true
+opt.splitbelow = true
+
+vim.cmd.colorscheme "retrobox"

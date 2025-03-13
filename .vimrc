@@ -1,5 +1,9 @@
 let g:mapleader = " "
 
+let g:netrw_banner=0
+let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
+let g:netrw_localcopydircmd = 'cp -r'
+
 filetype plugin indent on
 syntax on
 set number
@@ -14,121 +18,149 @@ set ttimeoutlen=0
 set backspace=indent,eol,start
 set autoread
 set termguicolors
-set guifont=CommitMono\ 16
 set mouse=a
+set wildmenu
+set wildoptions=pum
+set splitbelow
+set splitright
+set signcolumn=yes
+set clipboard=unnamedplus
+set hidden
 
-let &t_SI = "\e[6 q"
-let &t_SR = "\e[4 q"
-let &t_EI = "\e[2 q"
+" let &t_SI = "\e[6 q"
+" let &t_SR = "\e[4 q"
+" let &t_EI = "\e[2 q"
 
-" colorscheme base16-classic-dark
+colorscheme retrobox
 
-autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml {
+" General mappings
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+nnoremap ge :Ex<CR>
+xnoremap > >gv
+xnoremap < <gv
+xnoremap J :move '>+1<CR>gv
+xnoremap K :move '>-2<CR>gv
+xnoremap < <gv
+
+autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml,*.html {
     set shiftwidth=2 tabstop=2
 }
 
+set grepprg=rg\ --no-heading\ --column
+nnoremap <leader>fg :grep!<space>
+
 " Fuzzy file finder
 function! FuzzyFileFinder()
-    execute "silent !fzf | sed 's/$/:0:0/' > /tmp/filefind"
+    let l:tmpfile = tempname()
+    let l:cmd = "cat {}"
+    if executable("batcat")
+        let l:cmd = "batcat --theme=gruvbox-dark --style=numbers --color=always {}"
+    endif
+    execute "silent !rg --files | fzf --preview='".l:cmd."' | sed 's/$/:0:0/' > " . l:tmpfile
     set efm=%f:%l:%c
-    silent cfile /tmp/filefind
+    silent execute 'cfile ' . l:tmpfile
     redraw!
 endfunction
 nnoremap <leader>ff :call FuzzyFileFinder()<CR>
 
-" Handmade compiler
-function! Compile(cmd)
-    let s:output = []
-    function! GetCompiledErrors(channel, message)
-        call add(s:output, a:message)
-    endfunction
+" augroup AutoTagUpdate
+"     autocmd!
+"     autocmd BufWritePost * call UpdateTags()
+" augroup END
 
-    function! PopulateQuickfixList(job, status)
-        execute 'lgetexpr s:output'
-        execute 'lw'
-    endfunction
-
-    call job_start(['bash', '-c', a:cmd], #{
-        \ out_cb: 'GetCompiledErrors',
-        \ err_cb: 'GetCompiledErrors',
-        \ exit_cb: 'PopulateQuickfixList'
-        \ })
+" Update tag on save
+function! UpdateTags()
+    let tags_file = "tags"
+    if filereadable(expand(tags_file))
+        if executable("ctags")
+            call job_start(["ctags", "-a", expand("%")])
+        else
+            echomsg "ctags not found! Install it to enable automatic tag updates." 
+        endif
+    endif
 endfunction
 
-" Error checker server
-function! StartServer(cmd, efm, is_stderr=v:false)
-    let s:full_cmd = a:is_stderr ? a:cmd : a:cmd . ' > /tmp/output'
-
-    execute 'set efm=' . a:efm
-
-    function! SetCompiledErrors(job, status)
-        execute 'cgetfile /tmp/output'
-    endfunction
-
-    call job_start(['bash', '-c', s:full_cmd], #{
-        \ exit_cb: 'SetCompiledErrors'
-        \ })
+" Turn of highlighting for tags file
+augroup DisableSyntaxForTags
+  autocmd!
+  autocmd BufReadPre,BufNewFile tags setlocal syntax=OFF eventignore=all
+augroup END
+function! EnableSyntax()
+    if &eventignore ==# 'all'
+        set eventignore=
+        execute ":e"
+    endif
 endfunction
+nnoremap <leader><leader> :call EnableSyntax()<CR>
 
-" TypeScript settings
-autocmd! BufEnter,BufWritePost *.ts,*.tsx {
-    call StartServer('tsc -b -i', '%f(%l\\,%c):\ %m')
-}
-
-function! FormatWithPrettier()
-    execute "silent !prettier -w %"
-    execute "redraw!"
+function! GitBlameSelection()
+    let line_start = getpos("'<")[1]
+    let line_end = getpos("'>")[1]
+    execute "silent! terminal sh -c \"echo '\e[1;31mBlame results:\e[0m' && git-blame-colored ".expand("%")." -L".line_start.",".line_end."\""
+    setlocal nobuflisted
 endfunction
-
-autocmd! BufWritePost *.ts,*.tsx,*.js,*.jsx,*.html,*.json,*.css {
-    call FormatWithPrettier()
-}
-
-" Python settings
-function! RunPyrightServer()
-    let s:cmd = 'pyright ' . expand("%") . ' | grep -E ":[0-9]+:[0-9]+" | sed "s/^\s*//"'
-    call StartServer(s:cmd, '%f:%l:%c\ %m')
+function! GitBlameFile()
+    execute "silent! terminal sh -c \"echo '\e[1;31mBlame results:\e[0m' && git-blame-colored ".expand("%")."\""
+    setlocal nobuflisted
 endfunction
+xnoremap gb :<C-u>call GitBlameSelection()<CR>
+nnoremap gb :call GitBlameFile()<CR>
 
-autocmd! BufEnter,BufWinEnter *.py {
-    call RunPyrightServer()
-}
+call plug#begin()
 
-function! FormatWithBlack()
-    execute "silent !black %"
-    execute "redraw!"
-endfunction
+Plug 'Exafunction/codeium.vim'
+Plug 'lilydjwg/colorizer'
+Plug 'airblade/vim-gitgutter'
+Plug 'yegappan/lsp'
+Plug 'sheerun/vim-polyglot'
+Plug 'sbdchd/neoformat'
 
-autocmd! BufWritePost *.py {
-    call FormatWithBlack()
-    call RunPyrightServer()
-}
+call plug#end()
 
-" Ruby settings
-function! StartRubocopServer()
-    let s:cmd = 'rubocop ' . expand("%")
-    call StartServer(s:cmd, '%f:%l:%c:\ %m')
-endfunction
+" Lsp settings
+set tagfunc=lsp#lsp#TagFunc
+let lspOpts = #{autoHighlightDiags: v:true}
+autocmd User LspSetup call LspOptionsSet(lspOpts)
 
-autocmd! BufEnter,BufWritePost *.rb {
-    call StartRubocopServer()
-}
+let lspServers = [#{
+	\      name: 'typescriptlang',
+	\      filetype: ['javascript', 'typescript', 'typescriptreact', 'javascriptreact'],
+    \      path: 'typescript-language-server',
+    \      args: ['--stdio']
+	\ },
+    \ #{
+    \       name: 'gopls',
+    \       filetype: ['go'],
+    \       path: 'gopls',
+    \       args: ['serve']
+    \ },
+    \ #{
+    \       name: 'pyright',
+    \       filetype: ['python'],
+    \       path: 'pyright-langserver',
+    \       args: ['--stdio'],
+    \       workspaceConfig: #{
+    \           python: #{
+    \               pythonPath: '/home/ashik/.pyenv/shims/python3.9'
+    \           }
+    \       }
+    \ }]
 
-" Go settings
-autocmd! BufEnter,BufWritePost *.go {
-    call StartServer('go build 2> /tmp/output', '%f:%l:%c:\ %m', v:true)
-}
+autocmd User LspSetup call LspAddServer(lspServers)
 
-function! FormatGo()
-    execute "silent !gofmt -w %"
-    execute "redraw!"
-endfunction
+nnoremap <silent> K :LspHover<CR>
+nnoremap <silent> grr :LspShowReferences<CR>
+nnoremap <silent> grn :LspRename<CR>
+nnoremap <silent> gca :LspCodeAction<CR>
+nnoremap <silent> ]d :LspDiagNext<CR>
+nnoremap <silent> [d :LspDiagPrev<CR>
+nnoremap <silent> <leader>e :LspDiagCurrent<CR>
 
-autocmd! BufWritePost *.go {
-    call FormatGo()
-}
-
-" Rust settings
-autocmd! BufEnter,BufWritePost *.rs {
-    call StartServer('cargo clippy 2>&1 | sed "s/  --> //" > /tmp/output', '%f:%l:%c', v:true)
-}
+" Formatter settings
+augroup fmt
+  autocmd!
+  autocmd BufWritePre * undojoin | Neoformat
+augroup END
