@@ -22,6 +22,8 @@ set termguicolors
 set mouse=a
 set wildmenu
 set wildoptions=pum
+set wildignore=**/.git/*,**/node_modules/**,**/dist/**,**/tmp/**
+set path=**
 set splitbelow
 set splitright
 set signcolumn=yes
@@ -231,8 +233,8 @@ augroup END
 
 " Formatter settings
 augroup fmt
-  autocmd!
-  autocmd BufWritePre * undojoin | Neoformat
+    autocmd!
+    autocmd BufWritePre * try | undojoin | Neoformat | catch /E790/ | Neoformat | endtry
 augroup END
 
 augroup templft
