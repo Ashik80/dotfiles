@@ -13,7 +13,8 @@ return {
           "eslint",
           "gopls",
           'cssls',
-          'tailwindcss'
+          'tailwindcss',
+          'templ',
         }
       })
     end

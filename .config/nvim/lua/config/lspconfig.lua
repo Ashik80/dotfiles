@@ -11,7 +11,7 @@ local lspconfig = require('lspconfig')
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('blink.cmp').get_lsp_capabilities()
 
-local servers = { "lua_ls", "pyright", "vtsls", "gopls", "eslint", "cssls", "tailwindcss" }
+local servers = { "lua_ls", "pyright", "vtsls", "gopls", "eslint", "cssls", "tailwindcss", "templ" }
 
 local map = vim.keymap.set
 
@@ -31,3 +31,5 @@ for _, server in ipairs(servers) do
     on_attach = on_attach,
   }
 end
+
+vim.api.nvim_create_autocmd({ "BufWritePre" }, { pattern = { "*.templ" }, callback = vim.lsp.buf.format })
