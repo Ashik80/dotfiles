@@ -43,8 +43,8 @@ nnoremap <C-l> <C-w>l
 nnoremap ge :Ex<CR>
 xnoremap > >gv
 xnoremap < <gv
-xnoremap J :move '>+1<CR>gv
-xnoremap K :move '>-2<CR>gv
+xnoremap J :move '>+1<CR>gv=gv
+xnoremap K :move '<-2<CR>gv=gv
 xnoremap < <gv
 
 autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml,*.html {
@@ -68,12 +68,11 @@ function! FuzzyFileFinder()
 endfunction
 nnoremap <leader>ff :call FuzzyFileFinder()<CR>
 
+" Update tag on save
 " augroup AutoTagUpdate
 "     autocmd!
 "     autocmd BufWritePost * call UpdateTags()
 " augroup END
-
-" Update tag on save
 function! UpdateTags()
     let tags_file = "tags"
     if filereadable(expand(tags_file))
@@ -111,98 +110,83 @@ endfunction
 xnoremap gb :<C-u>call GitBlameSelection()<CR>
 nnoremap gb :call GitBlameFile()<CR>
 
+" Status line
+function! GitBranch()
+  let l:branch = system('git rev-parse --abbrev-ref HEAD 2>/dev/null')
+  return v:shell_error ? '' : ' '.trim(l:branch).' | '
+endfunction
+set statusline=
+set statusline+=%{GitBranch()}
+set statusline+=%f
+set statusline+=\ %m
+set statusline+=\ %r
+set statusline+=%=
+set statusline+=%y
+set statusline+=\ %c,%l
+
 " Plugins
 call plug#begin()
 
 Plug 'Exafunction/codeium.vim'
 Plug 'lilydjwg/colorizer'
 Plug 'airblade/vim-gitgutter'
-Plug 'yegappan/lsp'
 Plug 'dense-analysis/ale'
 Plug 'sheerun/vim-polyglot'
-Plug 'sbdchd/neoformat'
 Plug 'sainnhe/gruvbox-material'
 
 call plug#end()
 
 " Lsp settings
-set tagfunc=lsp#lsp#TagFunc
-let lspOpts = #{
-            \   showDiagWithVirtualText: v:true,
-            \   diagVirtualTextAlign: 'after',
-            \   diagSignErrorText: 'E',
-            \   diagSignHintText: 'H',
-            \   diagSignInfoText: 'I',
-            \   diagSignWarningText: 'W',
-            \   diagVirtualTextWrap: 'truncate',
-            \   useQuickfixForLocations: v:true,
-            \   omniComplete: v:true,
-            \ }
-autocmd User LspSetup call LspOptionsSet(lspOpts)
-
-let lspServers = [
-            \ #{
-            \       name: 'typescriptlang',
-            \       filetype: ['javascript', 'typescript', 'typescriptreact', 'javascriptreact'],
-            \       path: 'typescript-language-server',
-            \       args: ['--stdio']
-            \ },
-            \ #{
-            \       name: 'gopls',
-            \       filetype: ['go'],
-            \       path: 'gopls',
-            \       args: ['serve']
-            \ },
-            \ #{
-            \       name: 'templ',
-            \       filetype: ['gohtmltmpl'],
-            \       path: 'templ',
-            \       args: ['lsp']
-            \ },
-            \ #{
-            \       name: 'tailwindcss-language-server',
-            \       filetype: ['html', 'gohtmltmpl', 'typescriptreact', 'javascriptreact'],
-            \       path: 'tailwindcss-language-server',
-            \       args: ['--stdio'],
-            \ },
-            \ #{
-            \       name: 'pyright',
-            \       filetype: ['python'],
-            \       path: 'pyright-langserver',
-            \       args: ['--stdio'],
-            \       workspaceConfig: #{
-            \           python: #{
-            \               pythonPath: '/home/ashik/.pyenv/shims/python3.9'
-            \           }
-            \       }
-            \ }]
-autocmd User LspSetup call LspAddServer(lspServers)
-
-nnoremap <silent> K :LspHover<CR>
-nnoremap <silent> grr :LspShowReferences<CR>
-nnoremap <silent> grn :LspRename<CR>
-nnoremap <silent> gca :LspCodeAction<CR>
-nnoremap <silent> ]d :LspDiagNext<CR>
-nnoremap <silent> [d :LspDiagPrev<CR>
-nnoremap <silent> <leader>e :LspDiagCurrent<CR>
-nnoremap <silent> <leader>dl :LspDiag show<CR>
-nnoremap <silent> <leader>sr :LspServer restart<CR>
-
-let g:ale_linters_explicit = 1
-let g:ale_disable_lsp = 1
+set completeopt=menu,menuone,popup,noselect,noinsert
+set omnifunc=ale#completion#OmniFunc
+let g:ale_completion_enabled = 1
+let g:ale_fix_on_save = 1
+" let g:ale_floating_preview = 1
 let g:ale_linters = {
-\   'javascript': ['eslint'],
-\   'typescript': ['eslint'],
-\   'javascriptreact': ['eslint'],
-\   'typescriptreact': ['eslint'],
+\   'javascript': ['tsserver', 'eslint'],
+\   'typescript': ['tsserver', 'eslint'],
+\   'javascriptreact': ['tsserver', 'eslint'],
+\   'typescriptreact': ['tsserver', 'eslint'],
+\   'python': ['pyright'],
+\   'gohtmltmpl': ['templ'],
 \}
+let g:ale_fixers = {
+\   'javascript': ['prettier', 'eslint'],
+\   'typescript': ['prettier', 'eslint'],
+\   'javascriptreact': ['prettier', 'eslint'],
+\   'typescriptreact': ['prettier', 'eslint'],
+\   'python': ['black'],
+\   'go': ['gofmt'],
+\}
+call ale#linter#Define('gohtmltmpl', {
+\   'name': 'templ',
+\   'lsp': 'stdio',
+\   'executable': 'templ',
+\   'command': '%e lsp',
+\   'project_root': getcwd(),
+\})
+
+function! SmartInsertCompletion() abort
+if pumvisible()
+  return "\<C-n>"
+endif
+
+return "\<C-c>a\<C-n>"
+endfunction
+
+inoremap <silent> <C-n> <C-R>=SmartInsertCompletion()<CR>
+nnoremap <silent> <C-]> :ALEGoToDefinition<CR>
+nnoremap <silent> K :ALEHover<CR>
+nnoremap <silent> grr :ALEFindReferences -relative<CR>
+nnoremap <silent> grn :ALERename<CR>
+nnoremap <silent> gca :ALECodeAction<CR>
+nnoremap <silent> ]d :ALENext<CR>
+nnoremap <silent> [d :ALEPrevious<CR>
+nnoremap <silent> <leader>e :ALEDetail<CR>
+nnoremap <silent> <leader>dl :LspDiag show<CR>
+nnoremap <silent> <leader>sr :ALEStopAllLSPs<CR>
 
 " Formatter settings
-augroup fmt
-    autocmd!
-    autocmd BufWritePre * try | undojoin | Neoformat | catch /E790/ | Neoformat | endtry
-augroup END
-
 augroup templft
     autocmd!
     autocmd BufWinEnter *.templ set filetype=gohtmltmpl
@@ -224,19 +208,6 @@ augroup Highlights
     autocmd ColorScheme * hi DiagnosticUnderlineWarn cterm=underline gui=underline guisp=Orange
     autocmd ColorScheme * hi DiagnosticUnderlineInfo cterm=underline gui=underline guisp=LightBlue
     autocmd ColorScheme * hi DiagnosticUnderlineHint cterm=underline gui=underline guisp=LightGrey
-
-    autocmd ColorScheme * hi link LspDiagInlineError DiagnosticUnderlineError
-    autocmd ColorScheme * hi link LspDiagInlineWarning DiagnosticUnderlineWarn
-    autocmd ColorScheme * hi link LspDiagInlineInfo DiagnosticUnderlineInfo
-    autocmd ColorScheme * hi link LspDiagInlineHint DiagnosticUnderlineHint
-    autocmd ColorScheme * hi link LspDiagSignErrorText DiagnosticError
-    autocmd ColorScheme * hi link LspDiagSignWarningText DiagnosticWarn
-    autocmd ColorScheme * hi link LspDiagSignInfoText DiagnosticInfo
-    autocmd ColorScheme * hi link LspDiagSignHintText DiagnosticHint
-    autocmd ColorScheme * hi link LspDiagVirtualTextError DiagnosticError
-    autocmd ColorScheme * hi link LspDiagVirtualTextWarning DiagnosticWarn
-    autocmd ColorScheme * hi link LspDiagVirtualTextInfo DiagnosticInfo
-    autocmd ColorScheme * hi link LspDiagVirtualTextHint DiagnosticHint
 
     autocmd ColorScheme * hi link ALEError DiagnosticUnderlineError
     autocmd ColorScheme * hi link ALEWarning DiagnosticUnderlineWarn
