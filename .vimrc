@@ -110,18 +110,43 @@ endfunction
 xnoremap gb :<C-u>call GitBlameSelection()<CR>
 nnoremap gb :call GitBlameFile()<CR>
 
-" Status line
+" Statusline
+let g:git_branch = ''
+function! UpdateGitBranch()
+    let l:branch = system('git rev-parse --abbrev-ref HEAD 2>/dev/null')
+    if !v:shell_error
+        let g:git_branch = ' '.trim(l:branch).' | '
+    else
+        let g:git_branch = ''
+    endif
+endfunction
 function! GitBranch()
-  let l:branch = system('git rev-parse --abbrev-ref HEAD 2>/dev/null')
-  return v:shell_error ? '' : ' '.trim(l:branch).' | '
+    return g:git_branch
+endfunction
+augroup GitBranchAutoUpdate
+    autocmd!
+    autocmd BufEnter,FocusGained * call UpdateGitBranch()
+augroup END
+function! FileName()
+    return expand('%') == '' ? '[No Name]' : expand('%:.')
+endfunction
+function! AleErrorCount()
+    let l:counts = ale#statusline#Count(bufnr('%'))
+    if l:counts.total == 0
+        return ''
+    endif
+    let l:errors = l:counts.error > 0 ? l:counts.error . 'E ' : ''
+    let l:warnings = l:counts.warning > 0 ? l:counts.warning . 'W ' : ''
+    return '  | '.l:errors . l:warnings
 endfunction
 set statusline=
 set statusline+=%{GitBranch()}
-set statusline+=%f
+set statusline+=%{FileName()}
+set statusline+=%{AleErrorCount()}
 set statusline+=\ %m
 set statusline+=\ %r
 set statusline+=%=
-set statusline+=%y
+set statusline+=\|\ %y
 set statusline+=\ %c,%l
 
 " Plugins
