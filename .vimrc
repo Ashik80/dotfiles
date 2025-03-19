@@ -7,6 +7,7 @@ let g:netrw_altfile = 1
 
 filetype plugin indent on
 syntax on
+set bg=dark
 set number
 set expandtab
 set shiftwidth=4 tabstop=4
@@ -33,8 +34,6 @@ set hidden
 " let &t_SI = "\e[6 q"
 " let &t_SR = "\e[4 q"
 " let &t_EI = "\e[2 q"
-
-colorscheme retrobox
 
 " General mappings
 nnoremap <C-h> <C-w>h
@@ -112,6 +111,7 @@ endfunction
 xnoremap gb :<C-u>call GitBlameSelection()<CR>
 nnoremap gb :call GitBlameFile()<CR>
 
+" Plugins
 call plug#begin()
 
 Plug 'Exafunction/codeium.vim'
@@ -121,6 +121,7 @@ Plug 'yegappan/lsp'
 Plug 'dense-analysis/ale'
 Plug 'sheerun/vim-polyglot'
 Plug 'sbdchd/neoformat'
+Plug 'sainnhe/gruvbox-material'
 
 call plug#end()
 
@@ -196,41 +197,6 @@ let g:ale_linters = {
 \   'typescriptreact': ['eslint'],
 \}
 
-augroup Highlights
-    autocmd!
-    autocmd ColorScheme * hi DiagnosticError ctermfg=1 guifg=Red
-    autocmd ColorScheme * hi DiagnosticWarn ctermfg=3 guifg=Orange
-    autocmd ColorScheme * hi DiagnosticInfo ctermfg=4 guifg=LightBlue
-    autocmd ColorScheme * hi DiagnosticHint ctermfg=7 guifg=LightGrey
-    autocmd ColorScheme * hi DiagnosticUnderlineError cterm=underline gui=underline guisp=Red
-    autocmd ColorScheme * hi DiagnosticUnderlineWarn cterm=underline gui=underline guisp=Orange
-    autocmd ColorScheme * hi DiagnosticUnderlineInfo cterm=underline gui=underline guisp=LightBlue
-    autocmd ColorScheme * hi DiagnosticUnderlineHint cterm=underline gui=underline guisp=LightGrey
-
-    autocmd ColorScheme * hi! link LspDiagInlineError DiagnosticUnderlineError
-    autocmd ColorScheme * hi! link LspDiagInlineWarning DiagnosticUnderlineWarn
-    autocmd ColorScheme * hi! link LspDiagInlineInfo DiagnosticUnderlineInfo
-    autocmd ColorScheme * hi! link LspDiagInlineHint DiagnosticUnderlineHint
-    autocmd ColorScheme * hi! link LspDiagSignErrorText DiagnosticError
-    autocmd ColorScheme * hi! link LspDiagSignWarningText DiagnosticWarn
-    autocmd ColorScheme * hi! link LspDiagSignInfoText DiagnosticInfo
-    autocmd ColorScheme * hi! link LspDiagSignHintText DiagnosticHint
-    autocmd ColorScheme * hi! link LspDiagVirtualTextError DiagnosticError
-    autocmd ColorScheme * hi! link LspDiagVirtualTextWarning DiagnosticWarn
-    autocmd ColorScheme * hi! link LspDiagVirtualTextInfo DiagnosticInfo
-    autocmd ColorScheme * hi! link LspDiagVirtualTextHint DiagnosticHint
-
-    autocmd ColorScheme * hi! link ALEError DiagnosticUnderlineError
-    autocmd ColorScheme * hi! link ALEWarning DiagnosticUnderlineWarn
-    autocmd ColorScheme * hi! link ALEInfo DiagnosticUnderlineInfo
-    autocmd ColorScheme * hi! link ALEVirtualTextError DiagnosticError
-    autocmd ColorScheme * hi! link ALEVirtualTextWarning DiagnosticWarn
-    autocmd ColorScheme * hi! link ALEVirtualTextInfo Diagnosticinfo
-    autocmd ColorScheme * hi! link ALEErrorSign DiagnosticError
-    autocmd ColorScheme * hi! link ALEWarningSign DiagnosticWarn
-    autocmd ColorScheme * hi! link ALEInfoSign DiagnosticInfo
-augroup END
-
 " Formatter settings
 augroup fmt
     autocmd!
@@ -246,3 +212,44 @@ augroup templFmt
     autocmd!
     autocmd BufWritePost *.templ silent! execute "!PATH=\"$PATH:$(go env GOPATH)/bin\" templ fmt <afile> >/dev/null 2>&1" | redraw!
 augroup END
+
+" Highlights
+augroup Highlights
+    autocmd!
+    autocmd ColorScheme * hi DiagnosticError ctermfg=1 guifg=Red
+    autocmd ColorScheme * hi DiagnosticWarn ctermfg=3 guifg=Orange
+    autocmd ColorScheme * hi DiagnosticInfo ctermfg=4 guifg=LightBlue
+    autocmd ColorScheme * hi DiagnosticHint ctermfg=7 guifg=LightGrey
+    autocmd ColorScheme * hi DiagnosticUnderlineError cterm=underline gui=underline guisp=Red
+    autocmd ColorScheme * hi DiagnosticUnderlineWarn cterm=underline gui=underline guisp=Orange
+    autocmd ColorScheme * hi DiagnosticUnderlineInfo cterm=underline gui=underline guisp=LightBlue
+    autocmd ColorScheme * hi DiagnosticUnderlineHint cterm=underline gui=underline guisp=LightGrey
+
+    autocmd ColorScheme * hi link LspDiagInlineError DiagnosticUnderlineError
+    autocmd ColorScheme * hi link LspDiagInlineWarning DiagnosticUnderlineWarn
+    autocmd ColorScheme * hi link LspDiagInlineInfo DiagnosticUnderlineInfo
+    autocmd ColorScheme * hi link LspDiagInlineHint DiagnosticUnderlineHint
+    autocmd ColorScheme * hi link LspDiagSignErrorText DiagnosticError
+    autocmd ColorScheme * hi link LspDiagSignWarningText DiagnosticWarn
+    autocmd ColorScheme * hi link LspDiagSignInfoText DiagnosticInfo
+    autocmd ColorScheme * hi link LspDiagSignHintText DiagnosticHint
+    autocmd ColorScheme * hi link LspDiagVirtualTextError DiagnosticError
+    autocmd ColorScheme * hi link LspDiagVirtualTextWarning DiagnosticWarn
+    autocmd ColorScheme * hi link LspDiagVirtualTextInfo DiagnosticInfo
+    autocmd ColorScheme * hi link LspDiagVirtualTextHint DiagnosticHint
+
+    autocmd ColorScheme * hi link ALEError DiagnosticUnderlineError
+    autocmd ColorScheme * hi link ALEWarning DiagnosticUnderlineWarn
+    autocmd ColorScheme * hi link ALEInfo DiagnosticUnderlineInfo
+    autocmd ColorScheme * hi link ALEVirtualTextError DiagnosticError
+    autocmd ColorScheme * hi link ALEVirtualTextWarning DiagnosticWarn
+    autocmd ColorScheme * hi link ALEVirtualTextInfo Diagnosticinfo
+    autocmd ColorScheme * hi link ALEErrorSign DiagnosticError
+    autocmd ColorScheme * hi link ALEWarningSign DiagnosticWarn
+    autocmd ColorScheme * hi link ALEInfoSign DiagnosticInfo
+augroup END
+
+let g:gruvbox_material_background = 'hard'
+let g:gruvbox_material_better_performance = 1
+
+colorscheme gruvbox-material

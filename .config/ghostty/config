@@ -2,11 +2,7 @@
 # theme = ayu
 # background = #0b0e14
 
-## everforest theme config
-theme = everforest-dark
-
-## retro theme config
-theme = retrobox-vim
+theme = gruvbox-material-dark
 
 font-family = Maple Mono
 # font-family = FiraCode Nerd Font Med

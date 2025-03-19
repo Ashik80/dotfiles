@@ -6,7 +6,7 @@ return {
       }
     },
     menu = {
-      border = 'rounded',
+      -- border = 'rounded',
       -- winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,CursorLine:BlinkCmpDocCursorLine,Search:None",
       draw = {
         padding = { 1, 1 },
