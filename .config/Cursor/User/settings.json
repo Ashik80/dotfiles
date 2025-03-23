@@ -37,7 +37,6 @@
   "editor.occurrencesHighlight": "off",
   "security.workspace.trust.untrustedFiles": "open",
   "git.confirmSync": false,
-  // vim settings
   "vim.leader": " ",
   "vim.normalModeKeyBindings": [
     {
@@ -108,7 +107,6 @@
       "before": ["g", "c", "a"],
       "commands": [
         {
-          // "command": "editor.action.quickFix"
           "command": "keyboard-quickfix.openQuickFix"
         }
       ]
@@ -186,7 +184,6 @@
       ]
     }
   ],
-
   "vim.insertModeKeyBindings": [
     {
       "before": ["ctrl+y"],
@@ -196,5 +193,6 @@
         }
       ]
     }
-  ]
+  ],
+  "editor.cursorStyle": "block"
 }

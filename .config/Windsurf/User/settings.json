@@ -1,5 +1,5 @@
 {
-  "workbench.colorTheme": "Everforest Dark",
+  "workbench.colorTheme": "Gruvbox Material Dark",
   "everforest.darkContrast": "hard",
   "editor.fontFamily": "'Maple Mono', 'FiraMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
   "window.zoomLevel": 1,
@@ -195,5 +195,11 @@
         }
       ]
     }
-  ]
+  ],
+  "windsurf.autocompleteSpeed": "default",
+  "windsurf.autoExecutionPolicy": "off",
+  "windsurf.chatFontSize": "default",
+  "windsurf.rememberLastModelSelection": true,
+  "windsurf.openRecentConversation": true,
+  "windsurf.explainAndFixInCurrentConversation": true
 }
