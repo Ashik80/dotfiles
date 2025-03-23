@@ -47,7 +47,7 @@ xnoremap J :move '>+1<CR>gv=gv
 xnoremap K :move '<-2<CR>gv=gv
 xnoremap < <gv
 
-autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml,*.html {
+autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml,*.html,*.css {
     set shiftwidth=2 tabstop=2
 }
 
@@ -137,7 +137,7 @@ function! AleErrorCount()
     endif
     let l:errors = l:counts.error > 0 ? l:counts.error . 'E ' : ''
     let l:warnings = l:counts.warning > 0 ? l:counts.warning . 'W ' : ''
-    return '  | '.l:errors . l:warnings
+    return '  | '.trim(l:errors . l:warnings)
 endfunction
 set statusline=
 set statusline+=%{GitBranch()}
@@ -146,8 +146,8 @@ set statusline+=%{AleErrorCount()}
 set statusline+=\ %m
 set statusline+=\ %r
 set statusline+=%=
-set statusline+=\|\ %y
-set statusline+=\ %c,%l
+set statusline+=%y
+set statusline+=\ \|\ %l,%c
 
 " Plugins
 call plug#begin()
@@ -191,16 +191,8 @@ call ale#linter#Define('gohtmltmpl', {
 \   'project_root': getcwd(),
 \})
 
-function! SmartInsertCompletion() abort
-if pumvisible()
-  return "\<C-n>"
-endif
-
-return "\<C-c>a\<C-n>"
-endfunction
-
-inoremap <silent> <C-n> <C-R>=SmartInsertCompletion()<CR>
 nnoremap <silent> <C-]> :ALEGoToDefinition<CR>
+nnoremap <silent> <C-w><C-]> :split<CR>:ALEGoToDefinition<CR>
 nnoremap <silent> K :ALEHover<CR>
 nnoremap <silent> grr :ALEFindReferences -relative<CR>
 nnoremap <silent> grn :ALERename<CR>
@@ -208,7 +200,7 @@ nnoremap <silent> gca :ALECodeAction<CR>
 nnoremap <silent> ]d :ALENext<CR>
 nnoremap <silent> [d :ALEPrevious<CR>
 nnoremap <silent> <leader>e :ALEDetail<CR>
-nnoremap <silent> <leader>dl :LspDiag show<CR>
+nnoremap <silent> <leader>dq :ALEPopulateQuickfix<CR>
 nnoremap <silent> <leader>sr :ALEStopAllLSPs<CR>
 
 " Formatter settings
