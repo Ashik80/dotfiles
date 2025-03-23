@@ -4,13 +4,13 @@
 
 theme = gruvbox-material-dark
 
-font-family = Maple Mono
-# font-family = FiraCode Nerd Font Med
+# font-family = Maple Mono
+font-family = FiraCode Nerd Font Med
 # font-family-bold = FiraCode Nerd Font Bold
 # font-family-italic = Iosevka NF Medium Italic
 # font-family-bold-italic = Iosevka NF Heavy Italic
 font-size = 15
-adjust-cell-height = 22%
-adjust-cursor-height = 25%
+adjust-cell-height = 30%
+adjust-cursor-height = 30%
 cursor-style = block
 shell-integration-features = no-cursor
