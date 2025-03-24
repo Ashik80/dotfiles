@@ -194,7 +194,7 @@ call ale#linter#Define('gohtmltmpl', {
 nnoremap <silent> <C-]> :ALEGoToDefinition<CR>
 nnoremap <silent> <C-w><C-]> :split<CR>:ALEGoToDefinition<CR>
 nnoremap <silent> K :ALEHover<CR>
-nnoremap <silent> grr :ALEFindReferences -relative<CR>
+nnoremap <silent> grr :ALEFindReferences -quickfix<CR>:cw<CR>
 nnoremap <silent> grn :ALERename<CR>
 nnoremap <silent> gca :ALECodeAction<CR>
 nnoremap <silent> ]d :ALENext<CR>
