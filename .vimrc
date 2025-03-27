@@ -51,6 +51,11 @@ autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml,*.html,*.c
     set shiftwidth=2 tabstop=2
 }
 
+autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx {
+    call setreg('c', "yoconsole.log('\<c-r>\"', \<c-r>\");\<esc>")
+    call setreg('l', "y}Oconsole.log('\<c-r>\"', \<c-r>\");\<esc>")
+}
+
 set grepprg=rg\ --no-heading\ --column
 nnoremap <leader>fg :grep!<space>
 
