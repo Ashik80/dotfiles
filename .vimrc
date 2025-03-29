@@ -30,6 +30,8 @@ set splitright
 set signcolumn=yes
 set clipboard=unnamedplus
 set hidden
+set nobackup
+set nowritebackup
 
 " let &t_SI = "\e[6 q"
 " let &t_SR = "\e[4 q"
@@ -135,19 +137,17 @@ augroup END
 function! FileName()
     return expand('%') == '' ? '[No Name]' : expand('%:.')
 endfunction
-function! AleErrorCount()
-    let l:counts = ale#statusline#Count(bufnr('%'))
-    if l:counts.total == 0
+function! CocStatus()
+    let l:status = coc#status()
+    if l:status == ''
         return ''
     endif
-    let l:errors = l:counts.error > 0 ? l:counts.error . 'E ' : ''
-    let l:warnings = l:counts.warning > 0 ? l:counts.warning . 'W ' : ''
-    return '  | '.trim(l:errors . l:warnings)
+    return '  | '.l:status
 endfunction
 set statusline=
 set statusline+=%{GitBranch()}
 set statusline+=%{FileName()}
-set statusline+=%{AleErrorCount()}
+set statusline+=%{CocStatus()}
 set statusline+=\ %m
 set statusline+=\ %r
 set statusline+=%=
@@ -160,53 +160,51 @@ call plug#begin()
 Plug 'Exafunction/codeium.vim'
 Plug 'lilydjwg/colorizer'
 Plug 'airblade/vim-gitgutter'
-Plug 'dense-analysis/ale'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'sheerun/vim-polyglot'
 Plug 'sainnhe/gruvbox-material'
 
 call plug#end()
 
 " Lsp settings
-set completeopt=menu,menuone,popup,noselect,noinsert
-set omnifunc=ale#completion#OmniFunc
-let g:ale_completion_enabled = 1
-let g:ale_fix_on_save = 1
-" let g:ale_floating_preview = 1
-let g:ale_linters = {
-\   'javascript': ['tsserver', 'eslint'],
-\   'typescript': ['tsserver', 'eslint'],
-\   'javascriptreact': ['tsserver', 'eslint'],
-\   'typescriptreact': ['tsserver', 'eslint'],
-\   'python': ['pyright'],
-\   'gohtmltmpl': ['templ'],
-\}
-let g:ale_fixers = {
-\   'javascript': ['prettier', 'eslint'],
-\   'typescript': ['prettier', 'eslint'],
-\   'javascriptreact': ['prettier', 'eslint'],
-\   'typescriptreact': ['prettier', 'eslint'],
-\   'python': ['black'],
-\   'go': ['gofmt'],
-\}
-call ale#linter#Define('gohtmltmpl', {
-\   'name': 'templ',
-\   'lsp': 'stdio',
-\   'executable': 'templ',
-\   'command': '%e lsp',
-\   'project_root': getcwd(),
-\})
+set tagfunc=CocTagFunc
 
-nnoremap <silent> <C-]> :ALEGoToDefinition<CR>
-nnoremap <silent> <C-w><C-]> :split<CR>:ALEGoToDefinition<CR>
-nnoremap <silent> K :ALEHover<CR>
-nnoremap <silent> grr :ALEFindReferences -quickfix<CR>:cw<CR>
-nnoremap <silent> grn :ALERename<CR>
-nnoremap <silent> gca :ALECodeAction<CR>
-nnoremap <silent> ]d :ALENext<CR>
-nnoremap <silent> [d :ALEPrevious<CR>
-nnoremap <silent> <leader>e :ALEDetail<CR>
-nnoremap <silent> <leader>dq :ALEPopulateQuickfix<CR>
-nnoremap <silent> <leader>sr :ALEStopAllLSPs<CR>
+function! CocHelperFocusFloat() abort
+  let winid = coc#float#get_float_win()
+  if winid > 0
+    exec winid . "wincmd w"
+  endif
+endfunction
+
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+nnoremap <silent> K :call ShowDocumentation()<CR>
+nnoremap <silent> grr <Plug>(coc-references)
+nnoremap <silent> grn <Plug>(coc-rename)
+nnoremap <silent> gca <Plug>(coc-codeaction-cursor)
+nnoremap <silent> ]d <Plug>(coc-diagnostic-next)
+nnoremap <silent> [d <Plug>(coc-diagnostic-prev)
+nnoremap <silent><expr> <leader>e coc#float#close_all()
+nnoremap <silent> <leader>dl :CocDiagnostics<CR>
+nnoremap <silent> <leader>sr :CocRestart<CR>
+nnoremap <silent><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+nnoremap <silent><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+inoremap <silent><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+inoremap <silent><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+vnoremap <silent><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+vnoremap <silent><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+inoremap <silent><expr> <c-x><c-o> coc#refresh()
+
+augroup coc-formatting
+    autocmd!
+    autocmd BufWritePre *.go,*.js,*.jsx,*.ts,*.tsx,*.py,*.json,*.html,*.css call CocAction('format')
+augroup END
 
 " Formatter settings
 augroup templft
@@ -231,15 +229,14 @@ augroup Highlights
     autocmd ColorScheme * hi DiagnosticUnderlineInfo cterm=underline gui=underline guisp=LightBlue
     autocmd ColorScheme * hi DiagnosticUnderlineHint cterm=underline gui=underline guisp=LightGrey
 
-    autocmd ColorScheme * hi link ALEError DiagnosticUnderlineError
-    autocmd ColorScheme * hi link ALEWarning DiagnosticUnderlineWarn
-    autocmd ColorScheme * hi link ALEInfo DiagnosticUnderlineInfo
-    autocmd ColorScheme * hi link ALEVirtualTextError DiagnosticError
-    autocmd ColorScheme * hi link ALEVirtualTextWarning DiagnosticWarn
-    autocmd ColorScheme * hi link ALEVirtualTextInfo Diagnosticinfo
-    autocmd ColorScheme * hi link ALEErrorSign DiagnosticError
-    autocmd ColorScheme * hi link ALEWarningSign DiagnosticWarn
-    autocmd ColorScheme * hi link ALEInfoSign DiagnosticInfo
+    autocmd ColorScheme * hi link CocErrorVirtualText DiagnosticError
+    autocmd ColorScheme * hi link CocWarningVirtualText DiagnosticWarn
+    autocmd ColorScheme * hi link CocInfoVirtualText DiagnosticInfo
+    autocmd ColorScheme * hi link CocHintVirtualText DiagnosticHint
+    autocmd ColorScheme * hi link CocErrorSign DiagnosticError
+    autocmd ColorScheme * hi link CocWarningSign DiagnosticWarn
+    autocmd ColorScheme * hi link CocInfoSign DiagnosticInfo
+    autocmd ColorScheme * hi link CocHintSign DiagnosticHint
 augroup END
 
 let g:gruvbox_material_background = 'hard'
