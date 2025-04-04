@@ -12,12 +12,11 @@
       "command": "templ",
       "args": ["lsp"],
       "filetypes": ["gohtmltmpl"]
-    },
-    "tailwindcss": {
-      "command": "tailwindcss-language-server",
-      "filetypes": ["html", "jsx", "tsx", "gohtmltmpl"],
-      "rootPatterns": ["tailwind.config.*"]
     }
+  },
+  "tailwindCSS.includeLanguages": {
+    "jst": "html",
+    "gohtmltmpl": "html"
   },
   "python.formatting.provider": "black"
 }

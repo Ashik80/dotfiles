@@ -1,3 +1,8 @@
+[dash-to-dock]
+app-hotkey-5=@as []
+hot-keys=false
+hotkeys-overlay=false
+
 [ding]
 check-x11wayland=true
 
@@ -36,15 +41,19 @@ application-styles='.space-bar {\n  -natural-hpadding: 12px;\n}\n\n.space-bar-wo
 [space-bar/behavior]
 indicator-style='workspaces-bar'
 show-empty-workspaces=true
-toggle-overview=true
+toggle-overview=false
+
+[space-bar/shortcuts]
+enable-activate-workspace-shortcuts=true
+enable-move-to-workspace-shortcuts=true
 
 [space-bar/state]
-version=32
+version=33
 
 [switcher]
 font-size=uint32 20
 icon-size=uint32 20
-launcher-stats='{"discord.desktop":2,"com.mattjakeman.ExtensionManager.desktop":2,"cursor.desktop":1,"slack.desktop":2,"org.gnome.Settings.desktop":1}'
+launcher-stats='{"discord.desktop":6,"com.mattjakeman.ExtensionManager.desktop":2,"cursor.desktop":3,"slack.desktop":6,"org.gnome.Settings.desktop":2,"brave-browser.desktop":8,"ca.desrt.dconf-editor.desktop":2,"libreoffice-calc.desktop":1}'
 matching=uint32 0
 max-width-percentage=uint32 50
 show-switcher=['<Super>d']
