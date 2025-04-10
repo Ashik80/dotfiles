@@ -53,9 +53,11 @@ autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml,*.html,*.c
     set shiftwidth=2 tabstop=2
 }
 
+" Macros
 autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx {
     call setreg('c', "yoconsole.log('\<c-r>\"', \<c-r>\");\<esc>")
     call setreg('l', "y}Oconsole.log('\<c-r>\"', \<c-r>\");\<esc>")
+    call setreg('t', "itry {\<CR>} catch (error) {\<CR>}\<esc>Vkk=")
 }
 
 set grepprg=rg\ --no-heading\ --column
