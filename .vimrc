@@ -159,7 +159,7 @@ set statusline+=\ \|\ %l,%c
 " Plugins
 call plug#begin()
 
-Plug 'Exafunction/codeium.vim'
+Plug 'Exafunction/windsurf.vim'
 Plug 'lilydjwg/colorizer'
 Plug 'airblade/vim-gitgutter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}

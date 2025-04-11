@@ -12,6 +12,12 @@
       "command": "templ",
       "args": ["lsp"],
       "filetypes": ["gohtmltmpl"]
+    },
+    "terraform": {
+      "command": "terraform-ls",
+      "args": ["serve"],
+      "filetypes": ["terraform", "tf"],
+      "initializationOptions": {}
     }
   },
   "tailwindCSS.includeLanguages": {
