@@ -33,16 +33,16 @@ set hidden
 set nobackup
 set nowritebackup
 
-" let &t_SI = "\e[6 q"
-" let &t_SR = "\e[4 q"
-" let &t_EI = "\e[2 q"
+let &t_SI = "\e[6 q"
+let &t_SR = "\e[4 q"
+let &t_EI = "\e[2 q"
 
 " General mappings
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-nnoremap ge :Ex<CR>
+nnoremap - :Ex<CR>
 xnoremap > >gv
 xnoremap < <gv
 xnoremap J :move '>+1<CR>gv=gv
@@ -106,6 +106,7 @@ function! EnableSyntax()
 endfunction
 nnoremap <leader><leader> :call EnableSyntax()<CR>
 
+" Git blame
 function! GitBlameSelection()
     let line_start = getpos("'<")[1]
     let line_end = getpos("'>")[1]
@@ -164,7 +165,7 @@ Plug 'lilydjwg/colorizer'
 Plug 'airblade/vim-gitgutter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'sheerun/vim-polyglot'
-Plug 'sainnhe/gruvbox-material'
+Plug 'morhetz/gruvbox'
 
 call plug#end()
 
@@ -190,8 +191,10 @@ nnoremap <silent> K :call ShowDocumentation()<CR>
 nnoremap <silent> grr <Plug>(coc-references)
 nnoremap <silent> grn <Plug>(coc-rename)
 nnoremap <silent> gca <Plug>(coc-codeaction-cursor)
+nnoremap <silent> grs :CocList -I symbols<CR>
 nnoremap <silent> ]d <Plug>(coc-diagnostic-next)
 nnoremap <silent> [d <Plug>(coc-diagnostic-prev)
+inoremap <silent> <C-k> <C-r>=CocActionAsync('showSignatureHelp')<CR>
 nnoremap <silent><expr> <leader>e coc#float#close_all()
 nnoremap <silent> <leader>dl :CocDiagnostics<CR>
 nnoremap <silent> <leader>sr :CocRestart<CR>
@@ -241,7 +244,12 @@ augroup Highlights
     autocmd ColorScheme * hi link CocHintSign DiagnosticHint
 augroup END
 
-let g:gruvbox_material_background = 'hard'
-let g:gruvbox_material_better_performance = 1
-
-colorscheme gruvbox-material
+colorscheme gruvbox
+hi SignColumn ctermbg=235 guibg=#282828
+hi GruvboxRedSign guibg=#282828
+hi GruvboxGreenSign guibg=#282828
+hi GruvboxYellowSign guibg=#282828
+hi GruvboxBlueSign guibg=#282828
+hi GruvboxPurpleSign guibg=#282828
+hi GruvboxAquaSign guibg=#282828
+hi GruvboxOrangeSign guibg=#282828
