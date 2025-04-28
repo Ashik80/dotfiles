@@ -120,6 +120,16 @@ endfunction
 xnoremap gb :<C-u>call GitBlameSelection()<CR>
 nnoremap gb :call GitBlameFile()<CR>
 
+" Netrw copy file path
+function! CopyFile()
+    if &filetype == 'netrw'
+        let l:file = netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))
+        let @+ = l:file
+        echo "Copied file path to clipboard: " . l:file
+    endif
+endfunction
+nnoremap cp :call CopyFile()<CR>
+
 " Statusline
 let g:git_branch = ''
 function! UpdateGitBranch()
