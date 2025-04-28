@@ -22,7 +22,7 @@ panel-in-overview=true
 ripple-box=true
 search=true
 show-apps-button=true
-startup-status=1
+startup-status=0
 support-notifier-showed-version=34
 support-notifier-type=0
 theme=false
@@ -53,7 +53,7 @@ version=33
 [switcher]
 font-size=uint32 20
 icon-size=uint32 20
-launcher-stats='{"discord.desktop":6,"com.mattjakeman.ExtensionManager.desktop":2,"cursor.desktop":3,"slack.desktop":6,"org.gnome.Settings.desktop":2,"brave-browser.desktop":8,"ca.desrt.dconf-editor.desktop":2,"libreoffice-calc.desktop":1}'
+launcher-stats='{"discord.desktop":20,"com.mattjakeman.ExtensionManager.desktop":3,"cursor.desktop":3,"slack.desktop":17,"org.gnome.Settings.desktop":3,"brave-browser.desktop":13,"ca.desrt.dconf-editor.desktop":2,"libreoffice-calc.desktop":1,"firmware-updater_firmware-updater.desktop":1,"org.gnome.Nautilus.desktop":1,"signal-desktop.desktop":1,"gpick.desktop":2,"emacs.desktop":98,"org.qbittorrent.qBittorrent.desktop":1,"org.gnome.Terminal.desktop":1}'
 matching=uint32 0
 max-width-percentage=uint32 50
 show-switcher=['<Super>d']
