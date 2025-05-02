@@ -33,9 +33,10 @@ set hidden
 set nobackup
 set nowritebackup
 
-let &t_SI = "\e[6 q"
-let &t_SR = "\e[4 q"
-let &t_EI = "\e[2 q"
+" Cursor change
+" let &t_SI = "\e[6 q"
+" let &t_SR = "\e[4 q"
+" let &t_EI = "\e[2 q"
 
 " General mappings
 nnoremap <C-h> <C-w>h
@@ -58,6 +59,8 @@ autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx {
     call setreg('c', "yoconsole.log('\<c-r>\"', \<c-r>\");\<esc>")
     call setreg('l', "y}Oconsole.log('\<c-r>\"', \<c-r>\");\<esc>")
     call setreg('t', "itry {\<CR>} catch (error) {\<CR>}\<esc>Vkk=")
+    call setreg('p', "yothis.logger.debug('\<c-r>\"', \<c-r>\");\<esc>")
+    call setreg('m', "y}Othis.logger.debug('\<c-r>\"', \<c-r>\");\<esc>")
 }
 
 set grepprg=rg\ --no-heading\ --column

@@ -5,7 +5,7 @@
 # theme = gruvbox-material-dark
 theme = GruvboxDark
 
-font-family = FiraCode Nerd Font Med
+font-family = CommitMono Nerd Font
 font-size = 15
 # adjust-cell-height = 30%
 # adjust-cursor-height = 30%
