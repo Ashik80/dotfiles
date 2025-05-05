@@ -19,7 +19,7 @@ set laststatus=2
 set ttimeoutlen=0
 set backspace=indent,eol,start
 set autoread
-set termguicolors
+" set termguicolors
 set mouse=a
 set wildmenu
 set wildoptions=pum
@@ -178,7 +178,7 @@ Plug 'lilydjwg/colorizer'
 Plug 'airblade/vim-gitgutter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'sheerun/vim-polyglot'
-Plug 'morhetz/gruvbox'
+" Plug 'morhetz/gruvbox'
 
 call plug#end()
 
@@ -257,12 +257,13 @@ augroup Highlights
     autocmd ColorScheme * hi link CocHintSign DiagnosticHint
 augroup END
 
-colorscheme gruvbox
-hi SignColumn ctermbg=235 guibg=#282828
-hi GruvboxRedSign guibg=#282828
-hi GruvboxGreenSign guibg=#282828
-hi GruvboxYellowSign guibg=#282828
-hi GruvboxBlueSign guibg=#282828
-hi GruvboxPurpleSign guibg=#282828
-hi GruvboxAquaSign guibg=#282828
-hi GruvboxOrangeSign guibg=#282828
+hi SignColumn ctermbg=NONE
+" colorscheme gruvbox
+" hi SignColumn ctermbg=235 guibg=#282828
+" hi GruvboxRedSign guibg=#282828
+" hi GruvboxGreenSign guibg=#282828
+" hi GruvboxYellowSign guibg=#282828
+" hi GruvboxBlueSign guibg=#282828
+" hi GruvboxPurpleSign guibg=#282828
+" hi GruvboxAquaSign guibg=#282828
+" hi GruvboxOrangeSign guibg=#282828
