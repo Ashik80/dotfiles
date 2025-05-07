@@ -1,3 +1,5 @@
+command = bash --login
+
 ## ayu theme config
 # theme = ayu
 # background = #0b0e14
@@ -5,7 +7,7 @@
 # theme = gruvbox-material-dark
 theme = GruvboxDark
 
-font-family = CommitMono Nerd Font
+font-family = FiraCode Nerd Font Med
 font-size = 15
 # adjust-cell-height = 30%
 # adjust-cursor-height = 30%

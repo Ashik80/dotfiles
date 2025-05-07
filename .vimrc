@@ -54,6 +54,8 @@ autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml,*.html,*.c
     set shiftwidth=2 tabstop=2
 }
 
+autocmd! FileType netrw set nocursorline
+
 " Macros
 autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx {
     call setreg('c', "yoconsole.log('\<c-r>\"', \<c-r>\");\<esc>")
