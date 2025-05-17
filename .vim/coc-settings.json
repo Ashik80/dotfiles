@@ -7,6 +7,7 @@
   "diagnostic.hintSign": "H",
   "diagnostic.infoSign": "I",
   "semanticTokens.enable": true,
+  "typescript.autoClosingTags": true,
   "languageserver": {
     "templ": {
       "command": "templ",
