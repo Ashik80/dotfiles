@@ -19,7 +19,7 @@ set laststatus=2
 set ttimeoutlen=0
 set backspace=indent,eol,start
 set autoread
-" set termguicolors
+set termguicolors
 set mouse=a
 set wildmenu
 set wildoptions=pum
@@ -180,6 +180,9 @@ Plug 'lilydjwg/colorizer'
 Plug 'airblade/vim-gitgutter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'sheerun/vim-polyglot'
+Plug 'nanotech/jellybeans.vim'
+" Plug 'junegunn/seoul256.vim'
+" Plug 'sjl/badwolf'
 " Plug 'morhetz/gruvbox'
 
 call plug#end()
@@ -259,7 +262,21 @@ augroup Highlights
     autocmd ColorScheme * hi link CocHintSign DiagnosticHint
 augroup END
 
-hi SignColumn ctermbg=NONE
+colorscheme jellybeans
+
+" For seoul256 theme
+" let g:seoul256_background = 233
+" colo seoul256
+
+" For default theme
+hi SignColumn ctermbg=NONE guibg=NONE
+
+" For badwolf theme
+" colorscheme badwolf
+" let g:badwolf_html_link_underline = 0
+" let g:badwolf_css_props_highlight = 1
+
+" For gruvbox theme
 " colorscheme gruvbox
 " hi SignColumn ctermbg=235 guibg=#282828
 " hi GruvboxRedSign guibg=#282828
