@@ -126,14 +126,24 @@ xnoremap gb :<C-u>call GitBlameSelection()<CR>
 nnoremap gb :call GitBlameFile()<CR>
 
 " Netrw copy file path
+function! GetFilePath()
+    return netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))
+endfunction
 function! CopyFile()
     if &filetype == 'netrw'
-        let l:file = netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))
+        let l:file = GetFilePath()
         let @+ = l:file
         echo "Copied file path to clipboard: " . l:file
     endif
 endfunction
+function! XdgOpenFile()
+    if &filetype == 'netrw'
+        let l:file = GetFilePath()
+        call system('xdg-open ' . l:file)
+    endif
+endfunction
 nnoremap cp :call CopyFile()<CR>
+nnoremap go :call XdgOpenFile()<CR>
 
 " Statusline
 let g:git_branch = ''

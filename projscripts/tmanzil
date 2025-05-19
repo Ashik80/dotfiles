@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+function switch_to_window() {
+    if [[ -z $TMUX ]]; then
+        tmux a -t manzil
+    else
+        tmux switch-client -t manzil
+    fi
+}
+
+function create_session_and_window() {
+    tmux new -ds manzil -c $HOME/src/ManzilApp/manzil
+}
+
+function create_new_window() {
+    tmux new-window -t manzil -n $1 -c $HOME/src/ManzilApp/manzil
+}
+
+function change_node_version() {
+    tmux send-keys -t manzil:$1 "nvm use 18" C-m
+    tmux send-keys -t manzil:$1 "clear" C-m
+}
+
+tmux has-session -t manzil 2>/dev/null
+
+if [[ $? == 1 ]]; then
+    create_session_and_window
+    create_new_window be-server
+    create_new_window fe-server
+    change_node_version be-server
+    change_node_version fe-server
+fi
+
+switch_to_window
