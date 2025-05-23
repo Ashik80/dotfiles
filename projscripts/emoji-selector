@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+res=$(cat ~/Documents/emojis.txt | fzf)
+
+echo $res | sed 's/\s-.*//' | xclip -i -selection clipboard

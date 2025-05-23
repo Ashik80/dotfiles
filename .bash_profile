@@ -18,3 +18,6 @@ alias vi="vim"
 
 # projscripts
 export PATH="/home/ashik/projscripts:$PATH"
+
+# local bin
+export PATH="/home/ashik/.local/bin:$PATH"
