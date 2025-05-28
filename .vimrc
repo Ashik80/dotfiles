@@ -73,7 +73,7 @@ function! FuzzyFileFinder()
     let l:tmpfile = tempname()
     let l:cmd = "cat {}"
     if executable("batcat")
-        let l:cmd = "batcat --theme=gruvbox-dark --style=numbers --color=always {}"
+        let l:cmd = "batcat --theme=ansi --style=numbers --color=always {}"
     endif
     execute "silent !rg --files | fzf --preview='".l:cmd."' | sed 's/$/:0:0/' > " . l:tmpfile
     set efm=%f:%l:%c
@@ -185,7 +185,8 @@ set statusline+=\ \|\ %l,%c
 " Plugins
 call plug#begin()
 
-Plug 'Exafunction/windsurf.vim'
+" Plug 'Exafunction/windsurf.vim'
+Plug 'github/copilot.vim'
 Plug 'lilydjwg/colorizer'
 Plug 'airblade/vim-gitgutter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -216,6 +217,7 @@ function! ShowDocumentation()
 endfunction
 
 nnoremap <silent> K :call ShowDocumentation()<CR>
+nnoremap <silent> <leader>gd <Plug>(coc-definition)
 nnoremap <silent> grr <Plug>(coc-references)
 nnoremap <silent> grn <Plug>(coc-rename)
 nnoremap <silent> gca <Plug>(coc-codeaction-cursor)
@@ -233,6 +235,14 @@ inoremap <silent><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(
 vnoremap <silent><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
 vnoremap <silent><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 inoremap <silent><expr> <c-x><c-o> coc#refresh()
+
+
+augroup coc-go-to-definition
+    autocmd!
+    autocmd BufEnter,BufWinEnter *.rb {
+        nnoremap <silent> gd <Plug>(coc-definition)
+    }
+augroup END
 
 augroup coc-formatting
     autocmd!

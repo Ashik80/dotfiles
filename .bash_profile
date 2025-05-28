@@ -7,7 +7,7 @@ export PS1='\e[0;33m\u\e[0m:\e[0;34m\w\e[0m$ '
 export EDITOR=vim
 export VISUAL=$EDITOR
 
-set -o vi
+# set -o vi
 
 # aliases
 alias l='ls -lh'
