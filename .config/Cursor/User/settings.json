@@ -1,10 +1,9 @@
 {
-  "workbench.colorTheme": "Gruvbox Material Dark",
-  "everforest.darkContrast": "hard",
-  "editor.fontFamily": "'Maple Mono', 'FiraMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
+  "workbench.colorTheme": "Jellybeans Theme",
+  "editor.fontFamily": "'FiraMono Nerd Font', 'Maple Mono', 'Droid Sans Mono', 'monospace', monospace",
   "window.zoomLevel": 1,
-  "editor.fontSize": 16,
-  "editor.lineHeight": 1.7,
+  "editor.fontSize": 17,
+  // "editor.lineHeight": 1.7,
   "editor.renderLineHighlight": "none",
   "breadcrumbs.enabled": false,
   "editor.stickyScroll.enabled": false,
@@ -37,6 +36,7 @@
   "editor.occurrencesHighlight": "off",
   "security.workspace.trust.untrustedFiles": "open",
   "git.confirmSync": false,
+  // vim settings
   "vim.leader": " ",
   "vim.normalModeKeyBindings": [
     {
@@ -194,5 +194,14 @@
       ]
     }
   ],
-  "editor.cursorStyle": "block"
+  "editor.cursorStyle": "block",
+  "extensions.ignoreRecommendations": true,
+  "workbench.iconTheme": "vscode-jetbrains-icon-theme-2023-dark",
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "bash",
+      "icon": "terminal-bash",
+      "args": ["-l"]
+    }
+  }
 }

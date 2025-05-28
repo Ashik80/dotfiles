@@ -1,12 +1,12 @@
-codeium.codeium
+chadalen.vscode-jetbrains-icon-theme
 dbaeumer.vscode-eslint
+dimitarnonov.jellybeans-theme
 esbenp.prettier-vscode
+github.copilot
+github.copilot-chat
 ms-python.black-formatter
 ms-python.debugpy
 ms-python.python
 ms-python.vscode-pylance
-nrwl.angular-console
 pascalsenn.keyboard-quickfix
-teabyii.ayu
 vscodevim.vim
-waderyan.gitblame

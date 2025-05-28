@@ -47,5 +47,9 @@
   {
     "key": "ctrl+i",
     "command": "composerMode.agent"
+  },
+  {
+    "key": "ctrl+p",
+    "command": "-workbench.action.quickOpen"
   }
 ]
