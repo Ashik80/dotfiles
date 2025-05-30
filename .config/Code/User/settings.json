@@ -14,6 +14,7 @@
   "window.enableMenuBarMnemonics": false,
   "window.restoreWindows": "none",
   "files.hotExit": "off",
+  "editor.cursorBlinking": "solid",
   "editor.guides.indentation": false,
   "codeium.enableCodeLens": false,
   "editor.formatOnSave": true,
@@ -183,6 +184,14 @@
           "command": "workbench.action.previousEditor"
         }
       ]
+    },
+    {
+      "before": ["g", "r", "s"],
+      "commands": [
+        {
+          "command": "workbench.action.showAllSymbols"
+        }
+      ]
     }
   ],
   "vim.insertModeKeyBindings": [
@@ -205,5 +214,11 @@
       "args": ["-l"]
     }
   },
-  "git.blame.editorDecoration.enabled": false
+  "git.blame.editorDecoration.enabled": false,
+  "window.density.editorTabHeight": "compact",
+  "window.titleBarStyle": "native",
+  "terminal.integrated.fontSize": 16,
+  "accessibility.signals.terminalBell": {
+    "sound": "off"
+  }
 }

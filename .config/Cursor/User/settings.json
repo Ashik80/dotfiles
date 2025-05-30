@@ -2,7 +2,7 @@
   "workbench.colorTheme": "Jellybeans Theme",
   "editor.fontFamily": "'FiraMono Nerd Font', 'Maple Mono', 'Droid Sans Mono', 'monospace', monospace",
   "window.zoomLevel": 1,
-  "editor.fontSize": 17,
+  "editor.fontSize": 16,
   // "editor.lineHeight": 1.7,
   "editor.renderLineHighlight": "none",
   "breadcrumbs.enabled": false,
@@ -14,6 +14,7 @@
   "window.enableMenuBarMnemonics": false,
   "window.restoreWindows": "none",
   "files.hotExit": "off",
+  "editor.cursorBlinking": "solid",
   "editor.guides.indentation": false,
   "codeium.enableCodeLens": false,
   "editor.formatOnSave": true,
@@ -182,6 +183,14 @@
           "command": "workbench.action.previousEditor"
         }
       ]
+    },
+    {
+      "before": ["g", "r", "s"],
+      "commands": [
+        {
+          "command": "workbench.action.showAllSymbols"
+        }
+      ]
     }
   ],
   "vim.insertModeKeyBindings": [
@@ -203,5 +212,11 @@
       "icon": "terminal-bash",
       "args": ["-l"]
     }
+  },
+  "window.density.editorTabHeight": "compact",
+  "window.titleBarStyle": "native",
+  "terminal.integrated.fontSize": 16,
+  "accessibility.signals.terminalBell": {
+    "sound": "off"
   }
 }
