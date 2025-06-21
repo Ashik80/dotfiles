@@ -185,8 +185,8 @@ set statusline+=\ \|\ %l,%c
 " Plugins
 call plug#begin()
 
-" Plug 'Exafunction/windsurf.vim'
-Plug 'github/copilot.vim'
+" Plug 'Exafunction/windsurf.vim', { 'branch': 'main' }
+Plug 'augmentcode/augment.vim'
 Plug 'lilydjwg/colorizer'
 Plug 'airblade/vim-gitgutter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -288,7 +288,7 @@ colorscheme jellybeans
 " let g:seoul256_background = 233
 " colo seoul256
 
-" For default theme
+" For default/jellybeans theme
 hi SignColumn ctermbg=NONE guibg=NONE
 
 " For badwolf theme
@@ -306,3 +306,6 @@ hi SignColumn ctermbg=NONE guibg=NONE
 " hi GruvboxPurpleSign guibg=#282828
 " hi GruvboxAquaSign guibg=#282828
 " hi GruvboxOrangeSign guibg=#282828
+
+" Augment settings
+let g:augment_workspace_folders = ['~/src/ManzilApp/manzil']
