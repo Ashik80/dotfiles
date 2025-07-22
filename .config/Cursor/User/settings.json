@@ -1,6 +1,6 @@
 {
   "workbench.colorTheme": "Jellybeans Theme",
-  "editor.fontFamily": "'FiraMono Nerd Font', 'Maple Mono', 'Droid Sans Mono', 'monospace', monospace",
+  "editor.fontFamily": "'SauceCodePro NFM Medium', 'FiraMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
   "window.zoomLevel": 1,
   "editor.fontSize": 16,
   // "editor.lineHeight": 1.7,
@@ -218,5 +218,8 @@
   "terminal.integrated.fontSize": 16,
   "accessibility.signals.terminalBell": {
     "sound": "off"
-  }
+  },
+  "editor.accessibilitySupport": "on",
+  "workbench.tree.indent": 16,
+  "workbench.tree.enableStickyScroll": false
 }

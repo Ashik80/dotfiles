@@ -6,7 +6,8 @@ background = #151515
 # theme = gruvbox-material-dark
 # theme = GruvboxDark
 
-font-family = FiraMono Nerd Font
+# font-family = FiraMono Nerd Font
+font-family = SauceCodePro NF Medium
 font-size = 15
 # adjust-cell-height = 30%
 # adjust-cursor-height = 30%

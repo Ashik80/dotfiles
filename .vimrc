@@ -32,6 +32,7 @@ set clipboard=unnamedplus
 set hidden
 set nobackup
 set nowritebackup
+set shell=/bin/bash\ --login
 
 " Cursor change
 " let &t_SI = "\e[6 q"
@@ -48,7 +49,6 @@ xnoremap > >gv
 xnoremap < <gv
 xnoremap J :move '>+1<CR>gv=gv
 xnoremap K :move '<-2<CR>gv=gv
-xnoremap < <gv
 
 autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml,*.html,*.css {
     set shiftwidth=2 tabstop=2
@@ -63,6 +63,10 @@ autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx {
     call setreg('t', "itry {\<CR>} catch (error) {\<CR>}\<esc>Vkk=")
     call setreg('p', "yothis.logger.debug('\<c-r>\"', \<c-r>\");\<esc>")
     call setreg('m', "y}Othis.logger.debug('\<c-r>\"', \<c-r>\");\<esc>")
+}
+autocmd! BufEnter,BufWinEnter *.py {
+    call setreg('c', "yoprint('\<c-r>\"', \<c-r>\")\<esc>")
+    call setreg('l', "y}Oprint('\<c-r>\"', \<c-r>\")\<esc>")
 }
 
 set grepprg=rg\ --no-heading\ --column
@@ -185,8 +189,7 @@ set statusline+=\ \|\ %l,%c
 " Plugins
 call plug#begin()
 
-" Plug 'Exafunction/windsurf.vim', { 'branch': 'main' }
-Plug 'augmentcode/augment.vim'
+Plug 'Exafunction/windsurf.vim', { 'branch': 'main' }
 Plug 'lilydjwg/colorizer'
 Plug 'airblade/vim-gitgutter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -236,7 +239,6 @@ vnoremap <silent><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<
 vnoremap <silent><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 inoremap <silent><expr> <c-x><c-o> coc#refresh()
 
-
 augroup coc-go-to-definition
     autocmd!
     autocmd BufEnter,BufWinEnter *.rb {
@@ -259,6 +261,9 @@ augroup templFmt
     autocmd!
     autocmd BufWritePost *.templ silent! execute "!PATH=\"$PATH:$(go env GOPATH)/bin\" templ fmt <afile> >/dev/null 2>&1" | redraw!
 augroup END
+
+" Git gutter
+nnoremap <leader>gh :GitGutterPreviewHunk<CR>
 
 " Highlights
 augroup Highlights
@@ -306,6 +311,3 @@ hi SignColumn ctermbg=NONE guibg=NONE
 " hi GruvboxPurpleSign guibg=#282828
 " hi GruvboxAquaSign guibg=#282828
 " hi GruvboxOrangeSign guibg=#282828
-
-" Augment settings
-let g:augment_workspace_folders = ['~/src/ManzilApp/manzil']
