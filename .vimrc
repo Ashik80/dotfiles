@@ -32,7 +32,6 @@ set clipboard=unnamedplus
 set hidden
 set nobackup
 set nowritebackup
-set shell=/bin/bash\ --login
 
 " Cursor change
 " let &t_SI = "\e[6 q"

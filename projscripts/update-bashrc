@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+echo "Updating bashrc"
+echo -e "\n" >> ~/.bashrc
+echo -e "\n" >> ~/.bashrc
+cat ~/Documents/bashrc-snippet >> ~/.bashrc
+echo "Done."
