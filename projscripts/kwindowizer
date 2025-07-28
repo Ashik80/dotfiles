@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+. utils
+
+window_path=$(find_relevant_directories)
+window_name=$(basename $window_path)
+
+kitten @ launch --cwd $window_path --type tab --title "$window_name"

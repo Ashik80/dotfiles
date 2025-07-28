@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+. utils
+
+session_path=$(find_relevant_directories)
+session_name=$(basename $session_path)
+
+kitten @ launch --cwd $session_path --type os-window --env ${session_name}_TAB=main --title "$session_name"

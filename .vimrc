@@ -49,6 +49,7 @@ xnoremap > >gv
 xnoremap < <gv
 xnoremap J :move '>+1<CR>gv=gv
 xnoremap K :move '<-2<CR>gv=gv
+nnoremap <leader>cp :let @+ = expand("%:.")<CR>
 
 autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml,*.html,*.css {
     set shiftwidth=2 tabstop=2
@@ -135,7 +136,7 @@ function! GetFilePath()
 endfunction
 function! CopyFile()
     if &filetype == 'netrw'
-        let l:file = GetFilePath()
+        let l:file = fnamemodify(GetFilePath(), ':.')
         let @+ = l:file
         echo "Copied file path to clipboard: " . l:file
     endif

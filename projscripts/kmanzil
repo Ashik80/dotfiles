@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+title='Manzil'
+project_path='~/src/ManzilApp/manzil'
+
+kitten @ launch --cwd $project_path --type os-window --env ${title}_TAB=main --title $title
+kitten @ launch --cwd $project_path --type tab --env ${title}_TAB=be --title "be"
+kitten @ launch --cwd $project_path --type tab --env ${title}_TAB=fe --title "fe"
+kitten @ launch --cwd $project_path --type tab --env ${title}_TAB=git --title "git"
+
+kitten @ send-text --match "env:${title}_TAB=be" "nvm use\nclear\n"
+kitten @ send-text --match "env:${title}_TAB=fe" "nvm use\nclear\n"
+
+kitten @ action goto_tab 1

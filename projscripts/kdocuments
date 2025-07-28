@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+title='Documents'
+project_path='~/Documents'
+
+kitten @ launch --cwd $project_path --type os-window --env ${title}_TAB=main --title $title
