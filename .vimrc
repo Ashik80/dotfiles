@@ -223,7 +223,7 @@ nnoremap <silent> K :call ShowDocumentation()<CR>
 nnoremap <silent> <leader>gd <Plug>(coc-definition)
 nnoremap <silent> grr <Plug>(coc-references)
 nnoremap <silent> grn <Plug>(coc-rename)
-nnoremap <silent> gca <Plug>(coc-codeaction-cursor)
+nnoremap <silent> gra <Plug>(coc-codeaction-cursor)
 nnoremap <silent> grs :CocList -I symbols<CR>
 nnoremap <silent> ]d <Plug>(coc-diagnostic-next)
 nnoremap <silent> [d <Plug>(coc-diagnostic-prev)
