@@ -17,6 +17,7 @@ vim.o.signcolumn = "yes"
 vim.o.clipboard = "unnamedplus"
 vim.o.writebackup = false
 vim.o.winborder = "solid"
+vim.o.guicursor = ""
 
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
@@ -28,10 +29,16 @@ vim.keymap.set({'v', 'x'}, '<', '<gv')
 vim.keymap.set({'v', 'x'}, 'J', ":move '>+1<CR>gv=gv")
 vim.keymap.set({'v', 'x'}, 'K', ":move '<-2<CR>gv=gv")
 vim.keymap.set('n', '<leader>cp', ':let @+ = expand("%:.")<CR>')
+vim.keymap.set('t', '<C-w>N', '<C-\\><C-n>')
 
 -- Grepping
 vim.o.grepprg = "rg --no-heading --column"
 vim.keymap.set('n', '<leader>fg', ':grep!<space>')
+
+-- Clean no name buffers
+vim.api.nvim_create_user_command("CleanNoNameBuffers", function()
+  vim.cmd [[bufdo if bufname('%') == '' && line('.') == 1 && getline('.') == '' | bdelete | endif]]
+end, {})
 
 -- Indent
 augroup('JSIndent', { clear = true })
@@ -77,6 +84,8 @@ local function fuzzy_file_finder()
     end
     local preview_cmd = vim.fn.shellescape(cmd)
     local fzf_cmd = string.format("rg --files | fzf --preview=%s | sed 's/$/:0:0/' > %s", preview_cmd, tmpfile)
+    vim.cmd("tabnew")
+    local unwanted_buffer = vim.api.nvim_get_current_buf()
     local term_buf = vim.api.nvim_create_buf(false, true)
     local term_win = vim.api.nvim_open_win(term_buf, true, {
         split = "below",
@@ -86,8 +95,13 @@ local function fuzzy_file_finder()
     vim.fn.termopen({ "/bin/sh", "-c", fzf_cmd }, {
         on_exit = function()
             if vim.fn.filereadable(tmpfile) == 1 and vim.fn.getfsize(tmpfile) > 0 then
+                vim.cmd("tabclose")
+                vim.api.nvim_buf_delete(unwanted_buffer, { unload = true })
                 vim.o.efm = "%f:%l:%c"
                 vim.cmd("silent cfile " .. tmpfile)
+            else
+                vim.cmd("tabclose")
+                vim.api.nvim_buf_delete(unwanted_buffer, { unload = true })
             end
         end
     })
@@ -179,11 +193,18 @@ vim.pack.add({
     { src = 'https://github.com/nanotech/jellybeans.vim' },
     { src = 'https://github.com/Exafunction/windsurf.vim', version = 'main' },
     { src = 'https://github.com/neovim/nvim-lspconfig' },
-    { src = 'https://github.com/lewis6991/gitsigns.nvim' }
+    { src = 'https://github.com/lewis6991/gitsigns.nvim' },
+    { src = 'https://github.com/brenoprata10/nvim-highlight-colors' }
 })
 
 -- LSP
-vim.lsp.enable({ 'pyright', 'ts_ls', 'eslint', 'tailwindcss', 'gopls' })
+vim.lsp.enable({
+    'basedpyright',
+    'ts_ls',
+    'eslint',
+    'tailwindcss',
+    'gopls',
+})
 vim.diagnostic.config({ virtual_text = true })
 
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { noremap = true, silent = true })
@@ -205,11 +226,37 @@ autocmd('LspAttach', {
    end
 })
 
+-- Formatting
+augroup('FormatPyWithBlack', { clear = true })
+autocmd('BufWritePost', {
+    group = 'FormatPyWithBlack',
+    pattern = { '*.py' },
+    callback = function()
+        if vim.fn.executable('black') then
+            vim.cmd('silent !black ' .. vim.fn.shellescape(vim.fn.expand('%')))
+        end
+    end
+})
+augroup('FormatJSWithPrettier', { clear = true })
+autocmd('BufWritePost', {
+    group = 'FormatJSWithPrettier',
+    pattern = { '*.js', '*.jsx', '*.ts', '*.tsx' },
+    callback = function()
+        if vim.fn.executable('prettier') then
+            vim.cmd('silent !prettier -w ' .. vim.fn.shellescape(vim.fn.expand('%')))
+        end
+    end
+})
+
 -- Git signs
 vim.keymap.set('n', '<leader>gh', require('gitsigns').preview_hunk, { noremap = true, silent = true })
+
+-- Colors
+require('nvim-highlight-colors').setup({})
 
 -- Theme
 vim.cmd [[
     colorscheme jellybeans
     hi SignColumn ctermbg=NONE guibg=NONE
+    hi StatusLine gui=none
 ]]

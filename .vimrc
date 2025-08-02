@@ -204,6 +204,9 @@ call plug#end()
 " Lsp settings
 set tagfunc=CocTagFunc
 
+let g:coc_enable_locationlist = 0
+autocmd User CocLocationsChange CocList --normal location
+
 function! CocHelperFocusFloat() abort
   let winid = coc#float#get_float_win()
   if winid > 0

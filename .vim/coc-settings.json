@@ -1,4 +1,5 @@
 {
+  "coc.preferences.useQuickfixForLocations": "true",
   "inlayHint.enable": false,
   "diagnostic.virtualText": true,
   "diagnostic.virtualTextCurrentLineOnly": false,
