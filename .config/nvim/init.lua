@@ -31,6 +31,20 @@ vim.keymap.set({'v', 'x'}, 'K', ":move '<-2<CR>gv=gv")
 vim.keymap.set('n', '<leader>cp', ':let @+ = expand("%:.")<CR>')
 vim.keymap.set('t', '<C-w>N', '<C-\\><C-n>')
 
+-- Lazygit
+if vim.fn.executable("lazygit") == 1 then
+    vim.keymap.set('n', '<leader>lg', ':term lazygit<CR>i')
+end
+
+augroup('LazyGitAutoClose', { clear = true })
+autocmd('TermClose', {
+    group = 'LazyGitAutoClose',
+    pattern = 'term://*lazygit',
+    callback = function()
+        vim.api.nvim_input('<CR>')
+    end
+})
+
 -- Grepping
 vim.o.grepprg = "rg --no-heading --column"
 vim.keymap.set('n', '<leader>fg', ':grep!<space>')

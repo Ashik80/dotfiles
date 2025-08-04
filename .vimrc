@@ -39,10 +39,6 @@ set nowritebackup
 " let &t_EI = "\e[2 q"
 
 " General mappings
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
 nnoremap - :Ex<CR>
 xnoremap > >gv
 xnoremap < <gv
@@ -50,6 +46,12 @@ xnoremap J :move '>+1<CR>gv=gv
 xnoremap K :move '<-2<CR>gv=gv
 nnoremap <leader>cp :let @+ = expand("%:.")<CR>
 
+" Lazygit
+if executable("lazygit")
+    nnoremap <leader>lg :silent term ++curwin lazygit<CR>
+endif
+
+" Indent
 autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml,*.html,*.css {
     set shiftwidth=2 tabstop=2
 }
