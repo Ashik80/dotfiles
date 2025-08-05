@@ -24,6 +24,8 @@ local autocmd = vim.api.nvim_create_autocmd
 
 -- Mappings
 vim.keymap.set('n', '-', '<cmd>Ex<CR>')
+vim.keymap.set('n', '<C-j>', '<cmd>cn<CR>')
+vim.keymap.set('n', '<C-k>', '<cmd>cp<CR>')
 vim.keymap.set({'v', 'x'}, '>', '>gv')
 vim.keymap.set({'v', 'x'}, '<', '<gv')
 vim.keymap.set({'v', 'x'}, 'J', ":move '>+1<CR>gv=gv")
@@ -208,7 +210,19 @@ vim.pack.add({
     { src = 'https://github.com/Exafunction/windsurf.vim', version = 'main' },
     { src = 'https://github.com/neovim/nvim-lspconfig' },
     { src = 'https://github.com/lewis6991/gitsigns.nvim' },
-    { src = 'https://github.com/brenoprata10/nvim-highlight-colors' }
+    { src = 'https://github.com/brenoprata10/nvim-highlight-colors' },
+    { src = 'https://github.com/nvim-treesitter/nvim-treesitter' }
+})
+
+-- Treesitter
+require'nvim-treesitter.configs'.setup({
+    highlight = {
+        enable = true,
+        additional_vim_regex_highlighting = false,
+    },
+    indent = {
+        enable = true
+    }
 })
 
 -- LSP

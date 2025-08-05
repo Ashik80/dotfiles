@@ -40,6 +40,8 @@ set nowritebackup
 
 " General mappings
 nnoremap - :Ex<CR>
+nnoremap <C-j> :cn<CR>
+nnoremap <C-k> :cp<CR>
 xnoremap > >gv
 xnoremap < <gv
 xnoremap J :move '>+1<CR>gv=gv
