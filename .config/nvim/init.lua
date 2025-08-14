@@ -144,7 +144,7 @@ end
 vim.api.nvim_create_user_command("FindFiles", function(opts)
   find_files_to_qf(opts.args)
 end, { nargs = 1 })
-vim.keymap.set("n", "<leader>ff", ":FindFiles ")
+vim.keymap.set("n", "<leader>ff", ":FindFiles<space>")
 
 -- Git blame
 local function git_blame_selection()

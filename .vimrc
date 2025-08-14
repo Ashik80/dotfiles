@@ -50,7 +50,7 @@ nnoremap <leader>cp :let @+ = expand("%:.")<CR>
 
 " Lazygit
 if executable("lazygit")
-    nnoremap <leader>lg :silent term ++curwin lazygit<CR>
+    nnoremap <leader>lg :tabnew \| silent term ++curwin ++close lazygit<CR>
 endif
 
 " Indent
@@ -88,7 +88,25 @@ function! FuzzyFileFinder()
     silent execute 'cfile ' . l:tmpfile
     redraw!
 endfunction
-nnoremap <leader>ff :call FuzzyFileFinder()<CR>
+nnoremap <leader>fz :call FuzzyFileFinder()<CR>
+
+" Find files
+function! FindFilesToQf(pattern)
+    let l:cmd = "rg --files | rg -i " . shellescape(a:pattern)
+    let l:lines = systemlist(l:cmd)
+    if len(l:lines) == 0
+        return
+    endif
+    let l:items = []
+    for l:line in l:lines
+        let l:item = {'filename': l:line, 'lnum': 1, 'col': 1}
+        call add(l:items, l:item)
+    endfor
+    call setqflist([], ' ', {'items': l:items, 'title': 'Find Files: ' . a:pattern})
+    cw
+endfunction
+command! -nargs=1 FindFiles call FindFilesToQf(<f-args>)
+nnoremap <leader>ff :FindFiles<space>
 
 " Update tag on save
 " augroup AutoTagUpdate
