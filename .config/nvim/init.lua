@@ -24,18 +24,18 @@ local autocmd = vim.api.nvim_create_autocmd
 
 -- Mappings
 vim.keymap.set('n', '-', '<cmd>Ex<CR>')
-vim.keymap.set('n', '<C-j>', '<cmd>cn<CR>')
-vim.keymap.set('n', '<C-k>', '<cmd>cp<CR>')
 vim.keymap.set({'v', 'x'}, '>', '>gv')
 vim.keymap.set({'v', 'x'}, '<', '<gv')
 vim.keymap.set({'v', 'x'}, 'J', ":move '>+1<CR>gv=gv")
 vim.keymap.set({'v', 'x'}, 'K', ":move '<-2<CR>gv=gv")
 vim.keymap.set('n', '<leader>cp', ':let @+ = expand("%:.")<CR>')
 vim.keymap.set('t', '<C-w>N', '<C-\\><C-n>')
+vim.keymap.set('t', '<C-w>w', '<C-\\><C-n><C-w>w')
+vim.keymap.set('t', '<C-w><C-w>', '<C-\\><C-n><C-w>w')
 
 -- Lazygit
 if vim.fn.executable("lazygit") == 1 then
-    vim.keymap.set('n', '<leader>lg', ':term lazygit<CR>i')
+    vim.keymap.set('n', '<leader>lg', ':tabnew | term lazygit<CR>i')
 end
 
 augroup('LazyGitAutoClose', { clear = true })
@@ -232,6 +232,7 @@ vim.lsp.enable({
     'eslint',
     'tailwindcss',
     'gopls',
+    'terraformls',
 })
 vim.diagnostic.config({ virtual_text = true })
 
