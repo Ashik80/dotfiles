@@ -93,36 +93,58 @@ autocmd('FileType', {
 
 -- Fuzzy finder
 local function fuzzy_file_finder()
-    local tmpfile = vim.fn.tempname()
     local cmd = "cat {}"
     if vim.fn.executable("batcat") == 1 then
         cmd = "batcat --theme=ansi --style=numbers --color=always {}"
     end
     local preview_cmd = vim.fn.shellescape(cmd)
-    local fzf_cmd = string.format("rg --files | fzf --preview=%s | sed 's/$/:0:0/' > %s", preview_cmd, tmpfile)
-    vim.cmd("tabnew")
-    local unwanted_buffer = vim.api.nvim_get_current_buf()
+    local fzf_cmd = string.format("rg --files | fzf --preview=%s", preview_cmd)
     local term_buf = vim.api.nvim_create_buf(false, true)
-    local term_win = vim.api.nvim_open_win(term_buf, true, {
-        split = "below",
-    })
-    vim.cmd("only")
+    vim.api.nvim_win_set_buf(0, term_buf)
     vim.cmd("startinsert")
+
     vim.fn.termopen({ "/bin/sh", "-c", fzf_cmd }, {
-        on_exit = function()
-            if vim.fn.filereadable(tmpfile) == 1 and vim.fn.getfsize(tmpfile) > 0 then
-                vim.cmd("tabclose")
-                vim.api.nvim_buf_delete(unwanted_buffer, { unload = true })
-                vim.o.efm = "%f:%l:%c"
-                vim.cmd("silent cfile " .. tmpfile)
-            else
-                vim.cmd("tabclose")
-                vim.api.nvim_buf_delete(unwanted_buffer, { unload = true })
+        on_exit = function(job_id, code, event)
+            local raw_lines = vim.api.nvim_buf_get_lines(term_buf, 0, -1, false)
+            if #raw_lines == 0 then
+                return
             end
+            local lines = {}
+            for _, line in ipairs(raw_lines) do
+                if line == "" then
+                    break
+                end
+                table.insert(lines, { filename = line, lnum = 1, col = 1 })
+            end
+            if #lines == 0 then
+                return
+                vim.api.nvim_input('<CR>')
+            end
+            vim.fn.setqflist({}, " ", { items = lines, title = "Fuzzy Find: " })
+            vim.cmd("silent cfirst")
         end
     })
 end
-vim.keymap.set("n", "<leader>ff", fuzzy_file_finder, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>fz", fuzzy_file_finder, { noremap = true, silent = true })
+
+-- Find files
+local function find_files_to_qf(pattern)
+    local cmd = "rg --files | rg -i " .. vim.fn.shellescape(pattern)
+    local lines = vim.fn.systemlist(cmd)
+    if #lines == 0 then
+        return
+    end
+    local items = {}
+    for _, line in ipairs(lines) do
+        table.insert(items, { filename = line, lnum = 1, col = 1 })
+    end
+    vim.fn.setqflist({}, " ", { items = items, title = "Find Files: " .. pattern })
+    vim.cmd("cw")
+end
+vim.api.nvim_create_user_command("FindFiles", function(opts)
+  find_files_to_qf(opts.args)
+end, { nargs = 1 })
+vim.keymap.set("n", "<leader>ff", ":FindFiles ")
 
 -- Git blame
 local function git_blame_selection()
