@@ -26,21 +26,28 @@ startup-status=0
 support-notifier-showed-version=34
 support-notifier-type=0
 theme=false
+type-to-search=true
 window-demands-attention-focus=false
 window-picker-icon=true
 window-preview-caption=true
 window-preview-close-button=true
 workspace=true
 workspace-background-corner-size=0
+workspace-peek=true
 workspace-popup=true
+workspace-switcher-should-show=false
+workspace-wrap-around=false
 workspaces-in-app-grid=true
 
 [space-bar/appearance]
 application-styles='.space-bar {\n  -natural-hpadding: 12px;\n}\n\n.space-bar-workspace-label.active {\n  margin: 0 4px;\n  background-color: rgba(255,255,255,0.3);\n  color: rgba(255,255,255,1);\n  border-color: rgba(0,0,0,0);\n  font-weight: 700;\n  border-radius: 4px;\n  border-width: 0px;\n  padding: 3px 8px;\n}\n\n.space-bar-workspace-label.inactive {\n  margin: 0 4px;\n  background-color: rgba(0,0,0,0);\n  color: rgba(255,255,255,1);\n  border-color: rgba(0,0,0,0);\n  font-weight: 700;\n  border-radius: 4px;\n  border-width: 0px;\n  padding: 3px 8px;\n}\n\n.space-bar-workspace-label.inactive.empty {\n  margin: 0 4px;\n  background-color: rgba(0,0,0,0);\n  color: rgba(255,255,255,0.5);\n  border-color: rgba(0,0,0,0);\n  font-weight: 700;\n  border-radius: 4px;\n  border-width: 0px;\n  padding: 3px 8px;\n}'
 
 [space-bar/behavior]
+always-show-numbers=false
 indicator-style='workspaces-bar'
 show-empty-workspaces=true
+smart-workspace-names=false
+system-workspace-indicator=false
 toggle-overview=false
 
 [space-bar/shortcuts]
@@ -53,7 +60,7 @@ version=33
 [switcher]
 font-size=uint32 20
 icon-size=uint32 20
-launcher-stats='{"discord.desktop":20,"com.mattjakeman.ExtensionManager.desktop":3,"cursor.desktop":3,"slack.desktop":17,"org.gnome.Settings.desktop":3,"brave-browser.desktop":13,"ca.desrt.dconf-editor.desktop":2,"libreoffice-calc.desktop":1,"firmware-updater_firmware-updater.desktop":1,"org.gnome.Nautilus.desktop":1,"signal-desktop.desktop":1,"gpick.desktop":2,"emacs.desktop":98,"org.qbittorrent.qBittorrent.desktop":1,"org.gnome.Terminal.desktop":1}'
+launcher-stats='{"discord.desktop":28,"com.mattjakeman.ExtensionManager.desktop":7,"cursor.desktop":38,"slack.desktop":26,"org.gnome.Settings.desktop":7,"brave-browser.desktop":27,"ca.desrt.dconf-editor.desktop":2,"libreoffice-calc.desktop":1,"firmware-updater_firmware-updater.desktop":1,"org.gnome.Nautilus.desktop":6,"signal-desktop.desktop":9,"gpick.desktop":2,"emacs.desktop":113,"org.qbittorrent.qBittorrent.desktop":1,"org.gnome.Terminal.desktop":7,"org.gnome.SystemMonitor.desktop":1,"zen.desktop":18,"org.gnome.eog.desktop":1,"org.gnome.Calculator.desktop":1,"dev.warp.Warp.desktop":2,"dev.zed.Zed.desktop":1,"code.desktop":10,"librewolf.desktop":18,"firefox_firefox.desktop":4,"sublime_text.desktop":5,"kitty.desktop":31,"com.mitchellh.ghostty.desktop":2}'
 matching=uint32 0
 max-width-percentage=uint32 50
 show-switcher=['<Super>d']
