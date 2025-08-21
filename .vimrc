@@ -171,6 +171,44 @@ endfunction
 nnoremap cp :call CopyFile()<CR>
 nnoremap go :call XdgOpenFile()<CR>
 
+" Open a scratch buffer
+function! OpenScratchBuffer()
+    above new
+    setlocal buftype=nofile
+    setlocal bufhidden=hide
+    setlocal noswapfile
+    setlocal nobuflisted
+endfunction
+nnoremap <silent> <leader>o :call OpenScratchBuffer()<CR>
+
+" Buffer to quickfix list
+function! SelectionToQF()
+  let startline = line("'<")
+  let endline = line("'>")
+  let lines = getline(startline, endline)
+  if empty(lines)
+    return
+  endif
+  let items = []
+  for line in lines
+    let m = matchlist(line, '\v^(\S+):(\d+):(\d+):(.*)')
+    if !empty(m)
+      call add(items, { 'filename': m[1], 'lnum': str2nr(m[2]), 'col': str2nr(m[3]), 'text': m[4] })
+    else
+      let m = matchlist(line, '\v^(\S+):(\d+):(.*)')
+      if !empty(m)
+        call add(items, { 'filename': m[1], 'lnum': str2nr(m[2]), 'col': 1, 'text': m[3] })
+      endif
+    endif
+  endfor
+  if !empty(items)
+    call setqflist([], ' ', {'items': items, 'title': 'Selection to Quickfix'})
+    cwindow
+  endif
+endfunction
+
+xnoremap <silent> <leader>q :<C-u>call SelectionToQF()<CR>
+
 " Statusline
 let g:git_branch = ''
 function! UpdateGitBranch()

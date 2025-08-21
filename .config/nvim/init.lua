@@ -195,6 +195,42 @@ autocmd('FileType', {
     end
 })
 
+-- Open a scratch buffer
+local function open_scratch_buffer()
+    local bufnr = vim.api.nvim_create_buf(false, true)
+    local scratch_win = vim.api.nvim_open_win(bufnr, true, {
+        split = "above",
+    })
+    vim.api.nvim_win_set_buf(0, bufnr)
+end
+vim.keymap.set("n", "<leader>o", open_scratch_buffer, { noremap = true, silent = true })
+
+-- Buffer to quickfix list
+local function selection_to_qf()
+    local startline = vim.fn.line("v")
+    local endline = vim.fn.line(".")
+    local lines = vim.fn.getline(startline, endline)
+    if #lines == 0 then
+        return
+    end
+    local items = {}
+    for i, line in ipairs(lines) do
+        local path, lnum, col, text = line:match("^(%S+):(%d+):(%d+):(.*)")
+        if path == nil then
+            path, lnum, text = line:match("^(%S+):(%d+):(.*)")
+            col = 1
+        end
+        if path then
+            table.insert(items, { filename = path, lnum = tonumber(lnum), col = tonumber(col), text = text })
+        end
+    end
+    if #items ~= 0 then
+        vim.fn.setqflist({}, " ", { items = items, title = "Selection to Quickfix" })
+    end
+    vim.cmd("cw")
+end
+vim.keymap.set({"v", "x"}, "<leader>q", selection_to_qf, { noremap = true, silent = true })
+
 -- Statusline
 vim.g.git_branch = ''
 local function update_git_branch()
