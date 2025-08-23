@@ -107,6 +107,7 @@ local function fuzzy_file_finder()
         on_exit = function(job_id, code, event)
             local raw_lines = vim.api.nvim_buf_get_lines(term_buf, 0, -1, false)
             if #raw_lines == 0 then
+                vim.api.nvim_buf_delete(term_buf, { force = true })
                 return
             end
             local lines = {}
@@ -117,9 +118,9 @@ local function fuzzy_file_finder()
                 table.insert(lines, { filename = line, lnum = 1, col = 1 })
             end
             if #lines == 0 then
-                return
                 vim.api.nvim_input('<CR>')
             end
+            vim.api.nvim_buf_delete(term_buf, { force = true })
             vim.fn.setqflist({}, " ", { items = lines, title = "Fuzzy Find: " })
             vim.cmd("silent cfirst")
         end

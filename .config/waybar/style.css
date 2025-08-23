@@ -1,0 +1,79 @@
+@define-color foreground #e8e8d3;
+@define-color background #151515;
+@define-color primary-color #F50207;
+
+* {
+  color: @foreground;
+
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+  font-family: Hack Nerd Font;
+  font-size: 15px;
+}
+
+#waybar {
+  background-color: transparent;
+}
+
+.modules-left {
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 10px;
+  background-color: @background;
+  margin-left: 8px;
+}
+
+.modules-center {
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 10px;
+  background-color: @background;
+}
+
+.modules-right {
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 10px;
+  background-color: @background;
+  margin-right: 8px;
+}
+
+
+#workspaces button:hover {
+  border-bottom: 3px solid @primary-color;
+}
+
+#workspaces button {
+  all: initial;
+  padding: 0 6px;
+  margin: 0 1.5px;
+  min-width: 9px;
+}
+
+#workspaces button.empty {
+  opacity: 0.5;
+}
+
+#workspaces button.active {
+  font-weight: 900;
+  border-bottom: 3px solid @primary-color;
+}
+
+#cpu,
+#battery,
+#network,
+#bluetooth,
+#pulseaudio,
+#clock {
+  min-width: 12px;
+  margin: 0 7.5px;
+}
+
+#bluetooth:hover {
+    border-bottom: 3px solid @primary-color;
+}
+
+tooltip {
+  background-color: @background;
+}
