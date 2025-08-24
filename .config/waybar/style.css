@@ -1,6 +1,7 @@
 @define-color foreground #e8e8d3;
 @define-color background #151515;
-@define-color primary-color #F50207;
+/*@define-color primary-color #F50207;*/
+@define-color primary-color #CC7753;
 
 * {
   color: @foreground;
