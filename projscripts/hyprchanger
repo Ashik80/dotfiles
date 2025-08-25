@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+SRC_HYPR=$HOME/dotfiles/.config/hypr
+SRC_WAYBAR=$HOME/dotfiles/.config/waybar
+LINK_DIR=$HOME/.local/share/hyprconfig
+MAX=7
+
+if [ ! -d $LINK_DIR ]; then
+    mkdir -p $LINK_DIR
+fi
+
+if [ -z "$1" ]; then
+    echo "No argument provided"
+    exit 1
+fi
+
+name="$1"
+echo $name
+
+if [ "$name" -gt "$MAX" ]; then
+    echo "Name cannot be greater than $MAX"
+    exit 1
+fi
+
+# change wallpaper
+if [ -f "$SRC_HYPR/wallpapers/$1.jpg" ]; then
+    ln -sf $SRC_HYPR/wallpapers/$1.jpg $LINK_DIR/activewallpaper
+    swww img $SRC_HYPR/wallpapers/$1.jpg
+elif [ -f "$SRC_HYPR/wallpapers/$1.png" ]; then
+    ln -sf $SRC_HYPR/wallpapers/$1.png $LINK_DIR/activewallpaper
+    swww img $SRC_HYPR/wallpapers/$1.png
+elif [ -f "$SRC_HYPR/wallpapers/$1.gif" ]; then
+    ln -sf $SRC_HYPR/wallpapers/$1.gif $LINK_DIR/activewallpaper
+    swww img $SRC_HYPR/wallpapers/$1.gif
+fi
+
+# chage hyprland border colors
+ln -sf $SRC_HYPR/colors/$1.conf $LINK_DIR/activecolor.conf
+
+# change waybar colors
+ln -sf $SRC_WAYBAR/colors/$1.css $LINK_DIR/activewaybar.css
+$HOME/dotfiles/.config/waybar/scripts/reload-waybar.sh

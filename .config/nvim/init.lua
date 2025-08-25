@@ -60,7 +60,7 @@ end, {})
 augroup('JSIndent', { clear = true })
 autocmd('FileType', {
     group = 'JSIndent',
-    pattern = { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact' },
+    pattern = { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', "json" },
     callback = function()
         vim.bo.tabstop = 2
         vim.bo.shiftwidth = 2
@@ -346,5 +346,5 @@ require('nvim-highlight-colors').setup({})
 vim.cmd [[
     colorscheme jellybeans
     hi SignColumn ctermbg=NONE guibg=NONE
-    hi StatusLine gui=none
+    hi StatusLine gui=none ctermfg=188 guifg=#e8e8d3 guibg=NONE ctermbg=NONE
 ]]

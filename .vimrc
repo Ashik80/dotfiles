@@ -229,17 +229,17 @@ augroup END
 function! FileName()
     return expand('%') == '' ? '[No Name]' : expand('%:.')
 endfunction
-function! CocStatus()
-    let l:status = coc#status()
-    if l:status == ''
-        return ''
-    endif
-    return '  | '.l:status
-endfunction
+"function! CocStatus()
+"    let l:status = coc#status()
+"    if l:status == ''
+"        return ''
+"    endif
+"    return '  | '.l:status
+"endfunction
 set statusline=
 set statusline+=%{GitBranch()}
 set statusline+=%{FileName()}
-set statusline+=%{CocStatus()}
+" set statusline+=%{CocStatus()}
 set statusline+=\ %m
 set statusline+=\ %r
 set statusline+=%=
@@ -252,9 +252,11 @@ call plug#begin()
 Plug 'Exafunction/windsurf.vim', { 'branch': 'main' }
 Plug 'lilydjwg/colorizer'
 Plug 'airblade/vim-gitgutter'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'sheerun/vim-polyglot'
 Plug 'nanotech/jellybeans.vim'
+if executable("node")
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+endif
 " Plug 'junegunn/seoul256.vim'
 " Plug 'sjl/badwolf'
 " Plug 'morhetz/gruvbox'
@@ -268,18 +270,18 @@ let g:coc_enable_locationlist = 0
 autocmd User CocLocationsChange CocList --normal location
 
 function! CocHelperFocusFloat() abort
-  let winid = coc#float#get_float_win()
-  if winid > 0
-    exec winid . "wincmd w"
-  endif
+    let winid = coc#float#get_float_win()
+    if winid > 0
+        exec winid . "wincmd w"
+    endif
 endfunction
 
 function! ShowDocumentation()
-  if CocAction('hasProvider', 'hover')
-    call CocActionAsync('doHover')
-  else
-    call feedkeys('K', 'in')
-  endif
+    if CocAction('hasProvider', 'hover')
+        call CocActionAsync('doHover')
+    else
+        call feedkeys('K', 'in')
+    endif
 endfunction
 
 nnoremap <silent> K :call ShowDocumentation()<CR>
@@ -358,6 +360,7 @@ colorscheme jellybeans
 
 " For default/jellybeans theme
 hi SignColumn ctermbg=NONE guibg=NONE
+hi StatusLine gui=none ctermfg=188 guifg=#e8e8d3 guibg=NONE ctermbg=NONE
 
 " For badwolf theme
 " colorscheme badwolf
