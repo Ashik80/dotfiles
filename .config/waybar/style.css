@@ -18,28 +18,24 @@
 }
 
 .modules-left {
-  padding-left: 8px;
-  padding-right: 8px;
+  padding: 0 8px;
   border-radius: 10px;
   background-color: @background;
   margin-left: 8px;
 }
 
 .modules-center {
-  padding-left: 8px;
-  padding-right: 8px;
+  padding: 0 8px;
   border-radius: 10px;
   background-color: @background;
 }
 
 .modules-right {
-  padding-left: 8px;
-  padding-right: 8px;
+  padding: 0 8px;
   border-radius: 10px;
   background-color: @background;
   margin-right: 8px;
 }
-
 
 #workspaces button:hover {
   border-bottom: 3px solid @primary-color;
@@ -71,7 +67,12 @@
   margin: 0 7.5px;
 }
 
-#bluetooth:hover {
+#cpu:hover,
+#battery:hover,
+#network:hover,
+#bluetooth:hover,
+#pulseaudio:hover,
+#clock:hover {
     border-bottom: 3px solid @primary-color;
 }
 
