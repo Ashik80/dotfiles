@@ -60,7 +60,7 @@ end, {})
 augroup('JSIndent', { clear = true })
 autocmd('FileType', {
     group = 'JSIndent',
-    pattern = { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', "json" },
+    pattern = { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', "json", "css" },
     callback = function()
         vim.bo.tabstop = 2
         vim.bo.shiftwidth = 2
