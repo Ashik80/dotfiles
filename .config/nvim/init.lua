@@ -18,6 +18,8 @@ vim.o.clipboard = "unnamedplus"
 vim.o.writebackup = false
 vim.o.winborder = "solid"
 vim.o.guicursor = ""
+vim.opt.listchars = { tab = "▸ ", trail = "·" }
+vim.opt.list = true
 
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd

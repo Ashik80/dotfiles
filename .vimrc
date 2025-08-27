@@ -32,7 +32,9 @@ set clipboard=unnamedplus
 set hidden
 set nobackup
 set nowritebackup
-
+set list
+set listchars=tab:▸\ ,trail:·
+    
 " Cursor change
 " let &t_SI = "\e[6 q"
 " let &t_SR = "\e[4 q"
