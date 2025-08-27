@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+hyprkittyswitcher $(hyprctl clients | grep title: | sed 's/.*:\s//' | fzf)

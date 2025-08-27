@@ -2,7 +2,7 @@
 
 window_name="$1"
 
-unix_socket=$(ls -1tr /tmp/kitty-$(whoami)-* | sort -k 2 | head -n 1)
+unix_socket=$(ls -1tr /tmp/kitty-$(whoami)-* | head -n 1)
 
 if [[ -z "$unix_socket" ]]; then
     notify-send "Error: No kitty socket found"
