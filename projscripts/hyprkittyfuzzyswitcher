@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
+# kitty_command=~/.local/kitty.app/bin/kitten
+kitty_command=kitten
 sockets=$(ls -1tr /tmp/kitty-$(whoami)-*)
 
 windows=()
 for socket in $sockets; do
-    window_name=$(~/.local/kitty.app/bin/kitten @ --to unix:"$socket" ls | jq -r --arg window_name "$window_name" '.[].tabs[].windows[].title')
+    window_name=$($kitty_command @ --to unix:"$socket" ls | jq -r --arg window_name "$window_name" '.[].tabs[].windows[].title')
 
     windows+=("$window_name")
 done

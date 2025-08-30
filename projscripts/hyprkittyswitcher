@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 
+# kitty_command=~/.local/kitty.app/bin/kitten
+kitty_command=kitten
 window_name="$1"
 
 sockets=$(ls -1tr /tmp/kitty-$(whoami)-*)
 
 for socket in $sockets; do
-    window_id=$(~/.local/kitty.app/bin/kitten @ --to unix:"$socket" ls | jq -r --arg window_name "$window_name" '.[].tabs[].windows[] | select(.title == $window_name).id')
+    window_id=$($kitty_command @ --to unix:"$socket" ls | jq -r --arg window_name "$window_name" '.[].tabs[].windows[] | select(.title == $window_name).id')
 
     if [[ -n "$window_id" ]]; then
         unix_socket="$socket"
 
-        ~/.local/kitty.app/bin/kitten @ --to unix:"$unix_socket" focus-window --match id:"$window_id"
+        $kitty_command @ --to unix:"$unix_socket" focus-window --match id:"$window_id"
 
         sleep 0.1
 

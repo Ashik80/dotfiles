@@ -46,7 +46,7 @@
   "cpu": {
     "interval": 5,
     "format": "󰍛",
-    "on-click": "~/.local/kitty.app/bin/kitty -e btop"
+    "on-click": "kitty -e btop"
   },
   "clock": {
     "format": "{:%A %I:%M %p}",
@@ -64,7 +64,7 @@
     "tooltip-format-disconnected": "Disconnected",
     "interval": 3,
     "nospacing": 1,
-    "on-click": "~/.local/kitty.app/bin/kitty --title=Impala -e impala"
+    "on-click": "kitty --title=Impala -e impala"
   },
   "battery": {
     "format": "{capacity}% {icon}",
@@ -97,7 +97,7 @@
   },
   "pulseaudio": {
     "format": "{icon}",
-    "on-click": "~/.local/kitty.app/bin/kitty --title=WireMix -e wiremix",
+    "on-click": "kitty --title=WireMix -e wiremix",
     "on-click-right": "pamixer -t",
     "tooltip-format": "Playing at {volume}%",
     "scroll-step": 5,
