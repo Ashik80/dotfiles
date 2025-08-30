@@ -1,3 +1,14 @@
 #!/usr/bin/env bash
 
-hyprkittyswitcher $(hyprctl clients | grep title: | sed 's/.*:\s//' | fzf)
+sockets=$(ls -1tr /tmp/kitty-$(whoami)-*)
+
+windows=()
+for socket in $sockets; do
+    window_name=$(~/.local/kitty.app/bin/kitten @ --to unix:"$socket" ls | jq -r --arg window_name "$window_name" '.[].tabs[].windows[].title')
+
+    windows+=("$window_name")
+done
+
+window_name=$(printf "%s\n" "${windows[@]}" | fzf)
+
+hyprkittyswitcher "$window_name"

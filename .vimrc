@@ -23,7 +23,7 @@ set termguicolors
 set mouse=a
 set wildmenu
 set wildoptions=pum
-set wildignore=**/.git/*,**/node_modules/**,**/dist/**,**/tmp/**
+set wildignore=**/.git/*,**/node_modules/**,**/dist/**,**/tmp/**,**/ios/**,**/android/**
 set path=**
 set splitbelow
 set splitright
@@ -34,7 +34,8 @@ set nobackup
 set nowritebackup
 set list
 set listchars=tab:▸\ ,trail:·
-    
+set fillchars=eob:\ 
+
 " Cursor change
 " let &t_SI = "\e[6 q"
 " let &t_SR = "\e[4 q"
@@ -49,6 +50,7 @@ xnoremap < <gv
 xnoremap J :move '>+1<CR>gv=gv
 xnoremap K :move '<-2<CR>gv=gv
 nnoremap <leader>cp :let @+ = expand("%:.")<CR>
+nnoremap <leader>ff :find<space>
 
 " Lazygit
 if executable("lazygit")
@@ -108,7 +110,7 @@ function! FindFilesToQf(pattern)
     cw
 endfunction
 command! -nargs=1 FindFiles call FindFilesToQf(<f-args>)
-nnoremap <leader>ff :FindFiles<space>
+"nnoremap <leader>ff :FindFiles<space>
 
 " Update tag on save
 " augroup AutoTagUpdate

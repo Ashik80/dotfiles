@@ -8,7 +8,7 @@ vim.o.smartindent = true
 vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.o.swapfile = false
-vim.o.wildignore = "**/.git/*,**/node_modules/**,**/dist/**,**/tmp/**"
+vim.o.wildignore = "**/.git/*,**/node_modules/**,**/dist/**,**/tmp/**,**/ios/**,**/android/**"
 vim.o.path = "**"
 vim.o.hlsearch = false
 vim.o.splitbelow = true
@@ -18,8 +18,10 @@ vim.o.clipboard = "unnamedplus"
 vim.o.writebackup = false
 vim.o.winborder = "solid"
 vim.o.guicursor = ""
-vim.opt.listchars = { tab = "▸ ", trail = "·" }
-vim.opt.list = true
+-- vim.o.listchars = "tab:▸ ,trail:·"
+vim.o.listchars = "tab:  ,trail:·"
+vim.o.list = true
+vim.o.fillchars = "eob: "
 
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
@@ -34,6 +36,7 @@ vim.keymap.set('n', '<leader>cp', ':let @+ = expand("%:.")<CR>')
 vim.keymap.set('t', '<C-w>N', '<C-\\><C-n>')
 vim.keymap.set('t', '<C-w>w', '<C-\\><C-n><C-w>w')
 vim.keymap.set('t', '<C-w><C-w>', '<C-\\><C-n><C-w>w')
+vim.keymap.set("n", "<leader>ff", ":find<space>")
 
 -- Lazygit
 if vim.fn.executable("lazygit") == 1 then
@@ -147,7 +150,7 @@ end
 vim.api.nvim_create_user_command("FindFiles", function(opts)
   find_files_to_qf(opts.args)
 end, { nargs = 1 })
-vim.keymap.set("n", "<leader>ff", ":FindFiles<space>")
+-- vim.keymap.set("n", "<leader>ff", ":FindFiles<space>")
 
 -- Git blame
 local function git_blame_selection()
@@ -267,7 +270,8 @@ vim.o.statusline = '%{v:lua.git_branch()}%{v:lua.file_name()} %m %r%=%y | %l,%c'
 
 -- Plugins
 vim.pack.add({
-    { src = 'https://github.com/nanotech/jellybeans.vim' },
+    -- { src = 'https://github.com/nanotech/jellybeans.vim' },
+    { src = 'https://github.com/vague2k/vague.nvim' },
     { src = 'https://github.com/Exafunction/windsurf.vim', version = 'main' },
     { src = 'https://github.com/neovim/nvim-lspconfig' },
     { src = 'https://github.com/lewis6991/gitsigns.nvim' },
@@ -346,7 +350,10 @@ require('nvim-highlight-colors').setup({})
 
 -- Theme
 vim.cmd [[
-    colorscheme jellybeans
-    hi SignColumn ctermbg=NONE guibg=NONE
-    hi StatusLine gui=none ctermfg=188 guifg=#e8e8d3 guibg=NONE ctermbg=NONE
+    "colorscheme jellybeans
+    "hi Normal ctermbg=NONE guibg=NONE
+    "hi SignColumn ctermbg=NONE guibg=NONE
+    "hi StatusLine gui=none ctermfg=188 guifg=#e8e8d3 guibg=NONE ctermbg=NONE
+    colorscheme vague
+    hi StatusLine guibg=None ctermbg=None
 ]]
