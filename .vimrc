@@ -77,6 +77,7 @@ autocmd! BufEnter,BufWinEnter *.py {
     call setreg('l', "y}Oprint('\<c-r>\"', \<c-r>\")\<esc>")
 }
 
+" Grepping
 set grepprg=rg\ --no-heading\ --column
 nnoremap <leader>fg :grep!<space>
 

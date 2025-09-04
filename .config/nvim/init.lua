@@ -56,6 +56,18 @@ autocmd('TermClose', {
 vim.o.grepprg = "rg --no-heading --column"
 vim.keymap.set('n', '<leader>fg', ':grep!<space>')
 
+-- Finding
+function FindFunc(cmdarg, cmdline)
+  local cmd = string.format(
+    "rg --files --hidden -g '!.git' | rg -i '%s'",
+    cmdarg
+  )
+  return vim.fn.systemlist(cmd)
+end
+if vim.fn.executable("rg") == 1 then
+  vim.o.findfunc = "v:lua.FindFunc"
+end
+
 -- Clean no name buffers
 vim.api.nvim_create_user_command("CleanNoNameBuffers", function()
   vim.cmd [[bufdo if bufname('%') == '' && line('.') == 1 && getline('.') == '' | bdelete | endif]]
