@@ -59,7 +59,7 @@ vim.keymap.set('n', '<leader>fg', ':grep!<space>')
 -- Finding
 function FindFunc(cmdarg, cmdline)
   local cmd = string.format(
-    "rg --files --hidden -g '!.git' | rg -i '%s'",
+    [[find . -type d \( -name node_modules -o -name .git \) -prune -o -type f -print | grep -i '%s']],
     cmdarg
   )
   return vim.fn.systemlist(cmd)
@@ -162,7 +162,7 @@ end
 vim.api.nvim_create_user_command("FindFiles", function(opts)
   find_files_to_qf(opts.args)
 end, { nargs = 1 })
--- vim.keymap.set("n", "<leader>ff", ":FindFiles<space>")
+vim.keymap.set("n", "<leader>fq", ":FindFiles<space>")
 
 -- Git blame
 local function git_blame_selection()

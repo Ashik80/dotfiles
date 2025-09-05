@@ -1,7 +1,5 @@
-command = bash --login
-
-foreground = #e8e8d3
-background = #151515
+foreground = #cdcdcd
+background = #141415
 
 # theme = gruvbox-material-dark
 # theme = GruvboxDark

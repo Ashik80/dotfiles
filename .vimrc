@@ -111,7 +111,7 @@ function! FindFilesToQf(pattern)
     cw
 endfunction
 command! -nargs=1 FindFiles call FindFilesToQf(<f-args>)
-"nnoremap <leader>ff :FindFiles<space>
+nnoremap <leader>fq :FindFiles<space>
 
 " Update tag on save
 " augroup AutoTagUpdate
