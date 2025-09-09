@@ -50,7 +50,6 @@ xnoremap < <gv
 xnoremap J :move '>+1<CR>gv=gv
 xnoremap K :move '<-2<CR>gv=gv
 nnoremap <leader>cp :let @+ = expand("%:.")<CR>
-nnoremap <leader>ff :find<space>
 
 " Lazygit
 if executable("lazygit")

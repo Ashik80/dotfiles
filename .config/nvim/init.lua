@@ -22,6 +22,9 @@ vim.o.guicursor = ""
 vim.o.listchars = "tab:  ,trail:·"
 vim.o.list = true
 vim.o.fillchars = "eob: "
+vim.o.wildmode = "noselect:lastused,full"
+vim.o.wildoptions = "pum,fuzzy"
+vim.o.pumheight = 15
 
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
@@ -57,16 +60,38 @@ vim.o.grepprg = "rg --no-heading --column"
 vim.keymap.set('n', '<leader>fg', ':grep!<space>')
 
 -- Finding
+files_cache = {}
 function FindFunc(cmdarg, cmdline)
-  local cmd = string.format(
-    [[find . -type d \( -name node_modules -o -name .git \) -prune -o -type f -print | grep -i '%s']],
-    cmdarg
-  )
-  return vim.fn.systemlist(cmd)
+  if #files_cache == 0 then
+    local cmd = string.format(
+      [[find . -type d \( -name node_modules -o -name .git -o -name dist -o -name *_cache -o -name __pycache__ -o -name android -o -name ios \) -prune -o -type f -print]]
+    )
+    files_cache = vim.fn.systemlist(cmd)
+  end
+  if cmdarg == "" then
+    return files_cache
+  else
+    return vim.fn.matchfuzzy(files_cache, cmdarg)
+  end
 end
 if vim.fn.executable("rg") == 1 then
   vim.o.findfunc = "v:lua.FindFunc"
 end
+augroup('CmdComplete', { clear = true })
+autocmd('CmdlineChanged', {
+    group = 'CmdComplete',
+    pattern = { ':' },
+    callback = function()
+        vim.fn.wildtrigger()
+    end
+})
+autocmd('CmdlineEnter', {
+    group = 'CmdComplete',
+    pattern = { ':' },
+    callback = function()
+        files_cache = {}
+    end
+})
 
 -- Clean no name buffers
 vim.api.nvim_create_user_command("CleanNoNameBuffers", function()
