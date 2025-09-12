@@ -1,0 +1,104 @@
+--- config.def.h	2025-09-12 18:08:43.548314823 +0600
++++ config.h	2025-09-12 18:40:51.393707712 +0600
+@@ -5,7 +5,7 @@
+  *
+  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
+  */
+-static char *font = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";
++static char *font = "Hack Nerd Font:pixelsize=22:antialias=true:autohint=true";
+ static int borderpx = 2;
+ 
+ /*
+@@ -96,32 +96,32 @@ unsigned int tabspaces = 8;
+ /* Terminal colors (16 first used in escape sequence) */
+ static const char *colorname[] = {
+ 	/* 8 normal colors */
+-	"black",
+-	"red3",
+-	"green3",
+-	"yellow3",
+-	"blue2",
+-	"magenta3",
+-	"cyan3",
+-	"gray90",
++	"#141415", // "black",
++	"#d8647e", // "red3",
++	"#7fa563", // "green3",
++	"#e8b589", // "yellow3",
++	"#7e98e8", // "blue2",
++	"#bb9dbd", // "magenta3",
++	"#b4d4cf", // "cyan3",
++	"#606079", // "gray90",
+ 
+ 	/* 8 bright colors */
+-	"gray50",
+-	"red",
+-	"green",
+-	"yellow",
+-	"#5c5cff",
+-	"magenta",
+-	"cyan",
+-	"white",
++	"#c3c3d5", // "gray50",
++	"#d8647e", // "red",
++	"#7fa563", // "green",
++	"#e8b589", // "yellow",
++	"#7e98e8", // "#5c5cff",
++	"#bb9dbd", // "magenta",
++	"#b4d4cf", // "cyan",
++	"#cdcdcd", // "white",
+ 
+ 	[255] = 0,
+ 
+ 	/* more colors can be added after 255 to use with DefaultXX */
+ 	"#cccccc",
+ 	"#555555",
+-	"gray90", /* default foreground colour */
+-	"black", /* default background colour */
++	"#cdcdcd", // "gray90", /* default foreground colour */
++	"#141415", // "black", /* default background colour */
+ };
+ 
+ 
+@@ -176,6 +176,8 @@ static uint forcemousemod = ShiftMask;
+  */
+ static MouseShortcut mshortcuts[] = {
+ 	/* mask                 button   function        argument       release */
++	{ ShiftMask,            Button4, kscrollup,      {.i = +1} },
++    { ShiftMask,            Button5, kscrolldown,    {.i = +1} },
+ 	{ XK_ANY_MOD,           Button2, selpaste,       {.i = 0},      1 },
+ 	{ ShiftMask,            Button4, ttysend,        {.s = "\033[5;2~"} },
+ 	{ XK_ANY_MOD,           Button4, ttysend,        {.s = "\031"} },
+@@ -184,7 +186,7 @@ static MouseShortcut mshortcuts[] = {
+ };
+ 
+ /* Internal keyboard shortcuts. */
+-#define MODKEY Mod1Mask
++#define MODKEY Mod4Mask
+ #define TERMMOD (ControlMask|ShiftMask)
+ 
+ static Shortcut shortcuts[] = {
+@@ -193,16 +195,18 @@ static Shortcut shortcuts[] = {
+ 	{ ControlMask,          XK_Print,       toggleprinter,  {.i =  0} },
+ 	{ ShiftMask,            XK_Print,       printscreen,    {.i =  0} },
+ 	{ XK_ANY_MOD,           XK_Print,       printsel,       {.i =  0} },
+-	{ TERMMOD,              XK_Prior,       zoom,           {.f = +1} },
+-	{ TERMMOD,              XK_Next,        zoom,           {.f = -1} },
+-	{ TERMMOD,              XK_Home,        zoomreset,      {.f =  0} },
++	{ TERMMOD,              XK_plus,        zoom,           {.f = +1} },
++	{ TERMMOD,              XK_underscore,  zoom,           {.f = -1} },
++	{ TERMMOD,              XK_parenright,  zoomreset,      {.f =  0} },
+ 	{ TERMMOD,              XK_C,           clipcopy,       {.i =  0} },
+ 	{ TERMMOD,              XK_V,           clippaste,      {.i =  0} },
+ 	{ TERMMOD,              XK_Y,           selpaste,       {.i =  0} },
+ 	{ ShiftMask,            XK_Insert,      selpaste,       {.i =  0} },
+ 	{ TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
+-	{ ShiftMask,            XK_Page_Up,     kscrollup,      {.i = -1} },
+-    { ShiftMask,            XK_Page_Down,   kscrolldown,    {.i = -1} },
++	{ TERMMOD,              XK_K,           kscrollup,      {.i = +1} },
++    { TERMMOD,              XK_J,           kscrolldown,    {.i = +1} },
++	{ TERMMOD,              XK_U,           kscrollup,      {.i = +50} },
++    { TERMMOD,              XK_D,           kscrolldown,    {.i = +50} },
+ };
+ 
+ /*

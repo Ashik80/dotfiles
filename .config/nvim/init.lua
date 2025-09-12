@@ -8,6 +8,7 @@ vim.o.smartindent = true
 vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.o.swapfile = false
+vim.o.termguicolors = true
 vim.o.wildignore = "**/.git/*,**/node_modules/**,**/dist/**,**/tmp/**,**/ios/**,**/android/**"
 vim.o.path = "**"
 vim.o.hlsearch = false
@@ -74,9 +75,7 @@ function FindFunc(cmdarg, cmdline)
     return vim.fn.matchfuzzy(files_cache, cmdarg)
   end
 end
-if vim.fn.executable("rg") == 1 then
-  vim.o.findfunc = "v:lua.FindFunc"
-end
+vim.o.findfunc = "v:lua.FindFunc"
 augroup('CmdComplete', { clear = true })
 autocmd('CmdlineChanged', {
     group = 'CmdComplete',
