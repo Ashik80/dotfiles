@@ -4,13 +4,13 @@ FILENAME=$HOME/Pictures/Screenshots/$(date +%Y-%m-%d-%H-%M-%S).png
 
 case $1 in
 	root)
-        import -window root $FILENAME
+        import -window root "$FILENAME"
 		;;
 	window)
-        import -window $(xdotool selectwindow) $FILENAME
+        import -window "$(xdotool selectwindow)" "$FILENAME"
 		;;
 	region)
-        import -window root -crop "$(slop)" $FILENAME
+        import -window root -crop "$(slop)" "$FILENAME"
 		;;
     *)
         echo "usage: xscreenshot.sh [root|window|region]"
@@ -18,6 +18,6 @@ case $1 in
         ;;
 esac
 
-xclip -selection clipboard -t image/png $FILENAME
+xclip -selection clipboard -t image/png "$FILENAME"
 
 notify-send "Screenshot saved to $FILENAME"

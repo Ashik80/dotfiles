@@ -1,22 +1,37 @@
 --- config.def.h	2025-09-11 19:29:25.057471437 +0600
-+++ config.h	2025-09-12 19:05:28.264426619 +0600
-@@ -1,12 +1,12 @@
++++ config.h	2025-09-13 21:15:40.117348357 +0600
+@@ -1,21 +1,23 @@
  /* See LICENSE file for copyright and license details. */
  
  /* appearance */
 -static const unsigned int borderpx  = 1;        /* border pixel of windows */
-+static const unsigned int borderpx  = 2;        /* border pixel of windows */
++static const unsigned int borderpx  = 3;        /* border pixel of windows */
  static const unsigned int snap      = 32;       /* snap pixel */
  static const int showbar            = 1;        /* 0 means no bar */
  static const int topbar             = 1;        /* 0 means bottom bar */
 -static const char *fonts[]          = { "monospace:size=10" };
 -static const char dmenufont[]       = "monospace:size=10";
+-static const char col_gray1[]       = "#222222";
 +static const char *fonts[]          = { "Hack Nerd Font:size=15" };
 +static const char dmenufont[]       = "Hack Nerd Font:size=15";
- static const char col_gray1[]       = "#222222";
++static const char col_gray1[]       = "#141415";
  static const char col_gray2[]       = "#444444";
  static const char col_gray3[]       = "#bbbbbb";
-@@ -34,7 +34,7 @@ static const Rule rules[] = {
+-static const char col_gray4[]       = "#eeeeee";
++static const char col_gray4[]       = "#cdcdcd";
+ static const char col_cyan[]        = "#005577";
++static const char col_yellow[]      = "#e8b589";
++
+ static const char *colors[][3]      = {
+ 	/*               fg         bg         border   */
+-	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
+-	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
++	[SchemeNorm] = { col_gray4, col_gray1,  col_gray2 },
++	[SchemeSel]  = { col_gray1, col_yellow, col_yellow  },
+ };
+ 
+ /* tagging */
+@@ -34,7 +36,7 @@ static const Rule rules[] = {
  /* layout(s) */
  static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
  static const int nmaster     = 1;    /* number of clients in master area */
@@ -25,7 +40,7 @@
  static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
  static const int refreshrate = 120;  /* refresh rate (per second) for client move/resize */
  
-@@ -46,7 +46,7 @@ static const Layout layouts[] = {
+@@ -46,7 +48,7 @@ static const Layout layouts[] = {
  };
  
  /* key definitions */
@@ -34,15 +49,24 @@
  #define TAGKEYS(KEY,TAG) \
  	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
  	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-@@ -59,22 +59,28 @@ static const Layout layouts[] = {
+@@ -58,23 +60,43 @@ static const Layout layouts[] = {
+ 
  /* commands */
  static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
- static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 -static const char *termcmd[]  = { "st", NULL };
++static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_yellow, "-sf", col_gray4, NULL };
 +static const char *termcmd[] = { "st", NULL };
 +static const char *browsercmd[] = { "chromium", "--new-window", "--ozone-platform=x11", NULL };
 +static const char *chatgptcmd[] = { "chromium", "--new-window", "--ozone-platform=x11", "--app=https://chatgpt.com/", "--profile-directory=Default", NULL };
 +static const char *claudecmd[] = { "chromium", "--new-window", "--ozone-platform=x11", "--app=https://claude.ai/", "--profile-directory=Default", NULL };
++static const char *youtubecmd[] = { "chromium", "--new-window", "--ozone-platform=x11", "--app=https://youtube.com/", "--profile-directory=Default", NULL };
++static const char *whatsappcmd[] = { "chromium", "--new-window", "--ozone-platform=x11", "--app=https://web.whatsapp.com/", "--profile-directory=Default", NULL };
++static const char *calendarcmd[] = { "chromium", "--new-window", "--ozone-platform=x11", "--app=https://calendar.google.com/calendar", "--profile-directory=Profile 1", NULL };
++static const char *slackcmd[] = { "chromium", "--new-window", "--ozone-platform=x11", "--app=https://getmanzil.slack.com", "--profile-directory=Profile 1", NULL };
++static const char *discordcmd[] = { "chromium", "--new-window", "--ozone-platform=x11", "--app=https://discord.com/channels/@me", "--profile-directory=Profile 1", NULL };
++static const char *refdwmbar[] = { "setdwmbar.sh", NULL };
++static const char *signalappcmd[] = { "signal-desktop", NULL };
  
  static const Key keys[] = {
  	/* modifier                     key        function        argument */
@@ -55,6 +79,13 @@
 +	{ MODKEY,                       XK_b,      spawn,          {.v = browsercmd } },
 +	{ MODKEY,                       XK_a,      spawn,          {.v = chatgptcmd } },
 +	{ MODKEY|ShiftMask,             XK_a,      spawn,          {.v = claudecmd } },
++	{ MODKEY,                       XK_y,      spawn,          {.v = youtubecmd } },
++	{ MODKEY,                       XK_c,      spawn,          {.v = calendarcmd } },
++	{ MODKEY,                       XK_g,      spawn,          {.v = signalappcmd } },
++	{ MODKEY|Mod1Mask,              XK_g,      spawn,          {.v = slackcmd } },
++	{ MODKEY|ControlMask,           XK_g,      spawn,          {.v = discordcmd } },
++	{ MODKEY|ShiftMask,             XK_g,      spawn,          {.v = whatsappcmd } },
++	{ MODKEY,                       XK_r,      spawn,          {.v = refdwmbar } },
  	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
  	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
  	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
