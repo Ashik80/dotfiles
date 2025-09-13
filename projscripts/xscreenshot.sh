@@ -10,7 +10,8 @@ case $1 in
         import -window "$(xdotool selectwindow)" "$FILENAME"
 		;;
 	region)
-        import -window root -crop "$(slop)" "$FILENAME"
+        REGION=$(slop) || exit 1
+        import -window root -crop "$REGION" "$FILENAME"
 		;;
     *)
         echo "usage: xscreenshot.sh [root|window|region]"
