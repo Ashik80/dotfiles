@@ -1,5 +1,5 @@
 --- config.def.h	2025-09-11 19:29:25.057471437 +0600
-+++ config.h	2025-09-13 21:15:40.117348357 +0600
++++ config.h	2025-09-14 00:11:34.744082405 +0600
 @@ -1,21 +1,23 @@
  /* See LICENSE file for copyright and license details. */
  
@@ -49,7 +49,7 @@
  #define TAGKEYS(KEY,TAG) \
  	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
  	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-@@ -58,23 +60,43 @@ static const Layout layouts[] = {
+@@ -58,23 +60,55 @@ static const Layout layouts[] = {
  
  /* commands */
  static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
@@ -67,6 +67,12 @@
 +static const char *discordcmd[] = { "chromium", "--new-window", "--ozone-platform=x11", "--app=https://discord.com/channels/@me", "--profile-directory=Profile 1", NULL };
 +static const char *refdwmbar[] = { "setdwmbar.sh", NULL };
 +static const char *signalappcmd[] = { "signal-desktop", NULL };
++static const char *screenshotregion[] = { "xscreenshot.sh", "region", NULL };
++static const char *screenshotwindow[] = { "xscreenshot.sh", "window", NULL };
++static const char *screenshotroot[] = { "xscreenshot.sh", "root", NULL };
++static const char *screenrecordregion[] = { "xscreenrecord.sh", "region", NULL };
++static const char *screenrecordroot[] = { "xscreenrecord.sh", "root", NULL };
++static const char *screenrecordrootaudio[] = { "xscreenrecord.sh", "root-audio", NULL };
  
  static const Key keys[] = {
  	/* modifier                     key        function        argument */
@@ -86,6 +92,12 @@
 +	{ MODKEY|ControlMask,           XK_g,      spawn,          {.v = discordcmd } },
 +	{ MODKEY|ShiftMask,             XK_g,      spawn,          {.v = whatsappcmd } },
 +	{ MODKEY,                       XK_r,      spawn,          {.v = refdwmbar } },
++	{ 0,                            XK_Print,  spawn,          {.v = screenshotregion } },
++	{ ShiftMask,                    XK_Print,  spawn,          {.v = screenshotwindow } },
++	{ MODKEY|ShiftMask,             XK_Print,  spawn,          {.v = screenshotroot } },
++	{ Mod1Mask,                     XK_Print,  spawn,          {.v = screenrecordregion } },
++	{ Mod1Mask|ShiftMask,           XK_Print,  spawn,          {.v = screenrecordroot } },
++	{ MODKEY|Mod1Mask,              XK_Print,  spawn,          {.v = screenrecordrootaudio } },
  	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
  	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
  	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
