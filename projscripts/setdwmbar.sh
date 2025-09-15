@@ -85,7 +85,6 @@ BLUETOOTH_STATUS=$(bluetoothctl show | awk '/Powered/ {print $2}')
 
 if [ "$BLUETOOTH_STATUS" = "yes" ]; then
     BLUETOOTH=" ${BLUETOOTH_ICON} |"
-    # bluetoothctl info | grep 'Name' > /dev/null
     if bluetoothctl info | grep 'Name' > /dev/null; then
         BLUETOOTH_DEVICE_NAME=$(bluetoothctl info | grep "Name" | sed 's/\s*Name:\s*//')
         BLUETOOTH=" ${BLUETOOTH_ICON} ${BLUETOOTH_DEVICE_NAME} |"
@@ -94,5 +93,20 @@ else
     BLUETOOTH_ICON=""
 fi
 
+# Brightness
+BRIGHTNESS=$(cat /sys/class/backlight/intel_backlight/brightness)
+MAX_BRIGHTNESS=$(cat /sys/class/backlight/intel_backlight/max_brightness)
+BRIGHTNESS_PERCENTAGE=$(( BRIGHTNESS * 100 / MAX_BRIGHTNESS ))
+BRIGHTNESS_ICON="󰃟"
+BRIGHTNESS="${BRIGHTNESS_ICON} ${BRIGHTNESS_PERCENTAGE}%"
+
+# Recording
+RECORDING_ICON="󰕧"
+if [ -f /tmp/xscreenrecord.pid ]; then
+    RECORDING=" ${RECORDING_ICON} Rec |"
+else
+    RECORDING=""
+fi
+
 # Set dwm status
-xsetroot -name "${BLUETOOTH} ${DATE} | ${VOLUME} | ${SIGNAL} | ${BATTERY}"
+xsetroot -name "${BLUETOOTH}${RECORDING} ${DATE} | ${BRIGHTNESS} | ${VOLUME} | ${SIGNAL} | ${BATTERY}"
