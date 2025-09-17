@@ -1,5 +1,5 @@
---- config.def.h	2025-09-11 19:29:25.057471437 +0600
-+++ config.h	2025-09-15 15:07:11.774332162 +0600
+--- config.def.h	2025-09-17 13:36:35.455112085 +0600
++++ config.h	2025-09-17 14:46:10.428258749 +0600
 @@ -1,21 +1,25 @@
  /* See LICENSE file for copyright and license details. */
  
@@ -67,19 +67,19 @@
 +static const char *calendarcmd[] = { "chromium", "--new-window", "--ozone-platform=x11", "--app=https://calendar.google.com/calendar", "--profile-directory=Profile 1", NULL };
 +static const char *slackcmd[] = { "chromium", "--new-window", "--ozone-platform=x11", "--app=https://getmanzil.slack.com", "--profile-directory=Profile 1", NULL };
 +static const char *discordcmd[] = { "chromium", "--new-window", "--ozone-platform=x11", "--app=https://discord.com/channels/@me", "--profile-directory=Profile 1", NULL };
-+static const char *refdwmbar[] = { "setdwmbar.sh", NULL };
++static const char *refdwmbar[] = { "/bin/sh", "-c", "~/dotfiles/projscripts/setdwmbar.sh", NULL };
 +static const char *signalappcmd[] = { "signal-desktop", NULL };
-+static const char *screenshotregion[] = { "xscreenshot.sh", "region", NULL };
-+static const char *screenshotwindow[] = { "xscreenshot.sh", "window", NULL };
-+static const char *screenshotroot[] = { "xscreenshot.sh", "root", NULL };
-+static const char *screenrecordregion[] = { "/bin/sh", "-c", "xscreenrecord.sh region && setdwmbar.sh", NULL };
-+static const char *screenrecordroot[] = { "/bin/sh", "-c", "xscreenrecord.sh root && setdwmbar.sh", NULL };
-+static const char *screenrecordrootaudio[] = { "/bin/sh", "-c", "xscreenrecord.sh root-audio && setdwmbar.sh", NULL };
-+static const char *increasebrightness[] = { "/bin/sh", "-c", "xbrightness.sh -inc 10 && setdwmbar.sh", NULL };
-+static const char *decreasebrightness[] = { "/bin/sh", "-c", "xbrightness.sh -dec 10 && setdwmbar.sh", NULL };
-+static const char *raiseaudio[] = { "/bin/sh", "-c", "pactl set-sink-volume @DEFAULT_SINK@ +5% && setdwmbar.sh", NULL };
-+static const char *loweraudio[] = { "/bin/sh", "-c", "pactl set-sink-volume @DEFAULT_SINK@ -5% && setdwmbar.sh", NULL };
-+static const char *muteaudio[] = { "/bin/sh", "-c", "pactl set-sink-mute @DEFAULT_SINK@ toggle && setdwmbar.sh", NULL };
++static const char *screenshotregion[] = { "/bin/sh", "-c", "~/dotfiles/projscripts/xscreenshot.sh region", NULL };
++static const char *screenshotwindow[] = { "/bin/sh", "-c", "~/dotfiles/projscripts/xscreenshot.sh window", NULL };
++static const char *screenshotroot[] = { "/bin/sh", "-c", "~/dotfiles/projscripts/xscreenshot.sh root", NULL };
++static const char *screenrecordregion[] = { "/bin/sh", "-c", "~/dotfiles/projscripts/xscreenrecord.sh region && ~/dotfiles/projscripts/setdwmbar.sh", NULL };
++static const char *screenrecordroot[] = { "/bin/sh", "-c", "~/dotfiles/projscripts/xscreenrecord.sh root && ~/dotfiles/projscripts/setdwmbar.sh", NULL };
++static const char *screenrecordrootaudio[] = { "/bin/sh", "-c", "~/dotfiles/projscripts/xscreenrecord.sh root-audio && ~/dotfiles/projscripts/setdwmbar.sh", NULL };
++static const char *increasebrightness[] = { "/bin/sh", "-c", "~/dotfiles/projscripts/xbrightness.sh -inc 10 && ~/dotfiles/projscripts/setdwmbar.sh", NULL };
++static const char *decreasebrightness[] = { "/bin/sh", "-c", "~/dotfiles/projscripts/xbrightness.sh -dec 10 && ~/dotfiles/projscripts/setdwmbar.sh", NULL };
++static const char *raiseaudio[] = { "/bin/sh", "-c", "pactl set-sink-volume @DEFAULT_SINK@ +5% && ~/dotfiles/projscripts/setdwmbar.sh", NULL };
++static const char *loweraudio[] = { "/bin/sh", "-c", "pactl set-sink-volume @DEFAULT_SINK@ -5% && ~/dotfiles/projscripts/setdwmbar.sh", NULL };
++static const char *muteaudio[] = { "/bin/sh", "-c", "pactl set-sink-mute @DEFAULT_SINK@ toggle && ~/dotfiles/projscripts/setdwmbar.sh", NULL };
  
  static const Key keys[] = {
 -	/* modifier                     key        function        argument */

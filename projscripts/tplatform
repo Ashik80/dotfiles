@@ -2,7 +2,7 @@
 
 function create_session_and_window() {
     tmux new -ds platform -c $HOME/src/ManzilApp/platform-$1
-    tmux rename-window -t platform:0 $1
+    tmux rename-window -t platform:1 $1
 }
 
 function create_new_window() {

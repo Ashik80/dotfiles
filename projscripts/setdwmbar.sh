@@ -8,7 +8,7 @@ else
     VOLUME_ICON="󰕾"
 fi
 
-MIC_MUTE_STATUS="$(pactl get-source-mute @DEFAULT_SINK@)"
+MIC_MUTE_STATUS="$(pactl get-source-mute @DEFAULT_SOURCE@)"
 if [ "$MIC_MUTE_STATUS" = "Mute: yes" ]; then
     MIC_ICON="󰍭"
 else
@@ -54,8 +54,8 @@ fi
 SIGNAL="${SIGNAL_ICON} ${NETWORK_NAME}"
 
 # Battery
-BATTERY_CAPACITY=$(cat /sys/class/power_supply/BAT1/capacity)
-BATTERY_STATUS=$(cat /sys/class/power_supply/BAT1/status)
+BATTERY_CAPACITY=$(cat /sys/class/power_supply/BAT*/capacity)
+BATTERY_STATUS=$(cat /sys/class/power_supply/BAT*/status)
 
 if [ "$BATTERY_STATUS" = "Charging" ]; then
     BATTERY_ICON="󰂄"
