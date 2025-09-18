@@ -59,7 +59,7 @@ BATTERY_STATUS=$(cat /sys/class/power_supply/BAT*/status)
 
 if [ "$BATTERY_STATUS" = "Charging" ]; then
     BATTERY_ICON="󰂄"
-elif [ "$BATTERY_STATUS" = "Discharging" ]; then
+elif [ "$BATTERY_STATUS" = "Discharging" ] || [ "$BATTERY_STATUS" = "Not charging" ]; then
     if [ "$BATTERY_CAPACITY" -lt 20 ]; then
         BATTERY_ICON="󰁻"
     elif [ "$BATTERY_CAPACITY" -lt 40 ]; then
