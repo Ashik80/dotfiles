@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 ~/dotfiles/projscripts/xsetkeyboard.sh
 
 while true; do
