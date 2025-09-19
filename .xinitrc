@@ -2,6 +2,8 @@
 
 ~/dotfiles/projscripts/xsetkeyboard.sh
 
+~/dotfiles/projscripts/settouchpad.sh
+
 while true; do
     ~/dotfiles/projscripts/setdwmbar.sh
 
