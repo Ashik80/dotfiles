@@ -33,20 +33,24 @@ elif [ "$SIGNAL_PERCENTAGE" -gt 100 ]; then
     SIGNAL_PERCENTAGE=100
 fi
 
-if [ "$SIGNAL_PERCENTAGE" -eq 0 ]; then
-    SIGNAL_ICON="󰤭"
-elif [ "$SIGNAL_PERCENTAGE" -lt 20 ]; then
-    SIGNAL_ICON="󰤬"
-elif [ "$SIGNAL_PERCENTAGE" -lt 40 ]; then
-    SIGNAL_ICON="󰤟"
-elif [ "$SIGNAL_PERCENTAGE" -lt 60 ]; then
-    SIGNAL_ICON="󰤢"
-elif [ "$SIGNAL_PERCENTAGE" -lt 80 ]; then
-    SIGNAL_ICON="󰤥"
-elif [ "$SIGNAL_PERCENTAGE" -lt 100 ]; then
-    SIGNAL_ICON="󰤨"
-elif [ "$SIGNAL_PERCENTAGE" -eq 100 ]; then
-    SIGNAL_ICON="󰤨"
+if [ ! -z "$RSSI" ]; then
+    if [ "$SIGNAL_PERCENTAGE" -eq 0 ]; then
+        SIGNAL_ICON="󰤭"
+    elif [ "$SIGNAL_PERCENTAGE" -lt 20 ]; then
+        SIGNAL_ICON="󰤬"
+    elif [ "$SIGNAL_PERCENTAGE" -lt 40 ]; then
+        SIGNAL_ICON="󰤟"
+    elif [ "$SIGNAL_PERCENTAGE" -lt 60 ]; then
+        SIGNAL_ICON="󰤢"
+    elif [ "$SIGNAL_PERCENTAGE" -lt 80 ]; then
+        SIGNAL_ICON="󰤥"
+    elif [ "$SIGNAL_PERCENTAGE" -lt 100 ]; then
+        SIGNAL_ICON="󰤨"
+    elif [ "$SIGNAL_PERCENTAGE" -eq 100 ]; then
+        SIGNAL_ICON="󰤨"
+    else
+        SIGNAL_ICON="󰤭"
+    fi
 else
     SIGNAL_ICON="󰤭"
 fi
