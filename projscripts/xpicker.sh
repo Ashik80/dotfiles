@@ -8,4 +8,6 @@ RESULT=$(eval "$(xdotool getmouselocation --shell)" && import -window root "$IMA
 
 rm -f "$IMAGE"
 
-echo "$RESULT"
+notify-send "$RESULT"
+
+xclip -selection clipboard <<< "$RESULT"

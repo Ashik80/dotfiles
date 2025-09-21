@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+OPTIONS=("Wifi" "Volume" "Bluetooth" "Exit")
+
+dmenu_command() {
+    local args=("$@")
+    local title="${args[0]}"
+    local list=("${args[@]:1}")
+    local length="${#list[@]}"
+
+    local choice
+    choice="$(printf '%s\n' "${list[@]}" | dmenu -fn "Menlo Nerd Font:size=15" -nb "#141415" -nf "#cdcdcd" -sb "#e8b589" -sf "#141415" -p "$title" -l "$length" -b -i)"
+
+    echo "$choice"
+}
+
+bluetooth_power() {
+    local bt_power_options=("On" "Off" "Exit")
+    local bt_power_choice
+
+    bt_power_choice="$(dmenu_command "Bluetooth Power:" "${bt_power_options[@]}")"
+
+    case $bt_power_choice in
+        "On")
+            bluetoothctl power on
+            ;;
+        "Off")
+            bluetoothctl power off
+            ;;
+        "Exit")
+            exit 0
+            ;;
+    esac
+}
+
+bluetooth_connect_to_device() {
+    local bluetoothctl_devices
+    local bt_device_ids
+    local bt_device_names
+    local bt_sel_device_name
+    local bt_sel_device_id
+
+    bluetoothctl_devices="$(bluetoothctl devices)"
+    bt_device_ids="$(echo "$bluetoothctl_devices" | awk '/Device/ {print $2}')"
+    bt_device_names="$(echo "$bluetoothctl_devices" | grep 'Device' | sed 's/Device \(\w\+:\)\+\w\+\s//')"
+
+    bt_sel_device_name="$(dmenu_command "Select Device:" "${bt_device_names[@]}")"
+
+    if [ -z "$bt_sel_device_name" ]; then
+        exit 0
+    fi
+
+    bt_sel_device_id="$(echo "$bluetoothctl_devices" | grep "$bt_sel_device_name" | awk '{print $2}')"
+
+    notify-send "Connecting to $bt_sel_device_id - $bt_sel_device_name"
+
+    bluetoothctl connect "$bt_sel_device_id"
+}
+
+CHOICE="$(dmenu_command "Utility Launcher:" "${OPTIONS[@]}")"
+
+case $CHOICE in
+    "Wifi")
+        st -e impala
+        ;;
+    "Volume")
+        st -e wiremix
+        ;;
+    "Bluetooth")
+        options=("Connect" "Disconnect" "Power")
+        choice="$(dmenu_command "Bluetooth:" "${options[@]}")"
+
+        case $choice in
+            "Connect")
+                bluetooth_connect_to_device
+                ;;
+            "Disconnect")
+                bluetoothctl disconnect
+                ;;
+            "Power")
+                bluetooth_power
+                ;;
+        esac
+        ;;
+    "Exit")
+        exit 0
+        ;;
+esac

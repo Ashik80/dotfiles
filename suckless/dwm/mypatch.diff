@@ -1,5 +1,5 @@
---- config.def.h	2025-09-17 13:36:35.455112085 +0600
-+++ config.h	2025-09-17 14:46:10.428258749 +0600
+--- config.def.h	2025-09-11 19:29:25.057471437 +0600
++++ config.h	2025-09-21 14:52:22.228556534 +0600
 @@ -1,21 +1,25 @@
  /* See LICENSE file for copyright and license details. */
  
@@ -14,8 +14,8 @@
 -static const char *fonts[]          = { "monospace:size=10" };
 -static const char dmenufont[]       = "monospace:size=10";
 -static const char col_gray1[]       = "#222222";
-+static const char *fonts[]          = { "Hack Nerd Font:size=15" };
-+static const char dmenufont[]       = "Hack Nerd Font:size=15";
++static const char *fonts[]          = { "Menlo Nerd Font:size=15" };
++static const char dmenufont[]       = "Menlo Nerd Font:size=15";
 +static const char col_gray1[]       = "#141415";
  static const char col_gray2[]       = "#444444";
  static const char col_gray3[]       = "#bbbbbb";
@@ -51,7 +51,7 @@
  #define TAGKEYS(KEY,TAG) \
  	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
  	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-@@ -58,44 +62,86 @@ static const Layout layouts[] = {
+@@ -58,44 +62,88 @@ static const Layout layouts[] = {
  
  /* commands */
  static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
@@ -80,6 +80,7 @@
 +static const char *raiseaudio[] = { "/bin/sh", "-c", "pactl set-sink-volume @DEFAULT_SINK@ +5% && ~/dotfiles/projscripts/setdwmbar.sh", NULL };
 +static const char *loweraudio[] = { "/bin/sh", "-c", "pactl set-sink-volume @DEFAULT_SINK@ -5% && ~/dotfiles/projscripts/setdwmbar.sh", NULL };
 +static const char *muteaudio[] = { "/bin/sh", "-c", "pactl set-sink-mute @DEFAULT_SINK@ toggle && ~/dotfiles/projscripts/setdwmbar.sh", NULL };
++static const char *utilityselector[] = { "/bin/sh", "-c", "~/dotfiles/projscripts/xutilitylauncher.sh", NULL };
  
  static const Key keys[] = {
 -	/* modifier                     key        function        argument */
@@ -141,6 +142,7 @@
 +	{ 0,                            XF86XK_AudioRaiseVolume,   spawn,          {.v = raiseaudio } },
 +	{ 0,                            XF86XK_AudioLowerVolume,   spawn,          {.v = loweraudio } },
 +	{ 0,                            XF86XK_AudioMute,          spawn,          {.v = muteaudio } },
++	{ MODKEY,                       XK_u,                      spawn,          {.v = utilityselector } },
 +	{ MODKEY,                       XK_j,                      focusstack,     {.i = +1 } },
 +	{ MODKEY,                       XK_k,                      focusstack,     {.i = -1 } },
 +	{ MODKEY,                       XK_i,                      incnmaster,     {.i = +1 } },
