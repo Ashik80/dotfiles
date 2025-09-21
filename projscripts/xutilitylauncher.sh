@@ -1,17 +1,26 @@
 #!/usr/bin/env bash
 
-OPTIONS=("Wifi" "Volume" "Bluetooth" "Exit")
+OPTIONS=("Wifi" "Volume" "Bluetooth" "Power" "Exit")
 
 dmenu_command() {
     local args=("$@")
     local title="${args[0]}"
     local list=("${args[@]:1}")
     local length="${#list[@]}"
-
     local choice
+
     choice="$(printf '%s\n' "${list[@]}" | dmenu -fn "Menlo Nerd Font:size=15" -nb "#141415" -nf "#cdcdcd" -sb "#e8b589" -sf "#141415" -p "$title" -l "$length" -b -i)"
 
     echo "$choice"
+}
+
+dmenu_input() {
+    local title=$1
+    local input
+
+    input="$(echo | dmenu -fn "Menlo Nerd Font:size=15" -nb "#141415" -nf "#cdcdcd" -sb "#e8b589" -sf "#141415" -p "$title" -b)"
+
+    echo "$input"
 }
 
 bluetooth_power() {
@@ -57,6 +66,32 @@ bluetooth_connect_to_device() {
     bluetoothctl connect "$bt_sel_device_id"
 }
 
+power_options() {
+    local power_options=("Power Off" "Reboot" "Exit")
+    local choice
+    local password
+
+    choice="$(dmenu_command "Power Options:" "${power_options[@]}")"
+
+    case $choice in
+        "Power Off")
+            if ! poweroff 2>/dev/null; then
+                password="$(dmenu_input "Enter Password:")"
+                echo "$password" | sudo -S poweroff
+            fi
+            ;;
+        "Reboot")
+            if ! reboot 2>/dev/null; then
+                password="$(dmenu_input "Enter Password:")"
+                echo "$password" | sudo -S reboot
+            fi
+            ;;
+        "Exit")
+            exit 0
+            ;;
+    esac
+}
+
 CHOICE="$(dmenu_command "Utility Launcher:" "${OPTIONS[@]}")"
 
 case $CHOICE in
@@ -81,6 +116,9 @@ case $CHOICE in
                 bluetooth_power
                 ;;
         esac
+        ;;
+    "Power")
+        power_options
         ;;
     "Exit")
         exit 0
