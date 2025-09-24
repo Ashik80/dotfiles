@@ -23,7 +23,7 @@ set termguicolors
 set mouse=a
 set wildmenu
 set wildoptions=pum
-set wildignore=**/.git/*,**/node_modules/**,**/dist/**,**/tmp/**,**/ios/**,**/android/**
+set wildignore=**/.git/*,**/node_modules/**,**/dist/**,**/tmp/**,**/ios/**,**/android/**,**/.next/**
 set path=**
 set splitbelow
 set splitright

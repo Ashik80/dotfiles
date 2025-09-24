@@ -9,7 +9,7 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.o.swapfile = false
 vim.o.termguicolors = true
-vim.o.wildignore = "**/.git/*,**/node_modules/**,**/dist/**,**/tmp/**,**/ios/**,**/android/**"
+vim.o.wildignore = "**/.git/*,**/node_modules/**,**/dist/**,**/tmp/**,**/ios/**,**/android/**,**/.next/**"
 vim.o.path = "**"
 vim.o.hlsearch = false
 vim.o.splitbelow = true
@@ -65,7 +65,7 @@ files_cache = {}
 function FindFunc(cmdarg, cmdline)
   if #files_cache == 0 then
     local cmd = string.format(
-      [[find . -type d \( -name node_modules -o -name .git -o -name dist -o -name *_cache -o -name __pycache__ -o -name android -o -name ios \) -prune -o -type f -print]]
+      [[find . -type d \( -name node_modules -o -name .git -o -name dist -o -name *_cache -o -name __pycache__ -o -name android -o -name ios -o -name .next \) -prune -o -type f -print]]
     )
     files_cache = vim.fn.systemlist(cmd)
   end

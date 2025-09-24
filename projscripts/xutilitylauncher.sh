@@ -102,7 +102,7 @@ case $CHOICE in
         st -e wiremix
         ;;
     "Bluetooth")
-        options=("Connect" "Disconnect" "Power")
+        options=("Connect" "Disconnect" "Scan" "Power")
         choice="$(dmenu_command "Bluetooth:" "${options[@]}")"
 
         case $choice in
@@ -111,6 +111,9 @@ case $CHOICE in
                 ;;
             "Disconnect")
                 bluetoothctl disconnect
+                ;;
+            "Scan")
+                bluetoothctl scan on
                 ;;
             "Power")
                 bluetooth_power
