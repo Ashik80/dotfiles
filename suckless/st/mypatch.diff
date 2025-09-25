@@ -1,5 +1,5 @@
 --- config.def.h	2025-09-12 18:08:43.548314823 +0600
-+++ config.h	2025-09-21 14:05:52.218938927 +0600
++++ config.h	2025-09-21 14:57:58.487831611 +0600
 @@ -5,7 +5,7 @@
   *
   * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
@@ -39,7 +39,7 @@
 -	"magenta",
 -	"cyan",
 -	"white",
-+	"#c3c3d5", // "gray50",
++	"#606079", // "gray50",
 +	"#d8647e", // "red",
 +	"#7fa563", // "green",
 +	"#e8b589", // "yellow",
