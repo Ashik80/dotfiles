@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 echo "Updating bashrc"
+
 echo -e "\n" >> ~/.bashrc
-echo -e "\n" >> ~/.bashrc
-cat ~/Documents/bashrc-snippet >> ~/.bashrc
+cat <<- "EOF" >> ~/.bashrc
+[ -f "$HOME/Documents/bashrc-snippet" ] && source "$HOME/Documents/bashrc-snippet"
+EOF
 echo "Done."
