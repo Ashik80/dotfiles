@@ -1,5 +1,5 @@
---- config.def.h	2025-09-12 18:08:43.548314823 +0600
-+++ config.h	2025-09-21 14:57:58.487831611 +0600
+--- config.def.h	2025-10-03 13:11:00.285643807 +0600
++++ config.h	2025-10-03 14:26:20.662063413 +0600
 @@ -5,7 +5,7 @@
   *
   * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
@@ -69,7 +69,7 @@
  	{ XK_ANY_MOD,           Button2, selpaste,       {.i = 0},      1 },
  	{ ShiftMask,            Button4, ttysend,        {.s = "\033[5;2~"} },
  	{ XK_ANY_MOD,           Button4, ttysend,        {.s = "\031"} },
-@@ -184,7 +186,7 @@ static MouseShortcut mshortcuts[] = {
+@@ -184,25 +186,30 @@ static MouseShortcut mshortcuts[] = {
  };
  
  /* Internal keyboard shortcuts. */
@@ -77,8 +77,11 @@
 +#define MODKEY Mod4Mask
  #define TERMMOD (ControlMask|ShiftMask)
  
++static const char *dump_screen[] = { "/bin/sh", "-c", "cat > /tmp/capture", NULL };
++
  static Shortcut shortcuts[] = {
-@@ -193,16 +195,18 @@ static Shortcut shortcuts[] = {
+ 	/* mask                 keysym          function        argument */
+ 	{ XK_ANY_MOD,           XK_Break,       sendbreak,      {.i =  0} },
  	{ ControlMask,          XK_Print,       toggleprinter,  {.i =  0} },
  	{ ShiftMask,            XK_Print,       printscreen,    {.i =  0} },
  	{ XK_ANY_MOD,           XK_Print,       printsel,       {.i =  0} },
@@ -99,6 +102,7 @@
 +    { TERMMOD,              XK_J,           kscrolldown,    {.i = +1} },
 +	{ TERMMOD,              XK_U,           kscrollup,      {.i = +50} },
 +    { TERMMOD,              XK_D,           kscrolldown,    {.i = +50} },
++    { TERMMOD,              XK_E,           externalpipe,   {.v = dump_screen} },
  };
  
  /*
