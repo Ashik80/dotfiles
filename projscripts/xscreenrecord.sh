@@ -15,13 +15,13 @@ start () {
             echo "$!" > /tmp/xscreenrecord.pid
             ;;
         region)
-            REGION=$(slop -f "%X %Y %H %W") || exit 1
+            REGION=$(slop -D -f "%X %Y %H %W") || exit 1
             read -r X Y H W <<< "$REGION"
             ffmpeg -f x11grab -framerate 30 -video_size "${W}x${H}" -i ":0.0+${X},${Y}" -c:v libx264 -preset ultrafast -crf 18 "$FILENAME" &
             echo "$!" > /tmp/xscreenrecord.pid
             ;;
         region-audio)
-            REGION=$(slop -f "%X %Y %H %W") || exit 1
+            REGION=$(slop -D -f "%X %Y %H %W") || exit 1
             read -r X Y H W <<< "$REGION"
             ffmpeg -f x11grab -framerate 30 -video_size "${W}x${H}" -i ":0.0+${X},${Y}" -f pulse -i default -c:v libx264 -preset ultrafast -crf 18 -c:a aac "$FILENAME" &
             echo "$!" > /tmp/xscreenrecord.pid

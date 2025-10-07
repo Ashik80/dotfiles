@@ -10,7 +10,7 @@ case $1 in
         import -window "$(xdotool selectwindow)" "$FILENAME"
 		;;
 	region)
-        REGION=$(slop) || exit 1
+        REGION=$(slop -D) || exit 1
         import -window root -crop "$REGION" "$FILENAME"
 		;;
     *)
