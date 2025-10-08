@@ -23,7 +23,7 @@ set termguicolors
 set mouse=a
 set wildmenu
 set wildoptions=pum
-set wildignore=**/.git/*,**/node_modules/**,**/dist/**,**/tmp/**,**/ios/**,**/android/**,**/.next/**
+set wildignore=**/.git/*,**/node_modules/**,**/dist/**,**/tmp/**,**/ios/**,**cache**,**/android/**,**/.next/**
 set path=**
 set splitbelow
 set splitright
@@ -77,7 +77,7 @@ autocmd! BufEnter,BufWinEnter *.py {
 }
 
 " Grepping
-set grepprg=rg\ --no-heading\ --column
+set grepprg=grep\ -Rn\ --exclude-dir={node_modules,.git,dist,*cache*,android,ios,.next}
 nnoremap <leader>fg :grep!<space>
 
 " Fuzzy file finder
