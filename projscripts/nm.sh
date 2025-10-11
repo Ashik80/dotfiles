@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-. ~/dotfiles/projscripts/dmenu_helpers
+# shellcheck disable=SC1091
+. "$HOME/dotfiles/projscripts/dmenu_helpers"
 
 networks="$(nmcli -t -f BSSID,SSID,SIGNAL device wifi)"
 
@@ -13,6 +14,10 @@ options=$(get_ssid_and_signal)
 display=$(echo "$options" | column -t -s '|')
 
 choice_line=$(dmenu_command "Select Network:" "$(echo "$display" | nl -w2 -s'. ')")
+
+if [ -z "$choice_line" ]; then
+    exit 0
+fi
 
 line_num="$(echo "$choice_line" | awk '{print $1}' | sed 's/\.//')"
 

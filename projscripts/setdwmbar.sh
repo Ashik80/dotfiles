@@ -35,11 +35,11 @@ if ! command -v nmcli &> /dev/null; then
     fi
 else
     NETWORK=$(nmcli -t -f ACTIVE,SSID,SIGNAL d wifi | grep ^yes)
-    NETWORK_NAME=$(echo "$NETWORK" | awk -F":" '{print $2}')
-    SIGNAL_PERCENTAGE=$(echo "$NETWORK" | awk -F":" '{print $3}')
+    NETWORK_NAME=$(echo "$NETWORK" | awk -F':' '{print $2}')
+    SIGNAL_PERCENTAGE=$(echo "$NETWORK" | awk -F':' '{print $3}')
 fi
 
-if [ ! -z "$NETWORK_NAME" ]; then
+if [ -n "$NETWORK_NAME" ]; then
     if [ "$SIGNAL_PERCENTAGE" -eq 0 ]; then
         SIGNAL_ICON="󰤭"
     elif [ "$SIGNAL_PERCENTAGE" -lt 20 ]; then

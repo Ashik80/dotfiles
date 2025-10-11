@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-. ~/dotfiles/projscripts/dmenu_helpers
+# shellcheck disable=SC1091
+. "$HOME/dotfiles/projscripts/dmenu_helpers"
 
 OPTIONS=("Wifi" "Volume" "Bluetooth" "Power" "Exit")
 
@@ -25,13 +26,11 @@ bluetooth_power() {
 
 bluetooth_connect_to_device() {
     local bluetoothctl_devices
-    local bt_device_ids
     local bt_device_names
     local bt_sel_device_name
     local bt_sel_device_id
 
     bluetoothctl_devices="$(bluetoothctl devices)"
-    bt_device_ids="$(echo "$bluetoothctl_devices" | awk '/Device/ {print $2}')"
     bt_device_names="$(echo "$bluetoothctl_devices" | grep 'Device' | sed 's/Device \(\w\+:\)\+\w\+\s//')"
 
     bt_sel_device_name="$(dmenu_command "Select Device:" "${bt_device_names[@]}")"
@@ -77,7 +76,11 @@ CHOICE="$(dmenu_command "Utility Launcher:" "${OPTIONS[@]}")"
 
 case $CHOICE in
     "Wifi")
-        st -e impala
+        if ! command -v impala &> /dev/null; then
+            ~/dotfiles/projscripts/nm.sh
+        else
+            st -e impala
+        fi
         ;;
     "Volume")
         st -e wiremix
