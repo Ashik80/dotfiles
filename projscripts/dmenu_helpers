@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+DMENU_FONT="Menlo Nerd Font:size=15"
+DMENU_NB="#141415"
+DMENU_NF="#cdcdcd"
+DMENU_SB="#e8b589"
+DMENU_SF="#141415"
+
+dmenu_command() {
+    local args=("$@")
+    local title="${args[0]}"
+    local list=("${args[@]:1}")
+    local choice
+
+    choice="$(printf '%s\n' "${list[@]}" | dmenu -fn "$DMENU_FONT" -nb "$DMENU_NB" -nf "$DMENU_NF" -sb "$DMENU_SB" -sf "$DMENU_SF" -p "$title" -l 30 -b -i)"
+
+    echo "$choice"
+}
+
+dmenu_input() {
+    local title=$1
+    local input
+
+    input="$(echo | dmenu -fn "$DMENU_FONT" -nb "$DMENU_NB" -nf "$DMENU_NF" -sb "$DMENU_SB" -sf "$DMENU_SF" -p "$title" -b)"
+
+    echo "$input"
+}

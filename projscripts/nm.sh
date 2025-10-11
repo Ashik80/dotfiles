@@ -1,26 +1,8 @@
 #!/usr/bin/env bash
 
+. ~/dotfiles/projscripts/dmenu_helpers
+
 networks="$(nmcli -t -f BSSID,SSID,SIGNAL device wifi)"
-
-dmenu_command() {
-    local args=("$@")
-    local title="${args[0]}"
-    local list=("${args[@]:1}")
-    local choice
-
-    choice="$(printf '%s\n' "${list[@]}" | dmenu -fn "Menlo Nerd Font:size=15" -nb "#141415" -nf "#cdcdcd" -sb "#e8b589" -sf "#141415" -p "$title" -l 30 -b -i)"
-
-    echo "$choice"
-}
-
-dmenu_input() {
-    local title=$1
-    local input
-
-    input="$(echo | dmenu -fn "Menlo Nerd Font:size=15" -nb "#141415" -nf "#cdcdcd" -sb "#e8b589" -sf "#141415" -p "$title" -b)"
-
-    echo "$input"
-}
 
 get_ssid_and_signal() {
     echo "$networks" | sed 's/\(.*\\:[A-Z0-9]*\):\(.*\):\([0-9]*\)$/\1|\2|\3%/' | sed 's/\\//g'
