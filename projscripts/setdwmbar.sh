@@ -24,7 +24,7 @@ DATE=" $(date "+%e %b %Y, %a %I:%M %P")"
 
 # Wifi
 NETWORK_NAME=$(iwctl station wlan0 show | grep 'Connected network' | sed 's/\s*Connected network\s*//' | sed 's/\s*$//')
-RSSI=$(iwctl station wlan0 show | awk '/\sRSSI/ {print $2}')
+RSSI=$(iwctl station wlan0 show | awk '/RSSI/ {print $2}' | head -n 1)
 SIGNAL_PERCENTAGE=$(( (RSSI + 100) * 2 ))
 
 if [ "$SIGNAL_PERCENTAGE" -lt 0 ]; then
@@ -98,8 +98,13 @@ else
 fi
 
 # Brightness
-BRIGHTNESS=$(cat /sys/class/backlight/intel_backlight/brightness)
-MAX_BRIGHTNESS=$(cat /sys/class/backlight/intel_backlight/max_brightness)
+if [ -d "/sys/class/backlight/intel_backlight" ]; then
+    BRIGHTNESS_DIR="/sys/class/backlight/intel_backlight"
+elif [ -d "/sys/class/backlight/amdgpu_bl1" ]; then
+    BRIGHTNESS_DIR="/sys/class/backlight/amdgpu_bl1"
+fi
+BRIGHTNESS=$(cat "${BRIGHTNESS_DIR}/brightness")
+MAX_BRIGHTNESS=$(cat "${BRIGHTNESS_DIR}/max_brightness")
 BRIGHTNESS_PERCENTAGE=$(( BRIGHTNESS * 100 / MAX_BRIGHTNESS ))
 BRIGHTNESS_ICON="󰃟"
 BRIGHTNESS="${BRIGHTNESS_ICON} ${BRIGHTNESS_PERCENTAGE}%"

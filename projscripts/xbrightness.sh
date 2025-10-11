@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 
-BRIGHTNESS_DIR="/sys/class/backlight/intel_backlight"
+if [ -d "/sys/class/backlight/intel_backlight" ]; then
+    BRIGHTNESS_DIR="/sys/class/backlight/intel_backlight"
+elif [ -d "/sys/class/backlight/amdgpu_bl1" ]; then
+    BRIGHTNESS_DIR="/sys/class/backlight/amdgpu_bl1"
+else
+    echo "No backlight directory found"
+    exit 1
+fi
+
 FILE="${BRIGHTNESS_DIR}/brightness"
 MAX_FILE="${BRIGHTNESS_DIR}/max_brightness"
 
