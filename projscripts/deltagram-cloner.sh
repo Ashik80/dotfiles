@@ -9,7 +9,7 @@ add_git_permissions() {
 if [ ! -d $HOME/src/Deltagram ]; then
     cd $HOME/src
 
-    GIT_SSH_COMMAND="ssh -i ~/.ssh/personal" git clone --recurse-submodules git@github.com:The-Deltagram/Deltagram.git
+    GIT_SSH_COMMAND="ssh -i ~/.ssh/personal" git clone --depth 1 --recurse-submodules git@github.com:The-Deltagram/Deltagram.git
 
     ln -s $HOME/Documents/Deltagram/deltagram-env $HOME/src/Deltagram/.env
 
@@ -24,13 +24,13 @@ if [ -d $HOME/src/Deltagram/server ] && [ ! -f $HOME/src/Deltagram/server/.env ]
 fi
 
 if [ -d $HOME/src/Deltagram/client ] && [ ! -f $HOME/src/Deltagram/client/.env ]; then
-    ln -s $HOME/Documents/Deltagram/client-development-env $HOME/src/Deltagram/client/.env.development
+    ln $HOME/Documents/Deltagram/client-development-env $HOME/src/Deltagram/client/.env.development
     cd $HOME/src/Deltagram/client
     add_git_permissions
 fi
 
 if [ -d $HOME/src/Deltagram/admin ] && [ ! -f $HOME/src/Deltagram/admin/.env ]; then
-    ln -s $HOME/Documents/Deltagram/client-development $HOME/src/Deltagram/admin/.env.development
+    ln $HOME/Documents/Deltagram/client-development-env $HOME/src/Deltagram/admin/.env.development
     cd $HOME/src/Deltagram/admin
     add_git_permissions
 fi

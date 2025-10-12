@@ -15,21 +15,28 @@ fi
 
 if [ ! -d "$DIR"/manzil ]; then
     cd "$DIR"
-    GIT_SSH_COMMAND="ssh -i ~/.ssh/office" git clone git@github.com:Manzilapp/manzil.git
+    GIT_SSH_COMMAND="ssh -i ~/.ssh/office" git clone --depth 1 git@github.com:Manzilapp/manzil.git
     cd manzil
     add_git_permissions
 fi
 
 if [ ! -d "$DIR"/platform-be ]; then
     cd "$DIR"
-    GIT_SSH_COMMAND="ssh -i ~/.ssh/office" git clone git@github.com:Manzilapp/platform-be.git
+    GIT_SSH_COMMAND="ssh -i ~/.ssh/office" git clone --depth 1 git@github.com:Manzilapp/platform-be.git
     cd platform-be
     add_git_permissions
 fi
 
 if [ ! -d "$DIR"/platform-fe ]; then
     cd "$DIR"
-    GIT_SSH_COMMAND="ssh -i ~/.ssh/office" git clone git@github.com:Manzilapp/platform-fe.git
+    GIT_SSH_COMMAND="ssh -i ~/.ssh/office" git clone --depth 1 git@github.com:Manzilapp/platform-fe.git
     cd platform-fe
+    add_git_permissions
+fi
+
+if [ ! -d "$DIR"/AdminPortal ]; then
+    cd "$DIR"
+    GIT_SSH_COMMAND="ssh -i ~/.ssh/office" git clone --depth 1 git@github.com:Manzilapp/AdminPortal.git
+    cd AdminPortal
     add_git_permissions
 fi
