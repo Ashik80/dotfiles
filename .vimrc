@@ -251,21 +251,21 @@ set statusline+=%y
 set statusline+=\ \|\ %l,%c
 
 " Plugins
-call plug#begin()
+" call plug#begin()
 
-Plug 'Exafunction/windsurf.vim', { 'branch': 'main' }
-Plug 'lilydjwg/colorizer'
-Plug 'airblade/vim-gitgutter'
-Plug 'sheerun/vim-polyglot'
-Plug 'nanotech/jellybeans.vim'
-if executable("node")
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
-endif
-" Plug 'junegunn/seoul256.vim'
-" Plug 'sjl/badwolf'
-" Plug 'morhetz/gruvbox'
+" Plug 'Exafunction/windsurf.vim', { 'branch': 'main' }
+" Plug 'lilydjwg/colorizer'
+" Plug 'airblade/vim-gitgutter'
+" Plug 'sheerun/vim-polyglot'
+" Plug 'nanotech/jellybeans.vim'
+" if executable("node")
+"     Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" endif
+" " Plug 'junegunn/seoul256.vim'
+" " Plug 'sjl/badwolf'
+" " Plug 'morhetz/gruvbox'
 
-call plug#end()
+" call plug#end()
 
 " Lsp settings
 set tagfunc=CocTagFunc
@@ -356,7 +356,7 @@ augroup Highlights
     autocmd ColorScheme * hi link CocHintSign DiagnosticHint
 augroup END
 
-colorscheme jellybeans
+colorscheme murphy
 
 " For seoul256 theme
 " let g:seoul256_background = 233

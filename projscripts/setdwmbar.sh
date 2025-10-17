@@ -106,8 +106,11 @@ fi
 # Brightness
 if [ -d "/sys/class/backlight/intel_backlight" ]; then
     BRIGHTNESS_DIR="/sys/class/backlight/intel_backlight"
-elif [ -d "/sys/class/backlight/amdgpu_bl1" ]; then
-    BRIGHTNESS_DIR="/sys/class/backlight/amdgpu_bl1"
+else
+    for d in /sys/class/backlight/amdgpu_bl*; do
+        BRIGHTNESS_DIR="$d"
+        break
+    done
 fi
 BRIGHTNESS=$(cat "${BRIGHTNESS_DIR}/brightness")
 MAX_BRIGHTNESS=$(cat "${BRIGHTNESS_DIR}/max_brightness")

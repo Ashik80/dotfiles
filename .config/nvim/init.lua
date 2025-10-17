@@ -335,6 +335,7 @@ vim.lsp.enable({
     'tailwindcss',
     'gopls',
     'terraformls',
+    'jdtls',
 })
 vim.diagnostic.config({ virtual_text = true })
 

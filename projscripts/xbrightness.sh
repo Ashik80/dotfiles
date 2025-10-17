@@ -2,12 +2,19 @@
 
 if [ -d "/sys/class/backlight/intel_backlight" ]; then
     BRIGHTNESS_DIR="/sys/class/backlight/intel_backlight"
-elif [ -d "/sys/class/backlight/amdgpu_bl1" ]; then
-    BRIGHTNESS_DIR="/sys/class/backlight/amdgpu_bl1"
 else
-    echo "No backlight directory found"
-    exit 1
+    for d in /sys/class/backlight/amdgpu_bl*; do
+        BRIGHTNESS_DIR="$d"
+        break
+    done
+
+    if [ -z "$BRIGHTNESS_DIR" ]; then
+        echo "No backlight directory found"
+        exit 1
+    fi
 fi
+
+echo "$BRIGHTNESS_DIR"
 
 FILE="${BRIGHTNESS_DIR}/brightness"
 MAX_FILE="${BRIGHTNESS_DIR}/max_brightness"

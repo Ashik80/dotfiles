@@ -4,6 +4,8 @@
 
 ~/dotfiles/projscripts/settouchpad.sh
 
+~/dotfiles/projscripts/xdisablescreensaver.sh
+
 while true; do
     ~/dotfiles/projscripts/setdwmbar.sh
 
