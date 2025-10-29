@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-git checkout $(git branch | sed 's/.\s*//' | fzf)
