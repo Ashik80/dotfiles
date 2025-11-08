@@ -251,21 +251,19 @@ set statusline+=%y
 set statusline+=\ \|\ %l,%c
 
 " Plugins
-" call plug#begin()
+call plug#begin()
 
-" Plug 'Exafunction/windsurf.vim', { 'branch': 'main' }
-" Plug 'lilydjwg/colorizer'
-" Plug 'airblade/vim-gitgutter'
-" Plug 'sheerun/vim-polyglot'
+Plug 'Exafunction/windsurf.vim', { 'branch': 'main' }
+Plug 'lilydjwg/colorizer'
+Plug 'airblade/vim-gitgutter'
+Plug 'sheerun/vim-polyglot'
 " Plug 'nanotech/jellybeans.vim'
-" if executable("node")
-"     Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" endif
-" " Plug 'junegunn/seoul256.vim'
-" " Plug 'sjl/badwolf'
-" " Plug 'morhetz/gruvbox'
+if executable("node")
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+endif
+Plug 'junegunn/seoul256.vim'
 
-" call plug#end()
+call plug#end()
 
 " Lsp settings
 set tagfunc=CocTagFunc
@@ -293,7 +291,7 @@ nnoremap <silent> <leader>gd <Plug>(coc-definition)
 nnoremap <silent> grr <Plug>(coc-references)
 nnoremap <silent> grn <Plug>(coc-rename)
 nnoremap <silent> gra <Plug>(coc-codeaction-cursor)
-nnoremap <silent> grs :CocList -I symbols<CR>
+nnoremap <silent> gO :CocList -I symbols<CR>
 nnoremap <silent> ]d <Plug>(coc-diagnostic-next)
 nnoremap <silent> [d <Plug>(coc-diagnostic-prev)
 inoremap <silent> <C-k> <C-r>=CocActionAsync('showSignatureHelp')<CR>
@@ -317,7 +315,7 @@ augroup END
 
 augroup coc-formatting
     autocmd!
-    autocmd BufWritePre *.go,*.js,*.jsx,*.ts,*.tsx,*.py,*.json,*.html,*.css call CocAction('format')
+    autocmd BufWritePre *.go,*.js,*.jsx,*.ts,*.tsx,*.py,*.html,*.css call CocAction('format')
 augroup END
 
 " Formatter settings
@@ -356,28 +354,13 @@ augroup Highlights
     autocmd ColorScheme * hi link CocHintSign DiagnosticHint
 augroup END
 
-colorscheme murphy
-
 " For seoul256 theme
-" let g:seoul256_background = 233
-" colo seoul256
+let g:seoul256_background = 233
+colo seoul256
 
 " For default/jellybeans theme
 hi SignColumn ctermbg=NONE guibg=NONE
-hi StatusLine gui=none ctermfg=188 guifg=#e8e8d3 guibg=NONE ctermbg=NONE
-
-" For badwolf theme
-" colorscheme badwolf
-" let g:badwolf_html_link_underline = 0
-" let g:badwolf_css_props_highlight = 1
-
-" For gruvbox theme
-" colorscheme gruvbox
-" hi SignColumn ctermbg=235 guibg=#282828
-" hi GruvboxRedSign guibg=#282828
-" hi GruvboxGreenSign guibg=#282828
-" hi GruvboxYellowSign guibg=#282828
-" hi GruvboxBlueSign guibg=#282828
-" hi GruvboxPurpleSign guibg=#282828
-" hi GruvboxAquaSign guibg=#282828
-" hi GruvboxOrangeSign guibg=#282828
+"hi StatusLine gui=none ctermfg=188 guifg=#e8e8d3 guibg=NONE ctermbg=NONE
+hi StatusLine guibg=NONE ctermbg=NONE
+hi Normal ctermbg=NONE guibg=NONE
+hi LineNr ctermbg=NONE guibg=NONE
