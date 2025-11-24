@@ -1,5 +1,5 @@
---- config.def.h	2025-09-11 19:29:25.057471437 +0600
-+++ config.h	2025-09-21 14:52:22.228556534 +0600
+--- config.def.h	2025-10-22 12:59:31.482882922 +0600
++++ config.h	2025-11-21 21:27:54.483261235 +0600
 @@ -1,21 +1,25 @@
  /* See LICENSE file for copyright and license details. */
  
@@ -14,8 +14,8 @@
 -static const char *fonts[]          = { "monospace:size=10" };
 -static const char dmenufont[]       = "monospace:size=10";
 -static const char col_gray1[]       = "#222222";
-+static const char *fonts[]          = { "Menlo Nerd Font:size=15" };
-+static const char dmenufont[]       = "Menlo Nerd Font:size=15";
++static const char *fonts[]          = { "FiraCode Nerd Font:size=15" };
++static const char dmenufont[]       = "FiraCode Nerd Font:size=15";
 +static const char col_gray1[]       = "#141415";
  static const char col_gray2[]       = "#444444";
  static const char col_gray3[]       = "#bbbbbb";

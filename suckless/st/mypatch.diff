@@ -1,11 +1,11 @@
---- config.def.h	2025-10-03 13:11:00.285643807 +0600
-+++ config.h	2025-10-03 14:26:20.662063413 +0600
+--- config.def.h	2025-10-22 13:49:14.077653308 +0600
++++ config.h	2025-11-21 21:26:14.954568749 +0600
 @@ -5,7 +5,7 @@
   *
   * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
   */
 -static char *font = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";
-+static char *font = "Menlo Nerd Font:pixelsize=22:antialias=true:autohint=true";
++static char *font = "FiraCode Nerd Font:pixelsize=22:antialias=true:autohint=true";
  static int borderpx = 2;
  
  /*
