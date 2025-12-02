@@ -387,6 +387,7 @@ vim.keymap.set('n', '<leader>gh', require('gitsigns').preview_hunk, { noremap = 
 require('nvim-highlight-colors').setup({})
 
 -- Theme
+require('vague').setup({ italic = false })
 vim.cmd [[
     "colorscheme jellybeans
     "hi Normal ctermbg=NONE guibg=NONE

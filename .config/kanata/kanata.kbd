@@ -1,0 +1,64 @@
+(defcfg process-unmapped-keys yes)
+
+(defsrc
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  prnt  ins  del
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl kana lmet lalt           spc            ralt rctl
+)
+
+;; layer aliases
+(defalias nav (layer-while-held nav))
+(defalias num (layer-while-held num))
+(defalias fn (layer-while-held fn))
+(defalias bnav (tap-hold 200 200 esc @nav))
+(defalias enum (tap-hold 200 200 ret @num))
+
+;; home row mods - left hand
+(defalias skmet (tap-hold 200 200 s lmet))
+(defalias dkctl (tap-hold 200 200 d lctl))
+(defalias fksft (tap-hold 200 200 f lsft))
+(defalias gkalt (tap-hold 200 200 g lalt))
+;; home row mods - right hand
+(defalias lkmet (tap-hold 200 200 l rmet))
+(defalias kkctl (tap-hold 200 200 k rctl))
+(defalias jksft (tap-hold 200 200 j rsft))
+(defalias hkalt (tap-hold 200 200 h ralt))
+
+(deflayer base
+  XX  XX   XX      XX      XX      XX      XX   XX     XX      XX      XX      XX      XX   XX   XX   XX
+  XX  XX   q       w       e       r       t    XX     y       u       i       o       p    XX
+  XX  a    @skmet  @dkctl  @fksft  @gkalt  XX   XX     @hkalt  @jksft  @kkctl  @lkmet  ;    XX
+  XX  z    x       c       v       b       XX   XX     n       m       ,       .       /
+  XX  XX   XX      bspc    @bnav   XX      XX   @enum  spc     XX      XX      XX
+  XX  XX   XX      XX              XX                  XX      XX
+)
+
+(deflayer nav
+  XX  XX    XX   XX    XX     XX   XX   XX     XX    XX    XX    XX     XX   XX   XX   XX
+  XX  XX    brdn bru   vold   volu XX   XX     XX    home  pgup  pgdn   end  XX
+  XX  S-'   '    del   tab    XX   XX   XX     left  down  up    right  ins  XX
+  XX  mute  XX   XX    caps   XX   XX   XX     @fn   prnt  prev  next   pp
+  XX  XX    XX   bspc  XX     XX   XX   ret    spc   XX    XX    XX
+  XX  XX    XX   XX           XX               XX    XX
+)
+
+(deflayer num
+  XX  XX   XX     XX    XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX
+  XX  XX   grv    S-grv S--  =    +    XX   -    [    ]    {    }    XX
+  XX  1    2      3     4    5    XX   XX   6    7    8    9    0    XX
+  XX  S-1  S-2    S-3   S-4  S-5  XX   XX   S-6  S-7  S-8  S-9  S-0
+  XX  XX   XX     bspc  \    XX   XX   XX   spc  XX   XX   XX
+  XX  XX   XX     XX           XX           XX   XX
+)
+
+(deflayer fn
+  XX  XX   XX   XX    XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX   XX
+  XX  XX   XX   XX    XX   XX   XX   XX   f11  f12  XX   XX   XX   XX
+  XX  f1   f2   f3    f4   f5   XX   XX   f6   f7   f8   f9   f10  XX
+  XX  XX   XX   XX    XX   XX   XX   XX   XX   XX   XX   XX   XX
+  XX  XX   XX   XX    XX   XX   XX   XX   XX   XX   XX   XX
+  XX  XX   XX     XX           XX         XX   XX
+)
