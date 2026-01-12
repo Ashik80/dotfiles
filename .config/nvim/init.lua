@@ -293,8 +293,8 @@ end
 function git_branch()
   return vim.g.git_branch
 end
-vim.api.nvim_create_augroup('GitBranchAutoUpdate', { clear = true })
-vim.api.nvim_create_autocmd({ 'BufEnter', 'FocusGained' }, {
+augroup('GitBranchAutoUpdate', { clear = true })
+autocmd({ 'BufEnter', 'FocusGained' }, {
   group = 'GitBranchAutoUpdate',
   pattern = { '*' },
   callback = update_git_branch,
@@ -304,6 +304,21 @@ function file_name()
   return name == '' and '[No Name]' or vim.fn.expand('%:.')
 end
 vim.o.statusline = '%{v:lua.git_branch()}%{v:lua.file_name()} %m %r%=%y | %l,%c'
+
+-- Execute scripts
+augroup('ExecuteScripts', { clear = true })
+autocmd('FileType', {
+    group = 'ExecuteScripts',
+    pattern = { 'bash', 'sh' },
+    callback = function()
+        vim.keymap.set('n', '<leader>b', function()
+            vim.cmd('%y')
+            open_scratch_buffer()
+            vim.cmd('put')
+            vim.cmd('%!sh')
+        end, { noremap = true, silent = true })
+    end
+})
 
 -- Plugins
 vim.pack.add({
