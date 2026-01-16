@@ -2,17 +2,14 @@
 TERM = "xterm-256color"
 
 [colors.primary]
-background = "#272e33"
-foreground = "#d3c6aa"
+background = "#141415"
+foreground = "#cdcdcd"
 
 [colors.normal]
 red = "#e67e80"
-blue = "#7fbbb3"
-green = "#a7c080"
-yellow = "#dbbc7f"
 
 [font]
-size = 9
+size = 14
 
 [font.normal]
-family = "FiraMono Nerd Font"
+family = "FiraCode Nerd Font"

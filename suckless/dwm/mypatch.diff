@@ -1,5 +1,5 @@
 --- config.def.h	2025-10-22 12:59:31.482882922 +0600
-+++ config.h	2025-11-21 21:27:54.483261235 +0600
++++ config.h	2026-01-16 15:29:25.651129347 +0600
 @@ -1,21 +1,25 @@
  /* See LICENSE file for copyright and license details. */
  
@@ -58,7 +58,7 @@
 -static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 -static const char *termcmd[]  = { "st", NULL };
 +static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray4, "-sb", col_yellow, "-sf", col_gray1, NULL };
-+static const char *termcmd[] = { "st", NULL };
++static const char *termcmd[] = { "alacritty", NULL };
 +static const char *browsercmd[] = { "chromium", "--new-window", "--ozone-platform=x11", NULL };
 +static const char *chatgptcmd[] = { "chromium", "--new-window", "--ozone-platform=x11", "--app=https://chatgpt.com/", "--profile-directory=Default", NULL };
 +static const char *claudecmd[] = { "chromium", "--new-window", "--ozone-platform=x11", "--app=https://claude.ai/", "--profile-directory=Default", NULL };
