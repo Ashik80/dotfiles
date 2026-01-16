@@ -17,7 +17,11 @@ function create_new_window() {
 }
 
 function change_node_version() {
-    tmux send-keys -t manzil:$1 "nvm use 18" C-m
+    if [ ! -z $2 ]; then
+        tmux send-keys -t manzil:$1 "nvm use $2" C-m
+    else
+        tmux send-keys -t manzil:$1 "nvm use" C-m
+    fi
     tmux send-keys -t manzil:$1 "clear" C-m
 }
 
@@ -27,7 +31,7 @@ if [[ $? == 1 ]]; then
     create_session_and_window
     create_new_window be-server
     create_new_window fe-server
-    change_node_version be-server
+    change_node_version be-server 18
     change_node_version fe-server
 fi
 
