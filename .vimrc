@@ -250,6 +250,21 @@ set statusline+=%=
 set statusline+=%y
 set statusline+=\ \|\ %l,%c
 
+" Execute scripts
+augroup ExecuteScripts
+  autocmd!
+  autocmd FileType bash,sh call ExecuteScriptsSetup()
+augroup END
+function! ExecuteScriptsSetup() abort
+  nnoremap <silent> <buffer> <leader>b :call RunShellBuffer()<CR>
+endfunction
+function! RunShellBuffer() abort
+  %y
+  call OpenScratchBuffer()
+  put
+  %!sh
+endfunction
+
 " Plugins
 call plug#begin()
 
