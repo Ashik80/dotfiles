@@ -1,13 +1,14 @@
-foreground = #cdcdcd
-background = #141415
+# foreground = #cdcdcd
+# background = #141415
+background = "#1f1f1f"
+foreground = "#d4d4d4"
 
-# theme = gruvbox-material-dark
-# theme = GruvboxDark
-
-# font-family = FiraMono Nerd Font
-font-family = SauceCodePro NF Medium
+font-family = FiraCode Nerd Font
 font-size = 15
-# adjust-cell-height = 30%
-# adjust-cursor-height = 30%
-cursor-style = block
+
+adjust-cell-height = 20%
+adjust-cursor-height = 20%
+cursor-style-blink = false
+custom-shader = shaders/cursor_smear.glsl
+
 shell-integration-features = no-cursor

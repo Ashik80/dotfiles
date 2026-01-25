@@ -18,7 +18,7 @@ vim.o.signcolumn = "yes"
 vim.o.clipboard = "unnamedplus"
 vim.o.writebackup = false
 vim.o.winborder = "solid"
-vim.o.guicursor = ""
+-- vim.o.guicursor = ""
 -- vim.o.listchars = "tab:▸ ,trail:·"
 vim.o.listchars = "tab:  ,trail:·"
 vim.o.list = true
@@ -322,8 +322,7 @@ autocmd('FileType', {
 
 -- Plugins
 vim.pack.add({
-    -- { src = 'https://github.com/nanotech/jellybeans.vim' },
-    { src = 'https://github.com/vague2k/vague.nvim' },
+    { src = 'https://github.com/Mofiqul/vscode.nvim' },
     { src = 'https://github.com/Exafunction/windsurf.vim', version = 'main' },
     { src = 'https://github.com/neovim/nvim-lspconfig' },
     { src = 'https://github.com/lewis6991/gitsigns.nvim' },
@@ -402,12 +401,13 @@ vim.keymap.set('n', '<leader>gh', require('gitsigns').preview_hunk, { noremap = 
 require('nvim-highlight-colors').setup({})
 
 -- Theme
-require('vague').setup({ italic = false })
+-- require('vague').setup({ italic = false })
 vim.cmd [[
     "colorscheme jellybeans
     "hi Normal ctermbg=NONE guibg=NONE
     "hi SignColumn ctermbg=NONE guibg=NONE
     "hi StatusLine gui=none ctermfg=188 guifg=#e8e8d3 guibg=NONE ctermbg=NONE
-    colorscheme vague
-    hi StatusLine guibg=None ctermbg=None
+    "colorscheme vague
+    "hi StatusLine guibg=None ctermbg=None
+    colorscheme vscode
 ]]

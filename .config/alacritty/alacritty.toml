@@ -2,8 +2,10 @@
 TERM = "xterm-256color"
 
 [colors.primary]
-background = "#141415"
-foreground = "#cdcdcd"
+# background = "#141415"
+# foreground = "#cdcdcd"
+background = "#1f1f1f"
+foreground = "#d4d4d4"
 
 [colors.normal]
 red = "#e67e80"
