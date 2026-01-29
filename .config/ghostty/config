@@ -1,7 +1,7 @@
-# foreground = #cdcdcd
-# background = #141415
-background = "#1f1f1f"
-foreground = "#d4d4d4"
+# background = "#1f1f1f"
+# foreground = "#d4d4d4"
+background = "#11121d"
+foreground = "#a0a8cd"
 
 font-family = FiraCode Nerd Font
 font-size = 15
@@ -12,3 +12,5 @@ cursor-style-blink = false
 custom-shader = shaders/cursor_smear.glsl
 
 shell-integration-features = no-cursor
+
+window-decoration = false

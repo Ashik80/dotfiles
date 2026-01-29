@@ -31,7 +31,8 @@ local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
 
 -- Mappings
-vim.keymap.set('n', '-', '<cmd>Ex<CR>')
+-- vim.keymap.set('n', '-', '<cmd>Ex<CR>')
+vim.keymap.set('n', '-', '<cmd>Oil<CR>')
 vim.keymap.set({'v', 'x'}, '>', '>gv')
 vim.keymap.set({'v', 'x'}, '<', '<gv')
 vim.keymap.set({'v', 'x'}, 'J', ":move '>+1<CR>gv=gv")
@@ -321,25 +322,28 @@ autocmd('FileType', {
 })
 
 -- Plugins
-vim.pack.add({
-    { src = 'https://github.com/Mofiqul/vscode.nvim' },
-    { src = 'https://github.com/Exafunction/windsurf.vim', version = 'main' },
-    { src = 'https://github.com/neovim/nvim-lspconfig' },
-    { src = 'https://github.com/lewis6991/gitsigns.nvim' },
-    { src = 'https://github.com/brenoprata10/nvim-highlight-colors' },
-    { src = 'https://github.com/nvim-treesitter/nvim-treesitter' }
-})
+local plugins = {
+    'https://github.com/tiagovla/tokyodark.nvim',
+    'https://github.com/Exafunction/windsurf.vim',
+    'https://github.com/neovim/nvim-lspconfig',
+    'https://github.com/lewis6991/gitsigns.nvim',
+    'https://github.com/brenoprata10/nvim-highlight-colors',
+    'https://github.com/nvim-treesitter/nvim-treesitter',
+    'https://github.com/stevearc/oil.nvim'
+}
+
+require("plugger").setup(plugins)
 
 -- Treesitter
-require'nvim-treesitter.configs'.setup({
-    highlight = {
-        enable = true,
-        additional_vim_regex_highlighting = false,
-    },
-    indent = {
-        enable = true
-    }
-})
+-- require'nvim-treesitter.configs'.setup({
+--     highlight = {
+--         enable = true,
+--         additional_vim_regex_highlighting = false,
+--     },
+--     indent = {
+--         enable = true
+--     }
+-- })
 
 -- LSP
 vim.lsp.enable({
@@ -400,14 +404,8 @@ vim.keymap.set('n', '<leader>gh', require('gitsigns').preview_hunk, { noremap = 
 -- Colors
 require('nvim-highlight-colors').setup({})
 
+-- Oil
+require("oil").setup()
+
 -- Theme
--- require('vague').setup({ italic = false })
-vim.cmd [[
-    "colorscheme jellybeans
-    "hi Normal ctermbg=NONE guibg=NONE
-    "hi SignColumn ctermbg=NONE guibg=NONE
-    "hi StatusLine gui=none ctermfg=188 guifg=#e8e8d3 guibg=NONE ctermbg=NONE
-    "colorscheme vague
-    "hi StatusLine guibg=None ctermbg=None
-    colorscheme vscode
-]]
+vim.cmd [[ colorscheme tokyodark ]]

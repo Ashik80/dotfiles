@@ -7,27 +7,20 @@
 // custom settings, run `zed: open default settings` from the
 // command palette
 {
-  "assistant": {
-    "default_model": {
-      "provider": "copilot_chat",
-      "model": "gpt-4o"
-    },
-    "version": "2"
-  },
   "vim_mode": true,
   "ui_font_size": 18,
   // "use_autoclose": false,
-  "restore_on_startup": "none",
+  "restore_on_startup": "empty_tab",
   "soft_wrap": "editor_width",
   "indent_guides": {
-    "enabled": false
+    "enabled": false,
   },
-  "buffer_font_size": 18,
-  "buffer_font_family": "Maple Mono",
+  "buffer_font_size": 16.0,
+  "buffer_font_family": "FiraCode Nerd Font Mono",
   "theme": {
-    "mode": "system",
-    "light": "Jellybeans",
-    "dark": "Jellybeans"
+    "mode": "dark",
+    "dark": "One Dark",
+    "light": "One Light",
   },
   "languages": {
     "Python": {
@@ -35,9 +28,9 @@
       "formatter": {
         "external": {
           "command": "/usr/bin/black",
-          "arguments": ["-"]
-        }
-      }
-    }
-  }
+          "arguments": ["-"],
+        },
+      },
+    },
+  },
 }

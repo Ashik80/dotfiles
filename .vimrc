@@ -37,9 +37,9 @@ set listchars=tab:▸\ ,trail:·
 set fillchars=eob:\ 
 
 " Cursor change
-" let &t_SI = "\e[6 q"
-" let &t_SR = "\e[4 q"
-" let &t_EI = "\e[2 q"
+let &t_SI = "\e[6 q"
+let &t_SR = "\e[4 q"
+let &t_EI = "\e[2 q"
 
 " General mappings
 nnoremap - :Ex<CR>
@@ -268,17 +268,16 @@ endfunction
 " Plugins
 call plug#begin()
 
-Plug 'Exafunction/windsurf.vim', { 'branch': 'main' }
-Plug 'lilydjwg/colorizer'
-Plug 'airblade/vim-gitgutter'
-Plug 'sheerun/vim-polyglot'
-" Plug 'nanotech/jellybeans.vim'
-if executable("node")
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
-endif
-Plug 'junegunn/seoul256.vim'
+let g:plugins = [
+    \ 'https://github.com/Exafunction/windsurf.vim',
+    \ 'https://github.com/lilydjwg/colorizer',
+    \ 'https://github.com/airblade/vim-gitgutter',
+    \ 'https://github.com/sheerun/vim-polyglot',
+    \ 'https://github.com/neoclide/coc.nvim',
+    \ 'https://github.com/junegunn/seoul256.vim',
+    \ ]
 
-call plug#end()
+call plugger#setup(g:plugins)
 
 " Lsp settings
 set tagfunc=CocTagFunc

@@ -1,6 +1,6 @@
 --- config.def.h	2025-10-22 12:59:31.482882922 +0600
-+++ config.h	2026-01-25 17:58:37.164919437 +0600
-@@ -1,21 +1,25 @@
++++ config.h	2026-01-28 16:04:06.153056703 +0600
+@@ -1,21 +1,31 @@
  /* See LICENSE file for copyright and license details. */
  
 +#include <X11/XF86keysym.h>
@@ -14,26 +14,34 @@
 -static const char *fonts[]          = { "monospace:size=10" };
 -static const char dmenufont[]       = "monospace:size=10";
 -static const char col_gray1[]       = "#222222";
+-static const char col_gray2[]       = "#444444";
 +static const char *fonts[]          = { "FiraCode Nerd Font:size=15" };
 +static const char dmenufont[]       = "FiraCode Nerd Font:size=15";
-+static const char col_gray1[]       = "#141415";
- static const char col_gray2[]       = "#444444";
++// static const char col_gray1[]       = "#141415";
++// static const char col_gray2[]       = "#444444";
++// static const char col_gray3[]       = "#bbbbbb";
++// static const char col_gray4[]       = "#cdcdcd";
++// static const char col_cyan[]        = "#005577";
++// static const char col_yellow[]      = "#e8b589";
++static const char col_gray1[]       = "#11121d";
++static const char col_gray2[]       = "#262b3d";
  static const char col_gray3[]       = "#bbbbbb";
 -static const char col_gray4[]       = "#eeeeee";
-+static const char col_gray4[]       = "#cdcdcd";
- static const char col_cyan[]        = "#005577";
-+static const char col_yellow[]      = "#e8b589";
+-static const char col_cyan[]        = "#005577";
++static const char col_gray4[]       = "#a0a8cd";
++static const char col_cyan[]        = "#1c4474";
++static const char col_purple[]      = "#a485dd";
 +
  static const char *colors[][3]      = {
  	/*               fg         bg         border   */
 -	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
 -	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
 +	[SchemeNorm] = { col_gray4, col_gray1,  col_gray2 },
-+	[SchemeSel]  = { col_gray1, col_yellow, col_yellow  },
++	[SchemeSel]  = { col_gray1, col_purple, col_purple  },
  };
  
  /* tagging */
-@@ -34,7 +38,7 @@ static const Rule rules[] = {
+@@ -34,7 +44,7 @@ static const Rule rules[] = {
  /* layout(s) */
  static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
  static const int nmaster     = 1;    /* number of clients in master area */
@@ -42,7 +50,7 @@
  static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
  static const int refreshrate = 120;  /* refresh rate (per second) for client move/resize */
  
-@@ -46,7 +50,7 @@ static const Layout layouts[] = {
+@@ -46,7 +56,7 @@ static const Layout layouts[] = {
  };
  
  /* key definitions */
@@ -51,13 +59,14 @@
  #define TAGKEYS(KEY,TAG) \
  	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
  	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-@@ -58,44 +62,88 @@ static const Layout layouts[] = {
+@@ -58,44 +68,89 @@ static const Layout layouts[] = {
  
  /* commands */
  static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 -static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 -static const char *termcmd[]  = { "st", NULL };
-+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray4, "-sb", col_yellow, "-sf", col_gray1, NULL };
++// static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray4, "-sb", col_yellow, "-sf", col_gray1, NULL };
++static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray4, "-sb", col_purple, "-sf", col_gray1, NULL };
 +static const char *termcmd[] = { "ghostty", NULL };
 +static const char *browsercmd[] = { "chromium", "--new-window", "--ozone-platform=x11", NULL };
 +static const char *chatgptcmd[] = { "chromium", "--new-window", "--ozone-platform=x11", "--app=https://chatgpt.com/", "--profile-directory=Default", NULL };

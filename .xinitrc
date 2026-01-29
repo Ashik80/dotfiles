@@ -12,7 +12,7 @@ while true; do
     sleep $((60 - $(date +%S)))
 done &
 
-feh --bg-fill ~/dotfiles/.config/hypr/wallpapers/3.png
+feh --bg-fill ~/dotfiles/.config/hypr/wallpapers/glowing-purple-cloud.jpg
 
 dunst &
 

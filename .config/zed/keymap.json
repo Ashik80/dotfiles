@@ -15,7 +15,7 @@
       "g f r": "editor::FindAllReferences",
       "ctrl-j": "workspace::ToggleBottomDock",
       "tab": "pane::ActivateNextItem",
-      "shift-tab": "pane::ActivatePrevItem",
+      "shift-tab": "pane::ActivatePreviousItem",
       "ctrl-t": "pane::GoBack"
     }
   },
