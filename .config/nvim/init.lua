@@ -65,17 +65,17 @@ vim.keymap.set('n', '<leader>fg', ':grep!<space>')
 -- Finding
 files_cache = {}
 function FindFunc(cmdarg, cmdline)
-  if #files_cache == 0 then
-    local cmd = string.format(
-      [[find . -type d \( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next \) -prune -o -type f -print]]
-    )
-    files_cache = vim.fn.systemlist(cmd)
-  end
-  if cmdarg == "" then
-    return files_cache
-  else
-    return vim.fn.matchfuzzy(files_cache, cmdarg)
-  end
+    if #files_cache == 0 then
+        local cmd = string.format(
+            [[find . -type d \( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next \) -prune -o -type f -print]]
+        )
+        files_cache = vim.fn.systemlist(cmd)
+    end
+    if cmdarg == "" then
+        return files_cache
+    else
+        return vim.fn.matchfuzzy(files_cache, cmdarg)
+    end
 end
 vim.o.findfunc = "v:lua.FindFunc"
 augroup('CmdComplete', { clear = true })
@@ -96,7 +96,7 @@ autocmd('CmdlineEnter', {
 
 -- Clean no name buffers
 vim.api.nvim_create_user_command("CleanNoNameBuffers", function()
-  vim.cmd [[bufdo if bufname('%') == '' && line('.') == 1 && getline('.') == '' | bdelete | endif]]
+    vim.cmd [[bufdo if bufname('%') == '' && line('.') == 1 && getline('.') == '' | bdelete | endif]]
 end, {})
 
 -- Indent
@@ -141,7 +141,7 @@ local function fuzzy_file_finder()
         cmd = "batcat --theme=ansi --style=numbers --color=always {}"
     end
     local preview_cmd = vim.fn.shellescape(cmd)
-    local fzf_cmd = string.format("rg --files | fzf --preview=%s", preview_cmd)
+    local fzf_cmd = string.format("find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next \\) -prune -o -type f | fzf --preview=%s", preview_cmd)
     local term_buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(0, term_buf)
     vim.cmd("startinsert")
@@ -173,7 +173,7 @@ vim.keymap.set("n", "<leader>fz", fuzzy_file_finder, { noremap = true, silent = 
 
 -- Find files
 local function find_files_to_qf(pattern)
-    local cmd = "rg --files | rg -i " .. vim.fn.shellescape(pattern)
+    local cmd = "find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next \\) -prune -o -type f | grep -i " .. vim.fn.shellescape(pattern)
     local lines = vim.fn.systemlist(cmd)
     if #lines == 0 then
         return
@@ -186,7 +186,7 @@ local function find_files_to_qf(pattern)
     vim.cmd("cw")
 end
 vim.api.nvim_create_user_command("FindFiles", function(opts)
-  find_files_to_qf(opts.args)
+    find_files_to_qf(opts.args)
 end, { nargs = 1 })
 vim.keymap.set("n", "<leader>fq", ":FindFiles<space>")
 
@@ -278,31 +278,31 @@ vim.keymap.set({"v", "x"}, "<leader>q", selection_to_qf, { noremap = true, silen
 -- Statusline
 vim.g.git_branch = ''
 local function update_git_branch()
-  local handle = io.popen("git rev-parse --abbrev-ref HEAD 2>/dev/null")
-  if handle then
-    local branch = handle:read("*l")
-    handle:close()
-    if branch then
-      vim.g.git_branch = ' ' .. vim.trim(branch) .. ' | '
+    local handle = io.popen("git rev-parse --abbrev-ref HEAD 2>/dev/null")
+    if handle then
+        local branch = handle:read("*l")
+        handle:close()
+        if branch then
+            vim.g.git_branch = ' ' .. vim.trim(branch) .. ' | '
+        else
+            vim.g.git_branch = ''
+        end
     else
-      vim.g.git_branch = ''
+        vim.g.git_branch = ''
     end
-  else
-    vim.g.git_branch = ''
-  end
 end
 function git_branch()
-  return vim.g.git_branch
+    return vim.g.git_branch
 end
 augroup('GitBranchAutoUpdate', { clear = true })
 autocmd({ 'BufEnter', 'FocusGained' }, {
-  group = 'GitBranchAutoUpdate',
-  pattern = { '*' },
-  callback = update_git_branch,
+    group = 'GitBranchAutoUpdate',
+    pattern = { '*' },
+    callback = update_git_branch,
 })
 function file_name()
-  local name = vim.fn.expand('%')
-  return name == '' and '[No Name]' or vim.fn.expand('%:.')
+    local name = vim.fn.expand('%')
+    return name == '' and '[No Name]' or vim.fn.expand('%:.')
 end
 vim.o.statusline = '%{v:lua.git_branch()}%{v:lua.file_name()} %m %r%=%y | %l,%c'
 
@@ -328,22 +328,15 @@ local plugins = {
     'https://github.com/neovim/nvim-lspconfig',
     'https://github.com/lewis6991/gitsigns.nvim',
     'https://github.com/brenoprata10/nvim-highlight-colors',
-    'https://github.com/nvim-treesitter/nvim-treesitter',
-    'https://github.com/stevearc/oil.nvim'
+    'https://github.com/stevearc/oil.nvim',
+    'https://github.com/mfussenegger/nvim-dap',
+    'https://github.com/rcarriga/nvim-dap-ui',
+    'https://github.com/nvim-neotest/nvim-nio',
 }
-
-require("plugger").setup(plugins)
-
--- Treesitter
--- require'nvim-treesitter.configs'.setup({
---     highlight = {
---         enable = true,
---         additional_vim_regex_highlighting = false,
---     },
---     indent = {
---         enable = true
---     }
--- })
+local plugger = require("plugger")
+plugger.setup(plugins)
+vim.keymap.set('n', '<leader>pu', plugger.update, { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>pc', function() plugger.clean(plugins) end, { noremap = true, silent = true })
 
 -- LSP
 vim.lsp.enable({
@@ -362,18 +355,18 @@ vim.keymap.set('n', 'grs', vim.lsp.buf.workspace_symbol, { noremap = true, silen
 
 vim.opt.completeopt = { "menuone", "noinsert", "popup" }
 autocmd('LspAttach', {
-   callback = function (ev) 
-       local bufnr = ev.buf
-       local client = vim.lsp.get_client_by_id(ev.data.client_id)
-       if client:supports_method("textDocument/completion") then
-           vim.lsp.completion.enable(true, client.id, bufnr, {
-               autotrigger = true,
-               convert = function(item)
-                   return { abbr = item.label:gsub("%b()", "") }
-               end,
-           })
-       end
-   end
+    callback = function (ev)
+        local bufnr = ev.buf
+        local client = vim.lsp.get_client_by_id(ev.data.client_id)
+        if client:supports_method("textDocument/completion") then
+            vim.lsp.completion.enable(true, client.id, bufnr, {
+                autotrigger = true,
+                convert = function(item)
+                    return { abbr = item.label:gsub("%b()", "") }
+                end,
+            })
+        end
+    end
 })
 
 -- Formatting
@@ -406,6 +399,57 @@ require('nvim-highlight-colors').setup({})
 
 -- Oil
 require("oil").setup()
+
+-- Debugger
+local dap = require('dap')
+local dapui = require('dapui')
+local home = os.getenv("HOME")
+dapui.setup()
+dap.adapters["pwa-node"] = {
+    type = "server",
+    host = "localhost",
+    port = "${port}",
+    executable = {
+        command = "node",
+        args = {home.."/make-builds/js-debug/src/dapDebugServer.js", "${port}"},
+    }
+}
+dap.configurations.javascript = {
+    {
+        type = "pwa-node",
+        request = "launch",
+        name = "Launch file",
+        program = "${file}",
+        cwd = "${workspaceFolder}",
+    },
+    {
+        type = "pwa-node",
+        request = "launch",
+        name = "Launch API (npm start)",
+        runtimeExecutable = "npm",
+        runtimeArgs = { "run", "start" },
+        cwd = "${workspaceFolder}",
+        console = "integratedTerminal",
+    },
+}
+dap.configurations.typescript = dap.configurations.javascript
+dap.listeners.before.attach.dapui_config = function()
+    dapui.open()
+end
+dap.listeners.before.launch.dapui_config = function()
+    dapui.open()
+end
+dap.listeners.before.event_terminated.dapui_config = function()
+    dapui.close()
+end
+dap.listeners.before.event_exited.dapui_config = function()
+    dapui.close()
+end
+vim.keymap.set('n', '<leader>db', dap.toggle_breakpoint)
+vim.keymap.set('n', '<leader>dc', dap.continue)
+vim.keymap.set('n', '<leader>ds', dap.step_over)
+vim.keymap.set('n', '<leader>dr', dap.clear_breakpoints)
+vim.keymap.set('n', '<leader>dt', dap.terminate)
 
 -- Theme
 vim.cmd [[ colorscheme tokyodark ]]
