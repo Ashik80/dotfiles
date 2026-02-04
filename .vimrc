@@ -266,8 +266,6 @@ function! RunShellBuffer() abort
 endfunction
 
 " Plugins
-call plug#begin()
-
 let g:plugins = [
     \ 'https://github.com/Exafunction/windsurf.vim',
     \ 'https://github.com/lilydjwg/colorizer',
