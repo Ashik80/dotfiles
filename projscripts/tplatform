@@ -10,7 +10,7 @@ function create_new_window() {
 }
 
 function activate_virtualenv() {
-    tmux send-keys -t platform:$1 "pyenv activate platform-be" C-m
+    tmux send-keys -t platform:$1 "source .venv/bin/activate" C-m
     tmux send-keys -t platform:$1 "clear" C-m
 }
 
