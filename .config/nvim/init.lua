@@ -304,7 +304,27 @@ function file_name()
     local name = vim.fn.expand('%')
     return name == '' and '[No Name]' or vim.fn.expand('%:.')
 end
-vim.o.statusline = '%{v:lua.git_branch()}%{v:lua.file_name()} %m %r%=%y | %l,%c'
+function get_diagnostics()
+    local errors = vim.diagnostic.get(0, { severity = { vim.diagnostic.severity.ERROR } })
+    local warnings = vim.diagnostic.get(0, { severity = { vim.diagnostic.severity.WARN } })
+    local info = vim.diagnostic.get(0, { severity = { vim.diagnostic.severity.INFO } })
+    local hints = vim.diagnostic.get(0, { severity = { vim.diagnostic.severity.HINT } })
+    local diagnostic = {}
+    if #errors > 0 then
+        table.insert(diagnostic, 'E:' .. #errors)
+    end
+    if #warnings > 0 then
+        table.insert(diagnostic, 'W:' .. #warnings)
+    end
+    if #info > 0 then
+        table.insert(diagnostic, 'I:' .. #info)
+    end
+    if #hints > 0 then
+        table.insert(diagnostic, 'H:' .. #hints)
+    end
+    return table.concat(diagnostic, ' ')
+end
+vim.o.statusline = '%{v:lua.git_branch()}%{v:lua.file_name()} %m %r%=%{v:lua.get_diagnostics()} %y | %l,%c'
 
 -- Execute scripts
 augroup('ExecuteScripts', { clear = true })
@@ -329,6 +349,7 @@ local plugins = {
     'https://github.com/lewis6991/gitsigns.nvim',
     'https://github.com/brenoprata10/nvim-highlight-colors',
     'https://github.com/stevearc/oil.nvim',
+    -- Debugger plugins (testing)
     'https://github.com/mfussenegger/nvim-dap',
     'https://github.com/rcarriga/nvim-dap-ui',
     'https://github.com/nvim-neotest/nvim-nio',
@@ -401,55 +422,7 @@ require('nvim-highlight-colors').setup({})
 require("oil").setup()
 
 -- Debugger
-local dap = require('dap')
-local dapui = require('dapui')
-local home = os.getenv("HOME")
-dapui.setup()
-dap.adapters["pwa-node"] = {
-    type = "server",
-    host = "localhost",
-    port = "${port}",
-    executable = {
-        command = "node",
-        args = {home.."/make-builds/js-debug/src/dapDebugServer.js", "${port}"},
-    }
-}
-dap.configurations.javascript = {
-    {
-        type = "pwa-node",
-        request = "launch",
-        name = "Launch file",
-        program = "${file}",
-        cwd = "${workspaceFolder}",
-    },
-    {
-        type = "pwa-node",
-        request = "launch",
-        name = "Launch API (npm start)",
-        runtimeExecutable = "npm",
-        runtimeArgs = { "run", "start" },
-        cwd = "${workspaceFolder}",
-        console = "integratedTerminal",
-    },
-}
-dap.configurations.typescript = dap.configurations.javascript
-dap.listeners.before.attach.dapui_config = function()
-    dapui.open()
-end
-dap.listeners.before.launch.dapui_config = function()
-    dapui.open()
-end
-dap.listeners.before.event_terminated.dapui_config = function()
-    dapui.close()
-end
-dap.listeners.before.event_exited.dapui_config = function()
-    dapui.close()
-end
-vim.keymap.set('n', '<leader>db', dap.toggle_breakpoint)
-vim.keymap.set('n', '<leader>dc', dap.continue)
-vim.keymap.set('n', '<leader>ds', dap.step_over)
-vim.keymap.set('n', '<leader>dr', dap.clear_breakpoints)
-vim.keymap.set('n', '<leader>dt', dap.terminate)
+require("debugger")
 
 -- Theme
 vim.cmd [[ colorscheme tokyodark ]]
