@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+dconf dump /org/gnome/desktop/wm/ > wm-keybindings.conf
+dconf dump /org/gnome/shell/keybindings/ > shell-keybindings.conf
+dconf dump /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ > custom-keybindings.conf

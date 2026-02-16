@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+ROFI_FONT="MesloLGM Nerd Font 13"
+# ROFI_NB="#141415"
+# ROFI_NF="#cdcdcd"
+# ROFI_SB="#e8b589"
+# ROFI_SF="#141415"
+ROFI_NB="#11121d"
+ROFI_NF="#a0a8cd"
+ROFI_SB="#a485dd"
+ROFI_SF="#11121d"
+
+rofi_command() {
+    local args=("$@")
+    local title="${args[0]}"
+    local list=("${args[@]:1}")
+    local choice
+
+    choice="$(printf '%s\n' "${list[@]}" | rofi -dmenu -p "$title" -font "$ROFI_FONT" -i -normal-window -theme gruvbox-dark-hard)"
+
+    echo "$choice"
+}
+
+rofi_input() {
+    local title=$1
+    local input
+
+    input="$(echo | rofi -dmenu -p "$title" -font "$ROFI_FONT" -i -normal-window -theme gruvbox-dark-hard)"
+
+    echo "$input"
+}

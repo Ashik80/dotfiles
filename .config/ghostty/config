@@ -3,14 +3,15 @@
 background = "#11121d"
 foreground = "#a0a8cd"
 
-font-family = FiraCode Nerd Font
+# font-family = FiraCode Nerd Font
+font-family = MesloLGM Nerd Font:style=Regular
 font-size = 15
 
-adjust-cell-height = 20%
-adjust-cursor-height = 20%
+adjust-cell-height = 30%
+adjust-cursor-height = 30%
 cursor-style-blink = false
 custom-shader = shaders/cursor_smear.glsl
 
 shell-integration-features = no-cursor
 
-window-decoration = false
+# window-decoration = false

@@ -426,3 +426,10 @@ require("debugger")
 
 -- Theme
 vim.cmd [[ colorscheme tokyodark ]]
+vim.cmd [[
+    hi Keyword gui=NONE cterm=NONE
+    hi Identifier gui=NONE cterm=NONE
+    hi Type gui=NONE cterm=NONE
+    hi Comment gui=NONE cterm=NONE
+    hi Structure gui=NONE cterm=NONE
+]]
