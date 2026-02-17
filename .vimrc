@@ -276,6 +276,8 @@ let g:plugins = [
     \ ]
 
 call plugger#setup(g:plugins)
+nnoremap <silent> <leader>pu :call plugger#update()<CR>
+nnoremap <silent> <leader>pc :call plugger#clean(g:plugins)<CR>
 
 " Lsp settings
 set tagfunc=CocTagFunc
@@ -327,18 +329,17 @@ augroup END
 
 augroup coc-formatting
     autocmd!
-    autocmd BufWritePre *.go,*.js,*.jsx,*.ts,*.tsx,*.py,*.html,*.css call CocAction('format')
+    autocmd BufWritePre *.go,*.js,*.jsx,*.ts,*.tsx,*.html,*.css call CocAction('format')
 augroup END
 
 " Formatter settings
-augroup templft
+function! FormatWithBlack()
+    silent !black --quiet %
+    redraw!
+endfunction
+augroup python-formatting
     autocmd!
-    autocmd BufWinEnter *.templ set filetype=gohtmltmpl
-augroup END
-
-augroup templFmt
-    autocmd!
-    autocmd BufWritePost *.templ silent! execute "!PATH=\"$PATH:$(go env GOPATH)/bin\" templ fmt <afile> >/dev/null 2>&1" | redraw!
+    autocmd BufWritePost *.py call FormatWithBlack()
 augroup END
 
 " Git gutter

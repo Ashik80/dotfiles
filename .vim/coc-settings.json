@@ -66,6 +66,5 @@
   "tailwindCSS.includeLanguages": {
     "jst": "html",
     "gohtmltmpl": "html"
-  },
-  "python.formatting.provider": "black"
+  }
 }
