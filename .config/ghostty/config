@@ -1,14 +1,13 @@
-# background = "#1f1f1f"
-# foreground = "#d4d4d4"
+# background = "#11121d"
+# foreground = "#a0a8cd"
 background = "#11121d"
-foreground = "#a0a8cd"
+foreground = "#dcd7ba"
 
-# font-family = FiraCode Nerd Font
-font-family = MesloLGM Nerd Font:style=Regular
+font-family = Roboto Mono Nerd Font
 font-size = 15
 
-adjust-cell-height = 30%
-adjust-cursor-height = 30%
+adjust-cell-height = 25%
+adjust-cursor-height = 25%
 cursor-style-blink = false
 custom-shader = shaders/cursor_smear.glsl
 

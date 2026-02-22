@@ -343,12 +343,13 @@ autocmd('FileType', {
 
 -- Plugins
 local plugins = {
-    'https://github.com/tiagovla/tokyodark.nvim',
+    -- 'https://github.com/tiagovla/tokyodark.nvim',
     'https://github.com/Exafunction/windsurf.vim',
     'https://github.com/neovim/nvim-lspconfig',
     'https://github.com/lewis6991/gitsigns.nvim',
     'https://github.com/brenoprata10/nvim-highlight-colors',
     'https://github.com/stevearc/oil.nvim',
+    'https://github.com/rebelot/kanagawa.nvim',
     -- Debugger plugins (testing)
     'https://github.com/mfussenegger/nvim-dap',
     'https://github.com/rcarriga/nvim-dap-ui',
@@ -425,11 +426,26 @@ require("oil").setup()
 require("debugger")
 
 -- Theme
-vim.cmd [[ colorscheme tokyodark ]]
+-- vim.cmd [[ colorscheme tokyodark ]]
+-- vim.cmd [[
+--     hi Keyword gui=NONE cterm=NONE
+--     hi Identifier gui=NONE cterm=NONE
+--     hi Type gui=NONE cterm=NONE
+--     hi Comment gui=NONE cterm=NONE
+--     hi Structure gui=NONE cterm=NONE
+--     hi StorageClass gui=NONE cterm=NONE
+-- ]]
+
+vim.cmd [[ colorscheme kanagawa ]]
 vim.cmd [[
-    hi Keyword gui=NONE cterm=NONE
-    hi Identifier gui=NONE cterm=NONE
-    hi Type gui=NONE cterm=NONE
-    hi Comment gui=NONE cterm=NONE
-    hi Structure gui=NONE cterm=NONE
+    hi Normal ctermbg=NONE guibg=NONE
+    hi LineNr ctermbg=NONE guibg=NONE
+    hi SignColumn ctermbg=NONE guibg=NONE
+    hi GitSignsAdd ctermbg=NONE guibg=NONE
+    hi GitSignsChange ctermbg=NONE guibg=NONE
+    hi GitSignsDelete ctermbg=NONE guibg=NONE
+    hi DiagnosticSignError ctermbg=NONE guibg=NONE
+    hi DiagnosticSignWarn ctermbg=NONE guibg=NONE
+    hi DiagnosticSignInfo ctermbg=NONE guibg=NONE
+    hi DiagnosticSignHint ctermbg=NONE guibg=NONE
 ]]

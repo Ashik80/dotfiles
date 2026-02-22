@@ -112,35 +112,6 @@ endfunction
 command! -nargs=1 FindFiles call FindFilesToQf(<f-args>)
 nnoremap <leader>fq :FindFiles<space>
 
-" Update tag on save
-" augroup AutoTagUpdate
-"     autocmd!
-"     autocmd BufWritePost * call UpdateTags()
-" augroup END
-function! UpdateTags()
-    let tags_file = "tags"
-    if filereadable(expand(tags_file))
-        if executable("ctags")
-            call job_start(["ctags", "-a", expand("%")])
-        else
-            echomsg "ctags not found! Install it to enable automatic tag updates." 
-        endif
-    endif
-endfunction
-
-" Turn of highlighting for tags file
-augroup DisableSyntaxForTags
-  autocmd!
-  autocmd BufReadPre,BufNewFile tags setlocal syntax=OFF eventignore=all
-augroup END
-function! EnableSyntax()
-    if &eventignore ==# 'all'
-        set eventignore=
-        execute ":e"
-    endif
-endfunction
-nnoremap <leader><leader> :call EnableSyntax()<CR>
-
 " Git blame
 function! GitBlameSelection()
     let line_start = getpos("'<")[1]
@@ -233,20 +204,22 @@ augroup END
 function! FileName()
     return expand('%') == '' ? '[No Name]' : expand('%:.')
 endfunction
-"function! CocStatus()
-"    let l:status = coc#status()
-"    if l:status == ''
-"        return ''
-"    endif
-"    return '  | '.l:status
-"endfunction
+function! CocStatus()
+    let l:status = coc#status()
+    if l:status == ''
+        return ''
+    endif
+    return l:status.' | '
+endfunction
 set statusline=
 set statusline+=%{GitBranch()}
 set statusline+=%{FileName()}
-" set statusline+=%{CocStatus()}
 set statusline+=\ %m
 set statusline+=\ %r
 set statusline+=%=
+if executable('node')
+    set statusline+=%{CocStatus()}
+endif
 set statusline+=%y
 set statusline+=\ \|\ %l,%c
 
@@ -269,10 +242,11 @@ endfunction
 let g:plugins = [
     \ 'https://github.com/Exafunction/windsurf.vim',
     \ 'https://github.com/lilydjwg/colorizer',
-    \ 'https://github.com/airblade/vim-gitgutter',
     \ 'https://github.com/sheerun/vim-polyglot',
     \ 'https://github.com/neoclide/coc.nvim',
     \ 'https://github.com/junegunn/seoul256.vim',
+    \ 'https://github.com/mhinz/vim-signify',
+    \ 'https://github.com/menisadi/kanagawa.vim',
     \ ]
 
 call plugger#setup(g:plugins)
@@ -343,37 +317,36 @@ augroup python-formatting
 augroup END
 
 " Git gutter
-nnoremap <leader>gh :GitGutterPreviewHunk<CR>
+nnoremap <leader>gh :SignifyHunkDiff<CR>
 
 " Highlights
-augroup Highlights
-    autocmd!
-    autocmd ColorScheme * hi DiagnosticError ctermfg=1 guifg=Red
-    autocmd ColorScheme * hi DiagnosticWarn ctermfg=3 guifg=Orange
-    autocmd ColorScheme * hi DiagnosticInfo ctermfg=4 guifg=LightBlue
-    autocmd ColorScheme * hi DiagnosticHint ctermfg=7 guifg=LightGrey
-    autocmd ColorScheme * hi DiagnosticUnderlineError cterm=underline gui=underline guisp=Red
-    autocmd ColorScheme * hi DiagnosticUnderlineWarn cterm=underline gui=underline guisp=Orange
-    autocmd ColorScheme * hi DiagnosticUnderlineInfo cterm=underline gui=underline guisp=LightBlue
-    autocmd ColorScheme * hi DiagnosticUnderlineHint cterm=underline gui=underline guisp=LightGrey
+" augroup Highlights
+"     autocmd!
+"     autocmd ColorScheme * hi DiagnosticError ctermfg=1 guifg=Red
+"     autocmd ColorScheme * hi DiagnosticWarn ctermfg=3 guifg=Orange
+"     autocmd ColorScheme * hi DiagnosticInfo ctermfg=4 guifg=LightBlue
+"     autocmd ColorScheme * hi DiagnosticHint ctermfg=7 guifg=LightGrey
+"     autocmd ColorScheme * hi DiagnosticUnderlineError cterm=underline gui=underline guisp=Red
+"     autocmd ColorScheme * hi DiagnosticUnderlineWarn cterm=underline gui=underline guisp=Orange
+"     autocmd ColorScheme * hi DiagnosticUnderlineInfo cterm=underline gui=underline guisp=LightBlue
+"     autocmd ColorScheme * hi DiagnosticUnderlineHint cterm=underline gui=underline guisp=LightGrey
+" 
+"     autocmd ColorScheme * hi link CocErrorVirtualText DiagnosticError
+"     autocmd ColorScheme * hi link CocWarningVirtualText DiagnosticWarn
+"     autocmd ColorScheme * hi link CocInfoVirtualText DiagnosticInfo
+"     autocmd ColorScheme * hi link CocHintVirtualText DiagnosticHint
+"     autocmd ColorScheme * hi link CocErrorSign DiagnosticError
+"     autocmd ColorScheme * hi link CocWarningSign DiagnosticWarn
+"     autocmd ColorScheme * hi link CocInfoSign DiagnosticInfo
+"     autocmd ColorScheme * hi link CocHintSign DiagnosticHint
+" augroup END
 
-    autocmd ColorScheme * hi link CocErrorVirtualText DiagnosticError
-    autocmd ColorScheme * hi link CocWarningVirtualText DiagnosticWarn
-    autocmd ColorScheme * hi link CocInfoVirtualText DiagnosticInfo
-    autocmd ColorScheme * hi link CocHintVirtualText DiagnosticHint
-    autocmd ColorScheme * hi link CocErrorSign DiagnosticError
-    autocmd ColorScheme * hi link CocWarningSign DiagnosticWarn
-    autocmd ColorScheme * hi link CocInfoSign DiagnosticInfo
-    autocmd ColorScheme * hi link CocHintSign DiagnosticHint
-augroup END
+colorscheme kanagawa
 
-" For seoul256 theme
-let g:seoul256_background = 233
-colo seoul256
-
-" For default/jellybeans theme
 hi SignColumn ctermbg=NONE guibg=NONE
-"hi StatusLine gui=none ctermfg=188 guifg=#e8e8d3 guibg=NONE ctermbg=NONE
-hi StatusLine guibg=NONE ctermbg=NONE
 hi Normal ctermbg=NONE guibg=NONE
 hi LineNr ctermbg=NONE guibg=NONE
+hi DiffAdd ctermbg=NONE guibg=NONE
+hi DiffChange ctermbg=NONE guibg=NONE
+hi DiffDelete ctermbg=NONE guibg=NONE
+hi VertSplit cterm=NONE
