@@ -92,7 +92,7 @@ function! FuzzyFileFinder()
     silent execute 'cfile ' . l:tmpfile
     redraw!
 endfunction
-nnoremap <leader>fz :call FuzzyFileFinder()<CR>
+nnoremap <leader>ff :call FuzzyFileFinder()<CR>
 
 " Find files
 function! FindFilesToQf(pattern)

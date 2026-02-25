@@ -32,7 +32,6 @@ bluetooth_connect_to_device() {
 
     bluetoothctl_devices="$(bluetoothctl devices)"
     bt_device_names="$(echo "$bluetoothctl_devices" | grep 'Device' | sed 's/Device \(\w\+:\)\+\w\+\s//')"
-
     bt_sel_device_name="$(dmenu_command "Select Device:" "${bt_device_names[@]}")"
 
     if [ -z "$bt_sel_device_name" ]; then
@@ -44,6 +43,8 @@ bluetooth_connect_to_device() {
     notify-send "Connecting to $bt_sel_device_id - $bt_sel_device_name"
 
     bluetoothctl connect "$bt_sel_device_id"
+
+    notify-send "Connected to $bt_sel_device_name"
 }
 
 power_options() {
@@ -92,15 +93,19 @@ case $CHOICE in
         case $choice in
             "Connect")
                 bluetooth_connect_to_device
+                pkill -SIGRTMIN+2 i3blocks
                 ;;
             "Disconnect")
                 bluetoothctl disconnect
+                pkill -SIGRTMIN+2 i3blocks
                 ;;
             "Scan")
                 bluetoothctl scan on
+                pkill -SIGRTMIN+2 i3blocks
                 ;;
             "Power")
                 bluetooth_power
+                pkill -SIGRTMIN+2 i3blocks
                 ;;
         esac
         ;;

@@ -33,7 +33,7 @@ wireless wlp4s0 {
 }
 
 ethernet enp0s25 {
-    #if you use %speed, i3status requires root privileges
+#if you use %speed, i3status requires root privileges
     format_up = "%ip (%speed)"
     format_down = ""
 }
@@ -87,14 +87,14 @@ cpu_usage {
 }
 
 cpu_temperature 0 {
-	format = "🌡️ %degrees°C"
+    format = "🌡️ %degrees°C"
 }
 
 disk "/" {
-	format = "💿 %avail"
-	prefix_type	= custom
-	low_threshold = 20
-	threshold_type = percentage_avail
+    format = "💿 %avail"
+    prefix_type	= custom
+    low_threshold = 20
+    threshold_type = percentage_avail
 }
 
 volume master {

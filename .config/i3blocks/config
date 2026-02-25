@@ -1,0 +1,26 @@
+[record]
+command=~/.config/i3blocks/scripts/recording.sh
+signal=4
+
+[bluetooth]
+command=~/.config/i3blocks/scripts/bluetooth.sh
+interval=30
+signal=2
+
+[time]
+command=date "+ %e %b %Y, %a  %I:%M:%S %P"
+interval=1
+
+[brightness]
+command=~/.config/i3blocks/scripts/brightness.sh
+interval=once
+signal=1
+
+[volume]
+command=~/.config/i3blocks/scripts/volume.sh
+interval=once
+signal=3
+
+[battery]
+command=~/.config/i3blocks/scripts/battery.sh
+interval=30
