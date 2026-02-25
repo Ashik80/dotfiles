@@ -87,7 +87,7 @@ function! FuzzyFileFinder()
     if executable("batcat")
         let l:cmd = "batcat --theme=ansi --style=numbers --color=always {}"
     endif
-    execute "silent !rg --files | fzf --preview='".l:cmd."' | sed 's/$/:0:0/' > " . l:tmpfile
+    execute "silent !find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger \\) -prune -o -type f | fzf --preview='".l:cmd."' | sed 's/$/:0:0/' > " . l:tmpfile
     set efm=%f:%l:%c
     silent execute 'cfile ' . l:tmpfile
     redraw!
@@ -96,7 +96,7 @@ nnoremap <leader>ff :call FuzzyFileFinder()<CR>
 
 " Find files
 function! FindFilesToQf(pattern)
-    let l:cmd = "rg --files | rg -i " . shellescape(a:pattern)
+    let l:cmd = "find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next \\) -prune -o -type f | grep -i " . shellescape(a:pattern)
     let l:lines = systemlist(l:cmd)
     if len(l:lines) == 0
         return
