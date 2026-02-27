@@ -21,6 +21,11 @@ command=~/.config/i3blocks/scripts/volume.sh
 interval=once
 signal=3
 
+[wifi]
+command=~/.config/i3blocks/scripts/wifi.sh
+interval=30
+signal=5
+
 [battery]
 command=~/.config/i3blocks/scripts/battery.sh
 interval=30

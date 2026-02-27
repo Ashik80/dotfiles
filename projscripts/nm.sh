@@ -39,3 +39,5 @@ elif echo "$output" | grep -qi "secrets were required"; then
 else
     notify-send "Failed to connect to $name"
 fi
+
+pkill -SIGRTMIN+5 i3blocks
