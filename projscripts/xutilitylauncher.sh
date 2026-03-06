@@ -94,18 +94,22 @@ case $CHOICE in
             "Connect")
                 bluetooth_connect_to_device
                 pkill -SIGRTMIN+2 i3blocks
+                pkill -SIGRTMIN+3 i3blocks
                 ;;
             "Disconnect")
                 bluetoothctl disconnect
                 pkill -SIGRTMIN+2 i3blocks
+                pkill -SIGRTMIN+3 i3blocks
                 ;;
             "Scan")
                 bluetoothctl scan on
                 pkill -SIGRTMIN+2 i3blocks
+                pkill -SIGRTMIN+3 i3blocks
                 ;;
             "Power")
                 bluetooth_power
                 pkill -SIGRTMIN+2 i3blocks
+                pkill -SIGRTMIN+3 i3blocks
                 ;;
         esac
         ;;

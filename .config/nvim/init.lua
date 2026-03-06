@@ -18,7 +18,7 @@ vim.o.signcolumn = "yes"
 vim.o.clipboard = "unnamedplus"
 vim.o.writebackup = false
 vim.o.winborder = "solid"
--- vim.o.guicursor = ""
+vim.o.guicursor = ""
 -- vim.o.listchars = "tab:▸ ,trail:·"
 vim.o.listchars = "tab:  ,trail:·"
 vim.o.list = true
@@ -39,6 +39,7 @@ vim.keymap.set({'v', 'x'}, 'J', ":move '>+1<CR>gv=gv")
 vim.keymap.set({'v', 'x'}, 'K', ":move '<-2<CR>gv=gv")
 vim.keymap.set('n', '<leader>cp', ':let @+ = expand("%:.")<CR>')
 vim.keymap.set('t', '<C-w>N', '<C-\\><C-n>')
+vim.keymap.set('t', '<Esc>', '<C-\\><C-n>')
 vim.keymap.set('t', '<C-w>w', '<C-\\><C-n><C-w>w')
 vim.keymap.set('t', '<C-w><C-w>', '<C-\\><C-n><C-w>w')
 vim.keymap.set("n", "<leader>ff", ":find<space>")

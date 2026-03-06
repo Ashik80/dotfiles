@@ -37,9 +37,9 @@ set listchars=tab:▸\ ,trail:·
 set fillchars=eob:\ 
 
 " Cursor change
-let &t_SI = "\e[6 q"
-let &t_SR = "\e[4 q"
-let &t_EI = "\e[2 q"
+"let &t_SI = "\e[6 q"
+"let &t_SR = "\e[4 q"
+"let &t_EI = "\e[2 q"
 
 " General mappings
 nnoremap - :Ex<CR>
@@ -50,6 +50,13 @@ xnoremap < <gv
 xnoremap J :move '>+1<CR>gv=gv
 xnoremap K :move '<-2<CR>gv=gv
 nnoremap <leader>cp :let @+ = expand("%:.")<CR>
+tnoremap <Esc> <C-\><C-n>
+
+" Terminal settings
+augroup terminal_no_line_numbers
+    autocmd!
+    autocmd TerminalOpen * setlocal nonumber norelativenumber signcolumn=no
+augroup END
 
 " Lazygit
 if executable("lazygit")

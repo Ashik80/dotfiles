@@ -17,10 +17,10 @@ exec --no-startup-id nm-applet
 # Use pactl to adjust volume in PulseAudio.
 # set $refresh_i3status killall -SIGUSR1 i3status
 set $refresh_volume pkill -SIGRTMIN+3 i3blocks
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && $refresh_volume
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5% && $refresh_volume
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_volume
-bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_volume
+bindsym XF86AudioRaiseVolume exec --no-startup-id wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ && $refresh_volume
+bindsym XF86AudioLowerVolume exec --no-startup-id wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && $refresh_volume
+bindsym XF86AudioMute exec --no-startup-id wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && $refresh_volume
+bindsym XF86AudioMicMute exec --no-startup-id wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && $refresh_volume
 
 # adjust brightness
 set $refresh_brightness pkill -SIGRTMIN+1 i3blocks
@@ -236,3 +236,6 @@ set $refresh_record pkill -SIGRTMIN+4 i3blocks
 bindsym --release Mod1+Sys_Req exec --no-startup-id ~/dotfiles/projscripts/xscreenrecord.sh region && $refresh_record
 bindsym Mod1+Shift+Sys_Req exec --no-startup-id ~/dotfiles/projscripts/xscreenrecord.sh root && $refresh_record
 bindsym $mod+Mod1+Shift+Sys_Req exec --no-startup-id ~/dotfiles/projscripts/xscreenrecord.sh root-audio && $refresh_record
+
+# Enable this to remove title bar
+# default_border pixel 2

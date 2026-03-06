@@ -1,3 +1,7 @@
+# [window]
+# command=~/.config/i3blocks/scripts/window.sh
+# interval=1
+
 [record]
 command=~/.config/i3blocks/scripts/recording.sh
 signal=4
