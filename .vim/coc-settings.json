@@ -22,5 +22,6 @@
       "initializationOptions": {}
     },
   },
-  "prettier.bracketSpacing": true
+  "prettier.bracketSpacing": true,
+  "prettier.trailingComma": "all"
 }
