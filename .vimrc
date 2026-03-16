@@ -42,7 +42,8 @@ set fillchars=eob:\
 "let &t_EI = "\e[2 q"
 
 " General mappings
-nnoremap - :Ex<CR>
+" nnoremap - :Ex<CR>
+nnoremap - :VimExplorer<CR>
 nnoremap ]q :cn<CR>
 nnoremap [q :cp<CR>
 xnoremap > >gv

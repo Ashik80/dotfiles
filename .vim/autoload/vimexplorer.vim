@@ -241,15 +241,7 @@ function! vimexplorer#Enter() abort
   if isdirectory(l:target)
     call vimexplorer#Open(l:target)
   elseif filereadable(l:target)
-    " Open the file in a new window (or the previous window)
-    execute 'wincmd p'
-    if &buftype !=# '' || !empty(&buftype)
-      " Previous window is not a normal file window; just split
-      execute 'wincmd p'
-      execute 'split ' . fnameescape(l:target)
-    else
-      execute 'edit ' . fnameescape(l:target)
-    endif
+    execute 'edit ' . fnameescape(l:target)
   else
     echohl WarningMsg
     echo 'VimExplorer: not found: ' . l:target
