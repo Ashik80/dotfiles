@@ -327,8 +327,9 @@ function! s:SetupBuffer(dir) abort
   endif
   let s:state[l:bufnr].dir         = a:dir
   let s:state[l:bufnr].names       = []
-  let s:state[l:bufnr].show_hidden = get(s:state[l:bufnr], 'show_hidden', g:vimexplorer_show_hidden)
-  let s:state[l:bufnr].detail      = get(s:state[l:bufnr], 'detail',      g:vimexplorer_detail)
+  let s:state[l:bufnr].show_hidden   = get(s:state[l:bufnr], 'show_hidden',   g:vimexplorer_show_hidden)
+  let s:state[l:bufnr].detail        = get(s:state[l:bufnr], 'detail',        g:vimexplorer_detail)
+  let s:state[l:bufnr].show_header   = get(s:state[l:bufnr], 'show_header',   g:vimexplorer_show_header)
 
   " Key mappings (buffer-local)
   nnoremap <buffer> <silent> <CR>   :call vimexplorer#Enter()<CR>
@@ -363,9 +364,11 @@ function! s:Render(bufnr) abort
 
   " Header comment (not editable — users should not modify it, but it is
   " just a comment and will be ignored during save parsing)
-  call add(l:lines, '" ' . l:dir)
-  call add(l:lines, '" [<CR>] open  [-] up  [gh] hidden  [gd] detail  [?] help')
-  call add(l:lines, '')
+  if l:st.show_header
+    call add(l:lines, '" ' . l:dir)
+    call add(l:lines, '" [<CR>] open  [-] up  [gh] hidden  [gd] detail  [?] help')
+    call add(l:lines, '')
+  endif
 
   for l:e in l:entries
     let l:display = s:FormatEntry(l:e, l:detail)

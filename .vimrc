@@ -362,3 +362,7 @@ hi DiffChange ctermbg=NONE guibg=NONE
 hi DiffDelete ctermbg=NONE guibg=NONE
 hi VertSplit cterm=NONE ctermfg=233 guifg=#16161d
 "hi VertSplit cterm=NONE
+
+" VimExplorer
+let g:vimexplorer_show_hidden = 1
+let g:vimexplorer_show_header = 0

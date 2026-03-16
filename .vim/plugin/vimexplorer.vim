@@ -19,6 +19,10 @@ if !exists('g:vimexplorer_detail')
   let g:vimexplorer_detail = 1   " Show size + permissions prefix
 endif
 
+if !exists('g:vimexplorer_show_header')
+  let g:vimexplorer_show_header = 1
+endif
+
 " ── Commands ───────────────────────────────────────────────────────────────
 " :VimExplorer [dir]   open explorer for [dir] (default: current file's dir)
 command! -nargs=? -complete=dir VimExplorer call vimexplorer#Open(<q-args>)
