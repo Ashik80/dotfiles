@@ -61,9 +61,13 @@ function! vimexplorer#Save() abort
   let l:old_names = l:st.names
 
   " ── Deletions: in old but not in new ──────────────────────────────────
+  " Strip trailing slashes for comparison only — new_names may have them
+  " (user-typed dirs end with /), old_names never do.
+  let l:new_names_bare = map(copy(l:new_names), 'substitute(v:val, "/$", "", "")')
+
   let l:to_delete = []
   for l:name in l:old_names
-    if index(l:new_names, l:name) ==# -1
+    if index(l:new_names_bare, l:name) ==# -1
       call add(l:to_delete, l:name)
     endif
   endfor
@@ -74,14 +78,17 @@ function! vimexplorer#Save() abort
   " in the order they appear.
   let l:old_only = []
   for l:name in l:old_names
-    if index(l:new_names, l:name) ==# -1
+    if index(l:new_names_bare, l:name) ==# -1
       call add(l:old_only, l:name)
     endif
   endfor
 
   let l:new_only = []
   for l:name in l:new_names
-    if l:name !=# '' && index(l:old_names, l:name) ==# -1
+    " Use the raw name (with slash if present) so creation logic can
+    " detect directories. Skip bare names that already exist in old.
+    let l:bare = substitute(l:name, '/$', '', '')
+    if l:bare !=# '' && index(l:old_names, l:bare) ==# -1
       call add(l:new_only, l:name)
     endif
   endfor
@@ -179,10 +186,26 @@ function! vimexplorer#Save() abort
       endif
     else
       let l:fpath = l:dir . '/' . l:name
-      if writefile([], l:fpath) !=# 0
-        echohl ErrorMsg | echo 'VimExplorer: failed to create file: ' . l:fpath | echohl None
+      " Check if a file with this name exists somewhere in the original
+      " listing's parent directories — i.e. the user copied it from
+      " another open explorer buffer. We do this by searching all known
+      " explorer buffers for a directory containing this filename.
+      let l:src_path = s:FindInOtherBuffers(l:name, l:dir)
+      if l:src_path !=# ''
+        " Copy: read source and write to destination
+        let l:content = readfile(l:src_path, 'b')
+        if writefile(l:content, l:fpath, 'b') !=# 0
+          echohl ErrorMsg | echo 'VimExplorer: failed to copy to: ' . l:fpath | echohl None
+        else
+          echo 'Copied: ' . l:src_path . ' → ' . l:fpath
+        endif
       else
-        echo 'Created: ' . l:name
+        " Brand-new file: create empty
+        if writefile([], l:fpath) !=# 0
+          echohl ErrorMsg | echo 'VimExplorer: failed to create file: ' . l:fpath | echohl None
+        else
+          echo 'Created: ' . l:name
+        endif
       endif
     endif
   endfor
@@ -460,7 +483,8 @@ function! s:ParseLines(lines) abort
       let l:name = l:line
     endif
 
-    let l:name = substitute(l:name, '/$', '', '')
+    " Do NOT strip the trailing slash here — Save() uses it to detect
+    " that the user wants a directory created, not a file.
     let l:name = trim(l:name)
     if l:name !=# ''
       call add(l:names, l:name)
@@ -520,6 +544,21 @@ function! vimexplorer#StatusLine() abort
   let l:h   = l:st.show_hidden ? '[H]' : ''
   let l:d   = l:st.detail      ? '[D]' : ''
   return ' VimExplorer  ' . l:st.dir . '  ' . l:h . l:d
+endfunction
+
+" ── Private: Find a file by name in any other open explorer buffer ─────────
+" Returns the full path if found, or '' if not found or same directory.
+function! s:FindInOtherBuffers(name, current_dir) abort
+  for [l:bufnr, l:st] in items(s:state)
+    if l:st.dir ==# a:current_dir
+      continue
+    endif
+    let l:candidate = l:st.dir . '/' . a:name
+    if filereadable(l:candidate)
+      return l:candidate
+    endif
+  endfor
+  return ''
 endfunction
 
 " ── Public: Show help ──────────────────────────────────────────────────────
