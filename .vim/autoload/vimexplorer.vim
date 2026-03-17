@@ -144,7 +144,9 @@ function! vimexplorer#Save() abort
         echo 'Deleted dir: ' . l:name
       endif
     else
-      if delete(l:target) !=# 0
+      if !filereadable(l:target)
+        " Already gone (e.g. moved away by another buffer's save)
+      elseif delete(l:target) !=# 0
         echohl ErrorMsg | echo 'VimExplorer: failed to delete: ' . l:target | echohl None
       else
         echo 'Deleted: ' . l:name
@@ -186,11 +188,10 @@ function! vimexplorer#Save() abort
         if !isdirectory(l:fparent)
           call mkdir(l:fparent, 'p')
         endif
-        let l:content = readfile(l:src_path, 'b')
-        if writefile(l:content, l:fpath, 'b') !=# 0
-          echohl ErrorMsg | echo 'VimExplorer: failed to copy to: ' . l:fpath | echohl None
+        if rename(l:src_path, l:fpath) !=# 0
+          echohl ErrorMsg | echo 'VimExplorer: failed to move to: ' . l:fpath | echohl None
         else
-          echo 'Copied: ' . l:src_path . ' → ' . l:fpath
+          echo 'Moved: ' . l:src_path . ' → ' . l:fpath
         endif
       else
         " Brand-new file: create empty (ensure parent dirs exist)
