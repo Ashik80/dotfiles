@@ -54,13 +54,6 @@ function! vimexplorer#Save() abort
 
   let l:new_names_bare = map(copy(l:new_names), 'substitute(v:val, "/$", "", "")')
 
-  let l:to_delete = []
-  for l:name in l:old_names
-    if index(l:new_names_bare, l:name) ==# -1
-      call add(l:to_delete, l:name)
-    endif
-  endfor
-
   let l:old_only = []
   for l:name in l:old_names
     if index(l:new_names_bare, l:name) ==# -1
@@ -88,12 +81,8 @@ function! vimexplorer#Save() abort
     endif
   endfor
 
-  while l:ri < len(l:old_only)
-    if index(l:to_delete, l:old_only[l:ri]) ==# -1
-      call add(l:to_delete, l:old_only[l:ri])
-    endif
-    let l:ri += 1
-  endwhile
+  " Entries in old_only not consumed by a rename are true deletions
+  let l:to_delete = l:old_only[l:ri :]
 
   " Confirm deletions
   if !empty(l:to_delete)
