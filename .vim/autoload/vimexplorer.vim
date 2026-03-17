@@ -3,6 +3,9 @@
 " Script-local state
 let s:state = {}
 
+" Paths explicitly cut (dd) — used to distinguish move from copy
+let s:cut_paths = {}
+
 " Open the explorer buffer
 function! vimexplorer#Open(path) abort
   " If path is not provided should open in cwd
@@ -188,13 +191,24 @@ function! vimexplorer#Save() abort
         if !isdirectory(l:fparent)
           call mkdir(l:fparent, 'p')
         endif
-        if rename(l:src_path, l:fpath) !=# 0
-          echohl ErrorMsg | echo 'VimExplorer: failed to move to: ' . l:fpath | echohl None
+        if has_key(s:cut_paths, l:src_path)
+          " Cut (dd)
+          if rename(l:src_path, l:fpath) !=# 0
+            echohl ErrorMsg | echo 'VimExplorer: failed to move to: ' . l:fpath | echohl None
+          else
+            unlet s:cut_paths[l:src_path]
+            echo 'Moved: ' . l:src_path . ' → ' . l:fpath
+          endif
         else
-          echo 'Moved: ' . l:src_path . ' → ' . l:fpath
+          " Yank (yy)
+          let l:content = readfile(l:src_path, 'b')
+          if writefile(l:content, l:fpath, 'b') !=# 0
+            echohl ErrorMsg | echo 'VimExplorer: failed to copy to: ' . l:fpath | echohl None
+          else
+            echo 'Copied: ' . l:src_path . ' → ' . l:fpath
+          endif
         endif
       else
-        " Brand-new file: create empty (ensure parent dirs exist)
         let l:fparent = fnamemodify(l:fpath, ':h')
         if !isdirectory(l:fparent)
           call mkdir(l:fparent, 'p')
@@ -302,6 +316,39 @@ function! vimexplorer#OpenSplit(vertical) abort
   endif
 endfunction
 
+" Mark as cut
+function! vimexplorer#Cut() abort
+  let l:bufnr = bufnr('%')
+  if !has_key(s:state, l:bufnr)
+    return
+  endif
+  let l:name = s:NameUnderCursor()
+  if l:name ==# ''
+    return
+  endif
+  let l:path = s:state[l:bufnr].dir . '/' . l:name
+  let s:cut_paths[l:path] = 1
+  normal! dd
+endfunction
+
+" Don't mark as cut
+function! vimexplorer#Yank() abort
+  let l:bufnr = bufnr('%')
+  if !has_key(s:state, l:bufnr)
+    return
+  endif
+  let l:name = s:NameUnderCursor()
+  if l:name ==# ''
+    return
+  endif
+  " Remove from cut set in case a previous dd was undone
+  let l:path = s:state[l:bufnr].dir . '/' . l:name
+  if has_key(s:cut_paths, l:path)
+    unlet s:cut_paths[l:path]
+  endif
+  normal! yy
+endfunction
+
 " Set up the explorer buffer
 function! s:SetupBuffer(dir) abort
   let l:bufnr = bufnr('%')
@@ -339,6 +386,8 @@ function! s:SetupBuffer(dir) abort
   nnoremap <buffer> <silent> R      :call vimexplorer#Refresh()<CR>
   nnoremap <buffer> <silent> q      :bdelete<CR>
   nnoremap <buffer> <silent> ?      :call vimexplorer#Help()<CR>
+  nnoremap <buffer> <silent> dd     :call vimexplorer#Cut()<CR>
+  nnoremap <buffer> <silent> yy     :call vimexplorer#Yank()<CR>
 endfunction
 
 " Render the buffer contents
