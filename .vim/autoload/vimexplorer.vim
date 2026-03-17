@@ -1,15 +1,12 @@
 " autoload/vimexplorer.vim
-" Core logic for VimExplorer
 
-" ── Script-local state ─────────────────────────────────────────────────────
-" Each explorer buffer keeps its state in a dict keyed by bufnr
+" Script-local state
 let s:state = {}
 
-" ── Public: Open ───────────────────────────────────────────────────────────
+" Open the explorer buffer
 function! vimexplorer#Open(path) abort
-  " Resolve the directory to open
+  " If path is not provided should open in cwd
   if a:path ==# ''
-    " Default: directory of the current file, or cwd if no file
     let l:dir = expand('%:p:h')
     if l:dir ==# '' || !isdirectory(l:dir)
       let l:dir = getcwd()
@@ -27,15 +24,12 @@ function! vimexplorer#Open(path) abort
     return
   endif
 
-  " Check if we already have a buffer for this dir
   let l:bufname = 'vimexplorer://' . l:dir
   let l:existing = bufnr(l:bufname)
 
   if l:existing != -1
-    " Re-use existing buffer
     execute 'buffer ' . l:existing
   else
-    " Create a new scratch buffer
     execute 'edit ' . fnameescape(l:bufname)
   endif
 
@@ -43,7 +37,7 @@ function! vimexplorer#Open(path) abort
   call s:Render(bufnr('%'))
 endfunction
 
-" ── Public: Save (apply edits) ─────────────────────────────────────────────
+" Save to apply edits to filesystem
 function! vimexplorer#Save() abort
   let l:bufnr = bufnr('%')
   if !has_key(s:state, l:bufnr)
@@ -54,15 +48,10 @@ function! vimexplorer#Save() abort
   let l:st = s:state[l:bufnr]
   let l:dir = l:st.dir
 
-  " Parse current buffer lines into a list of filenames
   let l:new_names = s:ParseLines(getline(1, '$'))
 
-  " Original names when the buffer was last rendered
   let l:old_names = l:st.names
 
-  " ── Deletions: in old but not in new ──────────────────────────────────
-  " Strip trailing slashes for comparison only — new_names may have them
-  " (user-typed dirs end with /), old_names never do.
   let l:new_names_bare = map(copy(l:new_names), 'substitute(v:val, "/$", "", "")')
 
   let l:to_delete = []
@@ -72,10 +61,6 @@ function! vimexplorer#Save() abort
     endif
   endfor
 
-  " ── Renames: positional match (same index, different name) ────────────
-  " We detect renames by pairing entries that no longer exist on the
-  " new side with new entries that did not exist on the old side,
-  " in the order they appear.
   let l:old_only = []
   for l:name in l:old_names
     if index(l:new_names_bare, l:name) ==# -1
@@ -85,15 +70,12 @@ function! vimexplorer#Save() abort
 
   let l:new_only = []
   for l:name in l:new_names
-    " Use the raw name (with slash if present) so creation logic can
-    " detect directories. Skip bare names that already exist in old.
     let l:bare = substitute(l:name, '/$', '', '')
     if l:bare !=# '' && index(l:old_names, l:bare) ==# -1
       call add(l:new_only, l:name)
     endif
   endfor
 
-  " Pair old-only and new-only as renames (index-matched)
   let l:to_rename = []
   let l:new_files = []
   let l:ri = 0
@@ -102,12 +84,10 @@ function! vimexplorer#Save() abort
       call add(l:to_rename, [l:old_only[l:ri], l:new_only[l:i]])
       let l:ri += 1
     else
-      " More new names than old-only → these are new files to create
       call add(l:new_files, l:new_only[l:i])
     endif
   endfor
 
-  " Any remaining old_only entries that were not matched → deletions
   while l:ri < len(l:old_only)
     if index(l:to_delete, l:old_only[l:ri]) ==# -1
       call add(l:to_delete, l:old_only[l:ri])
@@ -115,20 +95,19 @@ function! vimexplorer#Save() abort
     let l:ri += 1
   endwhile
 
-  " ── Confirm deletions ─────────────────────────────────────────────────
+  " Confirm deletions
   if !empty(l:to_delete)
     let l:msg = 'VimExplorer: delete ' . len(l:to_delete) . ' item(s)? [y/N] '
     let l:ans = input(l:msg)
     if l:ans !~? '^y'
       echo "\nAborted."
-      " Re-render to restore buffer contents
       call s:Render(l:bufnr)
       return
     endif
     echo ''
   endif
 
-  " ── Apply renames ─────────────────────────────────────────────────────
+  " Apply renames
   for [l:old, l:new] in l:to_rename
     if l:new =~# '/'
       echohl ErrorMsg
@@ -153,12 +132,10 @@ function! vimexplorer#Save() abort
     endif
   endfor
 
-  " ── Apply deletions ───────────────────────────────────────────────────
+  " Apply deletions
   for l:name in l:to_delete
     let l:target = l:dir . '/' . l:name
     if isdirectory(l:target)
-      " Use rmdir -r (via system) because Vim's delete() with 'd' is not
-      " always recursive on all systems
       let l:out = system('rm -rf ' . shellescape(l:target))
       if v:shell_error !=# 0
         echohl ErrorMsg | echo 'VimExplorer: failed to remove dir: ' . l:target | echohl None
@@ -174,7 +151,7 @@ function! vimexplorer#Save() abort
     endif
   endfor
 
-  " ── Create new files ─────────────────────────────────────────────────
+  " Create new files
   for l:name in l:new_files
     if l:name =~# '/$'
       " Trailing slash → create directory
@@ -192,7 +169,6 @@ function! vimexplorer#Save() abort
       " explorer buffers for a directory containing this filename.
       let l:src_path = s:FindInOtherBuffers(l:name, l:dir)
       if l:src_path !=# ''
-        " Copy: read source and write to destination
         let l:content = readfile(l:src_path, 'b')
         if writefile(l:content, l:fpath, 'b') !=# 0
           echohl ErrorMsg | echo 'VimExplorer: failed to copy to: ' . l:fpath | echohl None
@@ -210,12 +186,11 @@ function! vimexplorer#Save() abort
     endif
   endfor
 
-  " ── Re-render ─────────────────────────────────────────────────────────
   call s:Render(l:bufnr)
   setlocal nomodified
 endfunction
 
-" ── Public: Refresh ────────────────────────────────────────────────────────
+" Refresh the explorer
 function! vimexplorer#Refresh() abort
   let l:bufnr = bufnr('%')
   if has_key(s:state, l:bufnr)
@@ -223,7 +198,7 @@ function! vimexplorer#Refresh() abort
   endif
 endfunction
 
-" ── Public: Enter (open file or directory under cursor) ────────────────────
+" Enter file or directory under cursor
 function! vimexplorer#Enter() abort
   let l:bufnr = bufnr('%')
   if !has_key(s:state, l:bufnr)
@@ -235,7 +210,6 @@ function! vimexplorer#Enter() abort
     return
   endif
 
-  " Strip detail prefix if present
   let l:target = l:dir . '/' . l:name
 
   if isdirectory(l:target)
@@ -249,7 +223,7 @@ function! vimexplorer#Enter() abort
   endif
 endfunction
 
-" ── Public: Go up one directory ────────────────────────────────────────────
+" Go up one directory
 function! vimexplorer#Up() abort
   let l:bufnr = bufnr('%')
   if !has_key(s:state, l:bufnr)
@@ -264,7 +238,7 @@ function! vimexplorer#Up() abort
   call vimexplorer#Open(l:parent)
 endfunction
 
-" ── Public: Toggle hidden files ────────────────────────────────────────────
+" Toggle hidden files
 function! vimexplorer#ToggleHidden() abort
   let l:bufnr = bufnr('%')
   if !has_key(s:state, l:bufnr)
@@ -275,7 +249,7 @@ function! vimexplorer#ToggleHidden() abort
   call s:Render(l:bufnr)
 endfunction
 
-" ── Public: Toggle detail (size/perms prefix) ──────────────────────────────
+" Toggle detail (size/perms prefix)
 function! vimexplorer#ToggleDetail() abort
   let l:bufnr = bufnr('%')
   if !has_key(s:state, l:bufnr)
@@ -286,7 +260,7 @@ function! vimexplorer#ToggleDetail() abort
   call s:Render(l:bufnr)
 endfunction
 
-" ── Public: Open file in a vertical split ──────────────────────────────────
+" Open file in a vertical split
 function! vimexplorer#OpenSplit(vertical) abort
   let l:bufnr = bufnr('%')
   if !has_key(s:state, l:bufnr)
@@ -305,7 +279,7 @@ function! vimexplorer#OpenSplit(vertical) abort
   endif
 endfunction
 
-" ── Private: Set up the explorer buffer ────────────────────────────────────
+" Set up the explorer buffer
 function! s:SetupBuffer(dir) abort
   let l:bufnr = bufnr('%')
 
@@ -344,7 +318,7 @@ function! s:SetupBuffer(dir) abort
   nnoremap <buffer> <silent> ?      :call vimexplorer#Help()<CR>
 endfunction
 
-" ── Private: Render the buffer contents ────────────────────────────────────
+" Render the buffer contents
 function! s:Render(bufnr) abort
   if !has_key(s:state, a:bufnr)
     return
@@ -355,10 +329,8 @@ function! s:Render(bufnr) abort
   let l:detail  = l:st.detail
   let l:show_h  = l:st.show_hidden
 
-  " Read directory entries
   let l:entries = s:ReadDir(l:dir, l:show_h)
 
-  " Build the display lines and store the canonical name list
   let l:lines = []
   let l:names = []
 
@@ -386,11 +358,10 @@ function! s:Render(bufnr) abort
     setlocal nomodifiable
   endif
 
-  " Save canonical name list (for diffing on save)
   let l:st.names = l:names
 endfunction
 
-" ── Private: Read and sort directory entries ───────────────────────────────
+" Read and sort directory entries
 function! s:ReadDir(dir, show_hidden) abort
   let l:all = glob(a:dir . '/*', 0, 1)
   if a:show_hidden
@@ -417,12 +388,12 @@ function! s:ReadDir(dir, show_hidden) abort
     call add(l:entries, l:entry)
   endfor
 
-  " Sort: dirs first, then alphabetical (case-insensitive)
+  " Sort dirs first, then alphabetical (case-insensitive)
   call sort(l:entries, function('s:CompareEntries'))
   return l:entries
 endfunction
 
-" ── Private: Format a single entry for display ─────────────────────────────
+" Format a single entry for display
 function! s:FormatEntry(entry, detail) abort
   let l:suffix = a:entry.is_dir ? '/' : ''
   let l:name   = a:entry.name . l:suffix
@@ -436,10 +407,9 @@ function! s:FormatEntry(entry, detail) abort
   endif
 endfunction
 
-" ── Private: Get name under cursor (strips detail prefix) ──────────────────
+" Get name under cursor (strips detail prefix)
 function! s:NameUnderCursor() abort
   let l:line = getline('.')
-  " Skip header comment lines and blank lines
   if l:line =~# '^"' || l:line =~# '^\s*$'
     return ''
   endif
@@ -455,16 +425,14 @@ function! s:NameUnderCursor() abort
     let l:name = l:line
   endif
 
-  " Strip trailing slash (dirs)
   let l:name = substitute(l:name, '/$', '', '')
   return trim(l:name)
 endfunction
 
-" ── Private: Parse buffer lines into name list (for Save) ──────────────────
+" Parse buffer lines into name list (for Save)
 function! s:ParseLines(lines) abort
   let l:names = []
   for l:line in a:lines
-    " Skip header comment lines and blanks
     if l:line =~# '^"' || l:line =~# '^\s*$'
       continue
     endif
@@ -488,7 +456,7 @@ function! s:ParseLines(lines) abort
   return l:names
 endfunction
 
-" ── Private: Sort comparator: dirs first, then alphabetical ────────────────
+" Sort comparator: dirs first, then alphabetical
 function! s:CompareEntries(a, b) abort
   if a:a.is_dir && !a:b.is_dir | return -1 | endif
   if !a:a.is_dir && a:b.is_dir | return  1 | endif
@@ -497,7 +465,7 @@ function! s:CompareEntries(a, b) abort
   return l:la ==# l:lb ? 0 : l:la <# l:lb ? -1 : 1
 endfunction
 
-" ── Private: Human-readable file size ──────────────────────────────────────
+" Human-readable file size
 function! s:HumanSize(bytes) abort
   if a:bytes < 0
     return '?'
@@ -512,7 +480,7 @@ function! s:HumanSize(bytes) abort
   endif
 endfunction
 
-" ── Private: File permissions string ───────────────────────────────────────
+" File permissions string
 function! s:FilePerms(path) abort
   " Use getfperm() — returns e.g. "rwxr-xr-x"
   let l:perms = getfperm(a:path)
@@ -529,7 +497,7 @@ function! s:FilePerms(path) abort
   endif
 endfunction
 
-" ── Public: Status line helper ─────────────────────────────────────────────
+" Status line helper
 function! vimexplorer#StatusLine() abort
   let l:bufnr = bufnr('%')
   if !has_key(s:state, l:bufnr)
@@ -541,7 +509,7 @@ function! vimexplorer#StatusLine() abort
   return ' VimExplorer  ' . l:st.dir . '  ' . l:h . l:d
 endfunction
 
-" ── Private: Find a file by name in any other open explorer buffer ─────────
+" Find a file by name in any other open explorer buffer
 " Returns the full path if found, or '' if not found or same directory.
 function! s:FindInOtherBuffers(name, current_dir) abort
   for [l:bufnr, l:st] in items(s:state)
@@ -556,7 +524,7 @@ function! s:FindInOtherBuffers(name, current_dir) abort
   return ''
 endfunction
 
-" ── Public: Show help ──────────────────────────────────────────────────────
+" Show help
 function! vimexplorer#Help() abort
   echo ''
   echo 'VimExplorer key bindings'
