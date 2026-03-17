@@ -96,6 +96,18 @@ function! vimexplorer#Save() abort
     echo ''
   endif
 
+  " Confirm renames
+  if !empty(l:to_rename)
+    let l:msg = 'VimExplorer: rename ' . len(l:to_rename) . ' item(s)? [y/N] '
+    let l:ans = input(l:msg)
+    if l:ans !~? '^y'
+      echo "\nAborted."
+      call s:Render(l:bufnr)
+      return
+    endif
+    echo ''
+  endif
+
   " Apply renames
   for [l:old, l:new] in l:to_rename
     if l:new =~# '/'
@@ -139,6 +151,18 @@ function! vimexplorer#Save() abort
       endif
     endif
   endfor
+
+  " Confirm creations
+  if !empty(l:new_files)
+    let l:msg = 'VimExplorer: create ' . len(l:new_files) . ' item(s)? [y/N] '
+    let l:ans = input(l:msg)
+    if l:ans !~? '^y'
+      echo "\nAborted."
+      call s:Render(l:bufnr)
+      return
+    endif
+    echo ''
+  endif
 
   " Create new files
   for l:name in l:new_files
