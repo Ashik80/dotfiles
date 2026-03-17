@@ -172,12 +172,35 @@ function! vimexplorer#Save() abort
   " Create new files
   for l:name in l:new_files
     if l:name =~# '/$'
-      " Trailing slash → create directory
-      let l:dname = l:dir . '/' . l:name[:-2]
-      if mkdir(l:dname, 'p') ==# 0
-        echohl ErrorMsg | echo 'VimExplorer: failed to create dir: ' . l:dname | echohl None
+      let l:bare  = l:name[:-2]
+      let l:dname = l:dir . '/' . l:bare
+      let l:src_path = s:FindInOtherBuffers(l:bare, l:dir)
+      if l:src_path !=# ''
+        " Directory came from another explorer buffer — move or copy it
+        if has_key(s:cut_paths, l:src_path)
+          " Cut (dd) → move
+          if rename(l:src_path, l:dname) !=# 0
+            echohl ErrorMsg | echo 'VimExplorer: failed to move dir: ' . l:src_path | echohl None
+          else
+            unlet s:cut_paths[l:src_path]
+            echo 'Moved: ' . l:src_path . ' → ' . l:dname
+          endif
+        else
+          " Yank (yy) → recursive copy
+          let l:out = system('cp -r ' . shellescape(l:src_path) . ' ' . shellescape(l:dname))
+          if v:shell_error !=# 0
+            echohl ErrorMsg | echo 'VimExplorer: failed to copy dir: ' . l:src_path | echohl None
+          else
+            echo 'Copied: ' . l:src_path . ' → ' . l:dname
+          endif
+        endif
       else
-        echo 'Created dir: ' . l:name
+        " No source found → create empty directory
+        if mkdir(l:dname, 'p') ==# 0
+          echohl ErrorMsg | echo 'VimExplorer: failed to create dir: ' . l:dname | echohl None
+        else
+          echo 'Created dir: ' . l:name
+        endif
       endif
     else
       let l:fpath = l:dir . '/' . l:name
@@ -200,12 +223,21 @@ function! vimexplorer#Save() abort
             echo 'Moved: ' . l:src_path . ' → ' . l:fpath
           endif
         else
-          " Yank (yy)
-          let l:content = readfile(l:src_path, 'b')
-          if writefile(l:content, l:fpath, 'b') !=# 0
-            echohl ErrorMsg | echo 'VimExplorer: failed to copy to: ' . l:fpath | echohl None
+          " Yank (yy) → copy (recursive for directories)
+          if isdirectory(l:src_path)
+            let l:out = system('cp -r ' . shellescape(l:src_path) . ' ' . shellescape(l:fpath))
+            if v:shell_error !=# 0
+              echohl ErrorMsg | echo 'VimExplorer: failed to copy dir: ' . l:src_path | echohl None
+            else
+              echo 'Copied: ' . l:src_path . ' → ' . l:fpath
+            endif
           else
-            echo 'Copied: ' . l:src_path . ' → ' . l:fpath
+            let l:content = readfile(l:src_path, 'b')
+            if writefile(l:content, l:fpath, 'b') !=# 0
+              echohl ErrorMsg | echo 'VimExplorer: failed to copy to: ' . l:fpath | echohl None
+            else
+              echo 'Copied: ' . l:src_path . ' → ' . l:fpath
+            endif
           endif
         endif
       else
@@ -589,7 +621,7 @@ function! s:FindInOtherBuffers(name, current_dir) abort
       continue
     endif
     let l:candidate = l:st.dir . '/' . a:name
-    if filereadable(l:candidate)
+    if filereadable(l:candidate) || isdirectory(l:candidate)
       return l:candidate
     endif
   endfor
