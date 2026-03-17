@@ -169,6 +169,10 @@ function! vimexplorer#Save() abort
       " explorer buffers for a directory containing this filename.
       let l:src_path = s:FindInOtherBuffers(l:name, l:dir)
       if l:src_path !=# ''
+        let l:fparent = fnamemodify(l:fpath, ':h')
+        if !isdirectory(l:fparent)
+          call mkdir(l:fparent, 'p')
+        endif
         let l:content = readfile(l:src_path, 'b')
         if writefile(l:content, l:fpath, 'b') !=# 0
           echohl ErrorMsg | echo 'VimExplorer: failed to copy to: ' . l:fpath | echohl None
@@ -176,7 +180,11 @@ function! vimexplorer#Save() abort
           echo 'Copied: ' . l:src_path . ' → ' . l:fpath
         endif
       else
-        " Brand-new file: create empty
+        " Brand-new file: create empty (ensure parent dirs exist)
+        let l:fparent = fnamemodify(l:fpath, ':h')
+        if !isdirectory(l:fparent)
+          call mkdir(l:fparent, 'p')
+        endif
         if writefile([], l:fpath) !=# 0
           echohl ErrorMsg | echo 'VimExplorer: failed to create file: ' . l:fpath | echohl None
         else
