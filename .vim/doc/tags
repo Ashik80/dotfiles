@@ -1,0 +1,15 @@
+:VimExplorer	vimexplorer.txt	/*:VimExplorer*
+:VimExplorerCwd	vimexplorer.txt	/*:VimExplorerCwd*
+g:vimexplorer_detail	vimexplorer.txt	/*g:vimexplorer_detail*
+g:vimexplorer_show_header	vimexplorer.txt	/*g:vimexplorer_show_header*
+g:vimexplorer_show_hidden	vimexplorer.txt	/*g:vimexplorer_show_hidden*
+g:vimexplorer_win_height	vimexplorer.txt	/*g:vimexplorer_win_height*
+vimexplorer-commands	vimexplorer.txt	/*vimexplorer-commands*
+vimexplorer-config	vimexplorer.txt	/*vimexplorer-config*
+vimexplorer-contents	vimexplorer.txt	/*vimexplorer-contents*
+vimexplorer-editing	vimexplorer.txt	/*vimexplorer-editing*
+vimexplorer-intro	vimexplorer.txt	/*vimexplorer-intro*
+vimexplorer-keys	vimexplorer.txt	/*vimexplorer-keys*
+vimexplorer-syntax	vimexplorer.txt	/*vimexplorer-syntax*
+vimexplorer-usage	vimexplorer.txt	/*vimexplorer-usage*
+vimexplorer.txt	vimexplorer.txt	/*vimexplorer.txt*
