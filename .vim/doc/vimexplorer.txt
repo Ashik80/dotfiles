@@ -15,8 +15,8 @@ CONTENTS                                               *vimexplorer-contents*
 1. INTRODUCTION                                           *vimexplorer-intro*
 
 VimExplorer opens a directory as an editable buffer. Files and directories
-are displayed as plain text. You can rename, delete, and create entries by
-editing the buffer and saving it with |:w|.
+are displayed as plain text. You can rename, delete, create, copy, and move
+entries by editing the buffer and saving it with |:w|.
 
 Inspired by oil.nvim for Neovim, written entirely in Vimscript.
 
@@ -43,11 +43,13 @@ Recommended mapping in your |vimrc|: >
     <BS>        Go up one directory
     gh          Toggle display of hidden files (dotfiles)
     gd          Toggle detail mode (permissions and size prefix)
-    gs          Toggle the header line at the top of the buffer
+    yy          Yank (copy) the entry under cursor
+    dd          Cut (move) the entry under cursor
+    p / P       Paste yanked/cut entry (standard Vim)
     <C-v>       Open file under cursor in a vertical split
     <C-s>       Open file under cursor in a horizontal split
     R           Refresh the directory listing
-    :w          Apply all edits (rename / delete / create / move)
+    :w          Apply all edits (rename / delete / create / copy / move)
     q           Close the explorer buffer
     ?           Show a brief key binding summary
 
@@ -80,12 +82,17 @@ directories are supported: >
     new_dir/
     new_dir/subdir/
 
-MOVE FILE~
+COPY FILE~
 Open the source directory in one explorer buffer and the destination
-directory in another. Delete the line from the source buffer and add it
-to the destination buffer. Save both buffers with |:w|. VimExplorer will
-move the file atomically using rename(2). If no matching open buffer is
-found, an empty file is created instead.
+directory in another. Use |yy| to yank the filename in the source buffer,
+then paste it into the destination buffer with |p|. Save the destination
+buffer with |:w|. The file is copied; the original is left untouched.
+
+MOVE FILE~
+Same as copy, but use |dd| instead of |yy| to cut the line. Save the
+destination buffer with |:w| and VimExplorer will move the file atomically.
+If the source buffer is also saved, the now-missing entry is silently
+ignored.
 
 DETAIL MODE~
 When detail mode is active (|gd| to toggle), each line is prefixed with
@@ -115,8 +122,8 @@ All variables can be set in your |vimrc| before the plugin loads.
     of the explorer buffer. Disable to get a clean listing: >
         let g:vimexplorer_show_header = 0
 
-    Can also be toggled on the fly inside an explorer buffer with |gh| for
-    hidden files, |gd| for detail mode.
+    Hidden files and detail mode can be toggled on the fly with |gh| and
+    |gd| respectively.
 
 *g:vimexplorer_win_height*              (default: 20)
     Reserved for future split-window mode. Not yet used.
