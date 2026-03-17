@@ -47,7 +47,7 @@ Recommended mapping in your |vimrc|: >
     <C-v>       Open file under cursor in a vertical split
     <C-s>       Open file under cursor in a horizontal split
     R           Refresh the directory listing
-    :w          Apply all edits (rename / delete / create / copy)
+    :w          Apply all edits (rename / delete / create / move)
     q           Close the explorer buffer
     ?           Show a brief key binding summary
 
@@ -55,7 +55,8 @@ Recommended mapping in your |vimrc|: >
 4. EDITING                                              *vimexplorer-editing*
 
 RENAME~
-Edit the filename portion of a line. Save with |:w| to apply.
+Edit the filename portion of a line. Save with |:w|. You will be prompted
+to confirm before any rename takes place.
 
     Before:  old_name.txt
     After:   new_name.txt
@@ -65,24 +66,29 @@ Delete the entire line. Save with |:w|. You will be prompted to confirm
 before any deletion takes place.
 
 CREATE FILE~
-Add a new line with the desired filename. Save with |:w|. >
+Add a new line with the desired filename. Save with |:w|. You will be
+prompted to confirm before any creation takes place. Nested paths are
+supported — parent directories are created automatically: >
 
     hello.txt
+    new_dir/hello.txt
 
 CREATE DIRECTORY~
-Add a new line ending with a forward slash /. Save with |:w|. >
+Add a new line ending with a forward slash /. Save with |:w|. Nested
+directories are supported: >
 
     new_dir/
+    new_dir/subdir/
 
-COPY FILE~
+MOVE FILE~
 Open the source directory in one explorer buffer and the destination
-directory in another. Add a line with the source filename to the
-destination buffer. Save with |:w|. VimExplorer will find the file in the
-other open explorer buffer and copy its contents across. If no matching
-open buffer is found, an empty file is created instead.
+directory in another. Delete the line from the source buffer and add it
+to the destination buffer. Save both buffers with |:w|. VimExplorer will
+move the file atomically using rename(2). If no matching open buffer is
+found, an empty file is created instead.
 
 DETAIL MODE~
-When detail mode is active (|gs| to toggle), each line is prefixed with
+When detail mode is active (|gd| to toggle), each line is prefixed with
 permissions and size: >
 
     drwxr-xr-x          src/
@@ -109,7 +115,8 @@ All variables can be set in your |vimrc| before the plugin loads.
     of the explorer buffer. Disable to get a clean listing: >
         let g:vimexplorer_show_header = 0
 
-    Can also be toggled on the fly inside an explorer buffer with |gs|.
+    Can also be toggled on the fly inside an explorer buffer with |gh| for
+    hidden files, |gd| for detail mode.
 
 *g:vimexplorer_win_height*              (default: 20)
     Reserved for future split-window mode. Not yet used.
