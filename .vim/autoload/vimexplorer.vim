@@ -216,6 +216,7 @@ endfunction
 function! vimexplorer#Refresh() abort
   let l:bufnr = bufnr('%')
   if has_key(s:state, l:bufnr)
+    call s:SetupBuffer(s:state[l:bufnr].dir)
     call s:Render(l:bufnr)
   endif
 endfunction
