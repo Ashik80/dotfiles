@@ -137,26 +137,6 @@ endfunction
 xnoremap gb :<C-u>call GitBlameSelection()<CR>
 nnoremap gb :call GitBlameFile()<CR>
 
-" Netrw copy file path
-function! GetFilePath()
-    return netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))
-endfunction
-function! CopyFile()
-    if &filetype == 'netrw'
-        let l:file = fnamemodify(GetFilePath(), ':.')
-        let @+ = l:file
-        echo "Copied file path to clipboard: " . l:file
-    endif
-endfunction
-function! XdgOpenFile()
-    if &filetype == 'netrw'
-        let l:file = GetFilePath()
-        call system('xdg-open ' . l:file)
-    endif
-endfunction
-nnoremap cp :call CopyFile()<CR>
-nnoremap go :call XdgOpenFile()<CR>
-
 " Open a scratch buffer
 function! OpenScratchBuffer()
     above new
@@ -255,7 +235,6 @@ let g:plugins = [
     \ 'https://github.com/lilydjwg/colorizer',
     \ 'https://github.com/sheerun/vim-polyglot',
     \ 'https://github.com/neoclide/coc.nvim',
-    \ 'https://github.com/junegunn/seoul256.vim',
     \ 'https://github.com/mhinz/vim-signify',
     \ 'https://github.com/menisadi/kanagawa.vim',
     \ ]
