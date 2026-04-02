@@ -7,7 +7,6 @@
   "diagnostic.warningSign": "W",
   "diagnostic.hintSign": "H",
   "diagnostic.infoSign": "I",
-  "semanticTokens.enable": true,
   "typescript.autoClosingTags": true,
   "languageserver": {
     "tailwindcss": {
@@ -20,7 +19,7 @@
       "args": ["serve"],
       "filetypes": ["terraform", "tf"],
       "initializationOptions": {}
-    },
+    }
   },
   "prettier.bracketSpacing": true,
   "prettier.trailingComma": "all"

@@ -1,13 +1,8 @@
 let g:mapleader = " "
 
-let g:netrw_banner=0
-let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
-let g:netrw_localcopydircmd = 'cp -r'
-let g:netrw_altfile = 1
-
 filetype plugin indent on
 syntax on
-set bg=dark
+set bg=light
 set number
 set expandtab
 set shiftwidth=4 tabstop=4
@@ -34,7 +29,7 @@ set nobackup
 set nowritebackup
 set list
 set listchars=tab:▸\ ,trail:·
-set fillchars=eob:\ 
+set fillchars=eob:\ ,vert:│
 
 " Cursor change
 "let &t_SI = "\e[6 q"
@@ -42,7 +37,6 @@ set fillchars=eob:\
 "let &t_EI = "\e[2 q"
 
 " General mappings
-" nnoremap - :Ex<CR>
 nnoremap - :VimExplorer<CR>
 nnoremap ]q :cn<CR>
 nnoremap [q :cp<CR>
@@ -54,6 +48,13 @@ nnoremap <leader>cp :let @+ = expand("%:.")<CR>
 tnoremap <Esc> <C-\><C-n>
 nnoremap <C-Left> :vertical resize -5<CR>
 nnoremap <C-Right> :vertical resize +5<CR>
+
+" Get highlight group
+function! SynGroup()
+    let l:s = synID(line('.'), col('.'), 1)
+    echo synIDattr(l:s, 'name') . ' -> ' . synIDattr(synIDtrans(l:s), 'name')
+endfun
+command! Inspect call SynGroup()
 
 " Terminal settings
 augroup terminal_no_line_numbers
@@ -70,8 +71,6 @@ endif
 autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx,*.json,*.rb,*.yml,*.html,*.css {
     set shiftwidth=2 tabstop=2
 }
-
-autocmd! FileType netrw set nocursorline
 
 " Macros
 autocmd! BufEnter,BufWinEnter *.js,*.jsx,*.ts,*.tsx {
@@ -97,6 +96,7 @@ function! FuzzyFileFinder()
     if executable("batcat")
         let l:cmd = "batcat --theme=ansi --style=numbers --color=always {}"
     endif
+    " if we want preview
     "execute "silent !find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger \\) -prune -o -type f | fzf --preview='".l:cmd."' | sed 's/$/:0:0/' > " . l:tmpfile
     execute "silent !find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger \\) -prune -o -type f | fzf | sed 's/$/:0:0/' > " . l:tmpfile
     set efm=%f:%l:%c
@@ -127,11 +127,11 @@ nnoremap <leader>fq :FindFiles<space>
 function! GitBlameSelection()
     let line_start = getpos("'<")[1]
     let line_end = getpos("'>")[1]
-    execute "silent! terminal sh -c \"echo '\e[1;31mBlame results:\e[0m' && git-blame-colored ".shellescape(expand("%"))." -L".line_start.",".line_end."\""
+    execute "silent! terminal sh -c \"echo '\e[38;5;1mBlame results:\e[0m' && git-blame-colored ".shellescape(expand("%"))." -L".line_start.",".line_end."\""
     setlocal nobuflisted
 endfunction
 function! GitBlameFile()
-    execute "silent! terminal sh -c \"echo '\e[1;31mBlame results:\e[0m' && git-blame-colored ".shellescape(expand("%"))."\""
+    execute "silent! terminal sh -c \"echo '\e[38;5;1mBlame results:\e[0m' && git-blame-colored ".shellescape(expand("%"))."\""
     setlocal nobuflisted
 endfunction
 xnoremap gb :<C-u>call GitBlameSelection()<CR>
@@ -172,7 +172,6 @@ function! SelectionToQF()
     cwindow
   endif
 endfunction
-
 xnoremap <silent> <leader>q :<C-u>call SelectionToQF()<CR>
 
 " Statusline
@@ -232,11 +231,10 @@ endfunction
 " Plugins
 let g:plugins = [
     \ 'https://github.com/Exafunction/windsurf.vim',
-    \ 'https://github.com/lilydjwg/colorizer',
+    \ 'https://github.com/SilentGlasses/colorhighlighter',
     \ 'https://github.com/sheerun/vim-polyglot',
     \ 'https://github.com/neoclide/coc.nvim',
     \ 'https://github.com/mhinz/vim-signify',
-    \ 'https://github.com/menisadi/kanagawa.vim',
     \ ]
 
 call plugger#setup(g:plugins)
@@ -248,13 +246,6 @@ set tagfunc=CocTagFunc
 
 let g:coc_enable_locationlist = 0
 autocmd User CocLocationsChange CocList --normal location
-
-function! CocHelperFocusFloat() abort
-    let winid = coc#float#get_float_win()
-    if winid > 0
-        exec winid . "wincmd w"
-    endif
-endfunction
 
 function! ShowDocumentation()
     if CocAction('hasProvider', 'hover')
@@ -309,6 +300,17 @@ augroup END
 " Git gutter
 nnoremap <leader>gh :SignifyHunkDiff<CR>
 
+" Color
+let g:colorhighlighter_filetypes = [
+      \ 'css', 'scss', 'sass', 'less', 'stylus',
+      \ 'html', 'javascript', 'typescript', 'vim',
+      \ 'jsx', 'tsx', 'json', 'yaml', 'conf', 'cpp'
+      \ ]
+
+" VimExplorer
+let g:vimexplorer_show_hidden = 1
+let g:vimexplorer_show_header = 0
+
 " Highlights
 " augroup Highlights
 "     autocmd!
@@ -331,17 +333,8 @@ nnoremap <leader>gh :SignifyHunkDiff<CR>
 "     autocmd ColorScheme * hi link CocHintSign DiagnosticHint
 " augroup END
 
-colorscheme kanagawa
+colorscheme default16
 
-hi SignColumn ctermbg=NONE guibg=NONE
-hi Normal ctermbg=NONE guibg=NONE
-hi LineNr ctermbg=NONE guibg=NONE
-hi DiffAdd ctermbg=NONE guibg=NONE
-hi DiffChange ctermbg=NONE guibg=NONE
-hi DiffDelete ctermbg=NONE guibg=NONE
-hi VertSplit cterm=NONE ctermfg=233 guifg=#16161d
-"hi VertSplit cterm=NONE
-
-" VimExplorer
-let g:vimexplorer_show_hidden = 1
-let g:vimexplorer_show_header = 0
+hi htmlH1 ctermfg=1
+hi mkdHeading ctermfg=1
+hi CocFloating ctermbg=0
