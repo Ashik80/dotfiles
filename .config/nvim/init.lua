@@ -19,20 +19,21 @@ vim.o.clipboard = "unnamedplus"
 vim.o.writebackup = false
 vim.o.winborder = "solid"
 vim.o.guicursor = ""
--- vim.o.listchars = "tab:▸ ,trail:·"
-vim.o.listchars = "tab:  ,trail:·"
+vim.o.listchars = "tab:▸ ,trail:·"
 vim.o.list = true
 vim.o.fillchars = "eob: "
-vim.o.wildmode = "noselect:lastused,full"
-vim.o.wildoptions = "pum,fuzzy"
-vim.o.pumheight = 15
+-- vim.o.wildmode = "noselect:lastused,full"
+-- vim.o.wildoptions = "pum,fuzzy"
+-- vim.o.pumheight = 15
+vim.o.wildmenu = true
+vim.o.wildoptions = "pum"
 
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
 
 -- Mappings
 -- vim.keymap.set('n', '-', '<cmd>Ex<CR>')
-vim.keymap.set('n', '-', '<cmd>Oil<CR>')
+vim.keymap.set('n', '-', '<cmd>VimExplorer<CR>')
 vim.keymap.set({'v', 'x'}, '>', '>gv')
 vim.keymap.set({'v', 'x'}, '<', '<gv')
 vim.keymap.set({'v', 'x'}, 'J', ":move '>+1<CR>gv=gv")
@@ -42,58 +43,17 @@ vim.keymap.set('t', '<C-w>N', '<C-\\><C-n>')
 vim.keymap.set('t', '<Esc>', '<C-\\><C-n>')
 vim.keymap.set('t', '<C-w>w', '<C-\\><C-n><C-w>w')
 vim.keymap.set('t', '<C-w><C-w>', '<C-\\><C-n><C-w>w')
-vim.keymap.set("n", "<leader>ff", ":find<space>")
-
--- Lazygit
-if vim.fn.executable("lazygit") == 1 then
-    vim.keymap.set('n', '<leader>lg', ':tabnew | term lazygit<CR>i')
-end
-
-augroup('LazyGitAutoClose', { clear = true })
-autocmd('TermClose', {
-    group = 'LazyGitAutoClose',
-    pattern = 'term://*lazygit',
-    callback = function()
-        vim.api.nvim_input('<CR>')
-    end
-})
+vim.keymap.set('c', '<Down>', function()
+  return vim.fn.pumvisible() == 1 and '<C-n>' or '<Down>'
+end, { expr = true })
+vim.keymap.set('c', '<Up>', function()
+  return vim.fn.pumvisible() == 1 and '<C-p>' or '<Up>'
+end, { expr = true })
 
 -- Grepping
 vim.o.grepprg = "grep -Rn --exclude-dir={node_modules,.git,dist,*cache*,android,ios,.next}"
 vim.o.grepformat = "%f:%l:%m"
 vim.keymap.set('n', '<leader>fg', ':grep!<space>')
-
--- Finding
-files_cache = {}
-function FindFunc(cmdarg, cmdline)
-    if #files_cache == 0 then
-        local cmd = string.format(
-            [[find . -type d \( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next \) -prune -o -type f -print]]
-        )
-        files_cache = vim.fn.systemlist(cmd)
-    end
-    if cmdarg == "" then
-        return files_cache
-    else
-        return vim.fn.matchfuzzy(files_cache, cmdarg)
-    end
-end
-vim.o.findfunc = "v:lua.FindFunc"
-augroup('CmdComplete', { clear = true })
-autocmd('CmdlineChanged', {
-    group = 'CmdComplete',
-    pattern = { ':' },
-    callback = function()
-        vim.fn.wildtrigger()
-    end
-})
-autocmd('CmdlineEnter', {
-    group = 'CmdComplete',
-    pattern = { ':' },
-    callback = function()
-        files_cache = {}
-    end
-})
 
 -- Clean no name buffers
 vim.api.nvim_create_user_command("CleanNoNameBuffers", function()
@@ -146,7 +106,6 @@ local function fuzzy_file_finder()
     local term_buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(0, term_buf)
     vim.cmd("startinsert")
-
     vim.fn.termopen({ "/bin/sh", "-c", fzf_cmd }, {
         on_exit = function(job_id, code, event)
             local raw_lines = vim.api.nvim_buf_get_lines(term_buf, 0, -1, false)
@@ -170,7 +129,7 @@ local function fuzzy_file_finder()
         end
     })
 end
-vim.keymap.set("n", "<leader>fz", fuzzy_file_finder, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>ff", fuzzy_file_finder, { noremap = true, silent = true })
 
 -- Find files
 local function find_files_to_qf(pattern)
@@ -216,29 +175,6 @@ local function git_blame_file()
 end
 vim.keymap.set({'v', 'x'}, "gb", git_blame_selection, { noremap = true, silent = true })
 vim.keymap.set('n', "gb", git_blame_file, { noremap = true, silent = true })
-
--- Netrw copy file
-augroup('NetrwCopyFilePath', { clear = true })
-autocmd('FileType', {
-    group = 'NetrwCopyFilePath',
-    pattern = 'netrw',
-    callback = function()
-        local function get_file()
-            return vim.fn['netrw#Call']('NetrwFile', vim.fn['netrw#Call']('NetrwGetWord'))
-        end
-        local function copy_file()
-            local file = vim.fn.fnamemodify(get_file(), ":.")
-            vim.fn.setreg('+', file)
-            print("Copied file path to clipboard: ", file)
-        end
-        local function xdg_open_file()
-            local file = vim.fn.fnamemodify(get_file(), ":.")
-            vim.fn.system({ "xdg-open", file })
-        end
-        vim.keymap.set('n', 'cp', copy_file, { noremap = true, silent = true })
-        vim.keymap.set('n', 'go', xdg_open_file, { noremap = true, silent = true })
-    end
-})
 
 -- Open a scratch buffer
 local function open_scratch_buffer()
@@ -344,17 +280,12 @@ autocmd('FileType', {
 
 -- Plugins
 local plugins = {
-    -- 'https://github.com/tiagovla/tokyodark.nvim',
     'https://github.com/Exafunction/windsurf.vim',
     'https://github.com/neovim/nvim-lspconfig',
     'https://github.com/lewis6991/gitsigns.nvim',
     'https://github.com/brenoprata10/nvim-highlight-colors',
-    'https://github.com/stevearc/oil.nvim',
+    'https://github.com/Ashik80/VimExplorer',
     'https://github.com/rebelot/kanagawa.nvim',
-    -- Debugger plugins (testing)
-    'https://github.com/mfussenegger/nvim-dap',
-    'https://github.com/rcarriga/nvim-dap-ui',
-    'https://github.com/nvim-neotest/nvim-nio',
 }
 local plugger = require("plugger")
 plugger.setup(plugins)
@@ -420,33 +351,21 @@ vim.keymap.set('n', '<leader>gh', require('gitsigns').preview_hunk, { noremap = 
 -- Colors
 require('nvim-highlight-colors').setup({})
 
--- Oil
-require("oil").setup()
-
--- Debugger
-require("debugger")
+-- VimExplorer
+vim.g.vimexplorer_show_hidden = 1
+vim.g.vimexplorer_show_header = 0
 
 -- Theme
--- vim.cmd [[ colorscheme tokyodark ]]
+-- vim.cmd [[ colorscheme kanagawa ]]
 -- vim.cmd [[
---     hi Keyword gui=NONE cterm=NONE
---     hi Identifier gui=NONE cterm=NONE
---     hi Type gui=NONE cterm=NONE
---     hi Comment gui=NONE cterm=NONE
---     hi Structure gui=NONE cterm=NONE
---     hi StorageClass gui=NONE cterm=NONE
+--     hi Normal ctermbg=NONE guibg=NONE
+--     hi LineNr ctermbg=NONE guibg=NONE
+--     hi SignColumn ctermbg=NONE guibg=NONE
+--     hi GitSignsAdd ctermbg=NONE guibg=NONE
+--     hi GitSignsChange ctermbg=NONE guibg=NONE
+--     hi GitSignsDelete ctermbg=NONE guibg=NONE
+--     hi DiagnosticSignError ctermbg=NONE guibg=NONE
+--     hi DiagnosticSignWarn ctermbg=NONE guibg=NONE
+--     hi DiagnosticSignInfo ctermbg=NONE guibg=NONE
+--     hi DiagnosticSignHint ctermbg=NONE guibg=NONE
 -- ]]
-
-vim.cmd [[ colorscheme kanagawa ]]
-vim.cmd [[
-    hi Normal ctermbg=NONE guibg=NONE
-    hi LineNr ctermbg=NONE guibg=NONE
-    hi SignColumn ctermbg=NONE guibg=NONE
-    hi GitSignsAdd ctermbg=NONE guibg=NONE
-    hi GitSignsChange ctermbg=NONE guibg=NONE
-    hi GitSignsDelete ctermbg=NONE guibg=NONE
-    hi DiagnosticSignError ctermbg=NONE guibg=NONE
-    hi DiagnosticSignWarn ctermbg=NONE guibg=NONE
-    hi DiagnosticSignInfo ctermbg=NONE guibg=NONE
-    hi DiagnosticSignHint ctermbg=NONE guibg=NONE
-]]
