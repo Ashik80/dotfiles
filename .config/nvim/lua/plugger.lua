@@ -77,9 +77,9 @@ function M.update()
 		local path = plugin_path .. '/' .. plugin_name
 		if vim.fn.isdirectory(path .. '/.git') == 1 then
 			print('Updating ' .. plugin_name .. '...')
-			vim.fn.system({
-				'git', '-C', path, 'pull', '--depth=1'
-			})
+			vim.fn.system(
+				'git -C ' .. path .. ' fetch --depth=1 && git -C ' .. path .. ' reset --hard FETCH_HEAD'
+			)
 
 			if vim.v.shell_error == 0 then
 				print('Updated ' .. plugin_name)

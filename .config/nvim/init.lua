@@ -22,9 +22,6 @@ vim.o.guicursor = ""
 vim.o.listchars = "tab:▸ ,trail:·"
 vim.o.list = true
 vim.o.fillchars = "eob: "
--- vim.o.wildmode = "noselect:lastused,full"
--- vim.o.wildoptions = "pum,fuzzy"
--- vim.o.pumheight = 15
 vim.o.wildmenu = true
 vim.o.wildoptions = "pum"
 
@@ -102,7 +99,8 @@ local function fuzzy_file_finder()
         cmd = "batcat --theme=ansi --style=numbers --color=always {}"
     end
     local preview_cmd = vim.fn.shellescape(cmd)
-    local fzf_cmd = string.format("find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next \\) -prune -o -type f | fzf --preview=%s", preview_cmd)
+    -- local fzf_cmd = string.format("find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next \\) -prune -o -type f | fzf --preview=%s", preview_cmd)
+    local fzf_cmd = "find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next \\) -prune -o -type f | fzf"
     local term_buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(0, term_buf)
     vim.cmd("startinsert")
@@ -285,7 +283,7 @@ local plugins = {
     'https://github.com/lewis6991/gitsigns.nvim',
     'https://github.com/brenoprata10/nvim-highlight-colors',
     'https://github.com/Ashik80/VimExplorer',
-    'https://github.com/rebelot/kanagawa.nvim',
+    'https://github.com/Ashik80/default16.vim',
 }
 local plugger = require("plugger")
 plugger.setup(plugins)
@@ -356,16 +354,4 @@ vim.g.vimexplorer_show_hidden = 1
 vim.g.vimexplorer_show_header = 0
 
 -- Theme
--- vim.cmd [[ colorscheme kanagawa ]]
--- vim.cmd [[
---     hi Normal ctermbg=NONE guibg=NONE
---     hi LineNr ctermbg=NONE guibg=NONE
---     hi SignColumn ctermbg=NONE guibg=NONE
---     hi GitSignsAdd ctermbg=NONE guibg=NONE
---     hi GitSignsChange ctermbg=NONE guibg=NONE
---     hi GitSignsDelete ctermbg=NONE guibg=NONE
---     hi DiagnosticSignError ctermbg=NONE guibg=NONE
---     hi DiagnosticSignWarn ctermbg=NONE guibg=NONE
---     hi DiagnosticSignInfo ctermbg=NONE guibg=NONE
---     hi DiagnosticSignHint ctermbg=NONE guibg=NONE
--- ]]
+vim.cmd [[ colorscheme default16 ]]

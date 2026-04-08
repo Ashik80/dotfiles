@@ -232,7 +232,8 @@ endfunction
 let g:plugins = [
     \ 'https://github.com/Exafunction/windsurf.vim',
     \ 'https://github.com/SilentGlasses/colorhighlighter',
-    \ 'https://github.com/sheerun/vim-polyglot',
+    \ 'https://github.com/Ashik80/vim-polyglot',
+    \ 'https://github.com/Ashik80/default16.vim',
     \ 'https://github.com/neoclide/coc.nvim',
     \ 'https://github.com/mhinz/vim-signify',
     \ ]

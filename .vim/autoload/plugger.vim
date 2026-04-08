@@ -79,7 +79,7 @@ function! plugger#update()
         let plugin_name = fnamemodify(plugin_dir, ':t')
         if isdirectory(plugin_dir . '/.git')
             echo 'Updating ' . plugin_name . '...'
-            let result = system('git -C ' . shellescape(plugin_dir) . ' pull --depth=1')
+            let result = system('git -C ' . shellescape(plugin_dir) . ' fetch --depth=1 && git -C ' . shellescape(plugin_dir) . ' reset --hard FETCH_HEAD')
 
             if v:shell_error == 0
                 echo 'Updated ' . plugin_name
