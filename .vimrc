@@ -86,7 +86,7 @@ autocmd! BufEnter,BufWinEnter *.py {
 }
 
 " Grepping
-set grepprg=grep\ -Rn\ --exclude-dir={node_modules,.git,dist,*cache*,android,ios,.next}
+set grepprg=grep\ -Rn\ --exclude-dir={node_modules,.git,dist,*cache*,android,ios,.next,.nx}
 nnoremap <leader>fg :grep!<space>
 
 " Fuzzy file finder
@@ -96,9 +96,7 @@ function! FuzzyFileFinder()
     if executable("batcat")
         let l:cmd = "batcat --theme=ansi --style=numbers --color=always {}"
     endif
-    " if we want preview
-    "execute "silent !find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger \\) -prune -o -type f | fzf --preview='".l:cmd."' | sed 's/$/:0:0/' > " . l:tmpfile
-    execute "silent !find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger \\) -prune -o -type f | fzf | sed 's/$/:0:0/' > " . l:tmpfile
+    execute "silent !find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx \\) -prune -o -type f | fzf | sed 's/$/:0:0/' > " . l:tmpfile
     set efm=%f:%l:%c
     silent execute 'cfile ' . l:tmpfile
     redraw!
@@ -107,7 +105,7 @@ nnoremap <leader>ff :call FuzzyFileFinder()<CR>
 
 " Find files
 function! FindFilesToQf(pattern)
-    let l:cmd = "find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next \\) -prune -o -type f | grep -i " . shellescape(a:pattern)
+    let l:cmd = "find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx \\) -prune -o -type f | grep -i " . shellescape(a:pattern)
     let l:lines = systemlist(l:cmd)
     if len(l:lines) == 0
         return
@@ -226,6 +224,7 @@ function! RunShellBuffer() abort
   call OpenScratchBuffer()
   put
   %!sh
+  redraw!
 endfunction
 
 " Plugins
@@ -336,6 +335,6 @@ let g:vimexplorer_show_header = 0
 
 colorscheme default16
 
-hi htmlH1 ctermfg=1
+hi link htmlH1 Title
 hi mkdHeading ctermfg=1
 hi CocFloating ctermbg=0
