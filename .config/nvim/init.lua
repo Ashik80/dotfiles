@@ -288,6 +288,47 @@ autocmd('FileType', {
     end
 })
 
+-- Built-in session chooser
+function session_chooser()
+    local list_sessions = 'ls -a ~/*.sock | fzf'
+    local term_buf = vim.api.nvim_create_buf(false, true)
+    local ui = vim.api.nvim_list_uis()[1]
+    local width = math.floor(ui.width * 0.8)
+    local height = math.floor(ui.height * 0.8)
+    local term_win = vim.api.nvim_open_win(term_buf, true, {
+        relative = "editor",
+        width = width,
+        height = height - 5,
+        col = math.floor((ui.width - width) / 2),
+        row = math.floor((ui.height - height) / 2),
+        style = "minimal",
+        border = "single",
+    })
+    vim.api.nvim_set_option_value("winhighlight", "Normal:Normal,FloatBorder:Normal", {
+        win = term_win,
+    })
+    vim.cmd("startinsert")
+    vim.fn.termopen({ '/bin/sh', '-c', list_sessions }, {
+        on_exit = function(job_id, code, event)
+            local raw_lines = vim.api.nvim_buf_get_lines(term_buf, 0, -1, false)
+            vim.api.nvim_win_close(term_win, true)
+            vim.api.nvim_buf_delete(term_buf, { force = true })
+            local selected = nil
+            for _, line in ipairs(raw_lines) do
+                if line ~= "" then
+                    selected = line
+                    break
+                end
+            end
+            if selected == nil then
+                return
+            end
+            vim.cmd("connect " .. vim.fn.fnameescape(selected))
+        end
+    })
+end
+vim.keymap.set("n", "<leader>fs", session_chooser, { noremap = true, silent = true })
+
 -- Plugins
 local plugins = {
     'https://github.com/Exafunction/windsurf.vim',
