@@ -109,10 +109,14 @@ local function fuzzy_file_finder()
     local term_win = vim.api.nvim_open_win(term_buf, true, {
         relative = "editor",
         width = width,
-        height = height,
+        height = height - 5,
         col = math.floor((ui.width - width) / 2),
         row = math.floor((ui.height - height) / 2),
         style = "minimal",
+        border = "single",
+    })
+    vim.api.nvim_set_option_value("winhighlight", "Normal:Normal,FloatBorder:Normal", {
+        win = term_win,
     })
     vim.cmd("startinsert")
     vim.fn.termopen({ "/bin/sh", "-c", fzf_cmd }, {
