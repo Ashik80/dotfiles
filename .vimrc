@@ -45,7 +45,7 @@ xnoremap < <gv
 xnoremap J :move '>+1<CR>gv=gv
 xnoremap K :move '<-2<CR>gv=gv
 nnoremap <leader>cp :let @+ = expand("%:.")<CR>
-tnoremap <Esc> <C-\><C-n>
+tnoremap <Esc><Esc> <C-\><C-n>
 nnoremap <C-Left> :vertical resize -5<CR>
 nnoremap <C-Right> :vertical resize +5<CR>
 

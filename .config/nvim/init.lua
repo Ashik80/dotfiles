@@ -37,7 +37,7 @@ vim.keymap.set({'v', 'x'}, 'J', ":move '>+1<CR>gv=gv")
 vim.keymap.set({'v', 'x'}, 'K', ":move '<-2<CR>gv=gv")
 vim.keymap.set('n', '<leader>cp', ':let @+ = expand("%:.")<CR>')
 vim.keymap.set('t', '<C-w>N', '<C-\\><C-n>')
-vim.keymap.set('t', '<Esc>', '<C-\\><C-n>')
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>')
 vim.keymap.set('t', '<C-w>w', '<C-\\><C-n><C-w>w')
 vim.keymap.set('t', '<C-w><C-w>', '<C-\\><C-n><C-w>w')
 vim.keymap.set('c', '<Down>', function()
@@ -101,29 +101,37 @@ local function fuzzy_file_finder()
     local preview_cmd = vim.fn.shellescape(cmd)
     -- local fzf_cmd = string.format("find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next \\) -prune -o -type f | fzf --preview=%s", preview_cmd)
     local fzf_cmd = "find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next \\) -prune -o -type f | fzf"
+    local origin_win = vim.api.nvim_get_current_win()
     local term_buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_win_set_buf(0, term_buf)
+    local ui = vim.api.nvim_list_uis()[1]
+    local width = math.floor(ui.width * 0.8)
+    local height = math.floor(ui.height * 0.8)
+    local term_win = vim.api.nvim_open_win(term_buf, true, {
+        relative = "editor",
+        width = width,
+        height = height,
+        col = math.floor((ui.width - width) / 2),
+        row = math.floor((ui.height - height) / 2),
+        style = "minimal",
+    })
     vim.cmd("startinsert")
     vim.fn.termopen({ "/bin/sh", "-c", fzf_cmd }, {
         on_exit = function(job_id, code, event)
             local raw_lines = vim.api.nvim_buf_get_lines(term_buf, 0, -1, false)
-            if #raw_lines == 0 then
-                vim.api.nvim_buf_delete(term_buf, { force = true })
-                return
-            end
-            local lines = {}
+            vim.api.nvim_win_close(term_win, true)
+            vim.api.nvim_buf_delete(term_buf, { force = true })
+            local selected = nil
             for _, line in ipairs(raw_lines) do
-                if line == "" then
+                if line ~= "" then
+                    selected = line
                     break
                 end
-                table.insert(lines, { filename = line, lnum = 1, col = 1 })
             end
-            if #lines == 0 then
-                vim.api.nvim_input('<CR>')
+            if selected == nil then
+                return
             end
-            vim.api.nvim_buf_delete(term_buf, { force = true })
-            vim.fn.setqflist({}, " ", { items = lines, title = "Fuzzy Find: " })
-            vim.cmd("silent cfirst")
+            vim.api.nvim_set_current_win(origin_win)
+            vim.cmd("edit " .. vim.fn.fnameescape(selected))
         end
     })
 end
