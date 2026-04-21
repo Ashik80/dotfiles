@@ -52,6 +52,11 @@ vim.o.grepprg = "grep -Rn --exclude-dir={node_modules,.git,dist,*cache*,android,
 vim.o.grepformat = "%f:%l:%m"
 vim.keymap.set('n', '<leader>fg', ':grep!<space>')
 
+-- Open terminal in a tab
+vim.api.nvim_create_user_command("Term", function()
+    vim.cmd [[tabnew | terminal]]
+end, {})
+
 -- Clean no name buffers
 vim.api.nvim_create_user_command("CleanNoNameBuffers", function()
     vim.cmd [[bufdo if bufname('%') == '' && line('.') == 1 && getline('.') == '' | bdelete | endif]]

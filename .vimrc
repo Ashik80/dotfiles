@@ -56,6 +56,9 @@ function! SynGroup()
 endfun
 command! Inspect call SynGroup()
 
+" Open terminal in a tab
+command! -nargs=* -complete=shellcmd Term tabnew | term ++curwin <args>
+
 " Terminal settings
 augroup terminal_no_line_numbers
     autocmd!
