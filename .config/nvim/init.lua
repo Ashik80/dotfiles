@@ -307,7 +307,7 @@ function session_chooser()
             return
         end
         vim.cmd("connect " .. vim.fn.fnameescape(selected))
-    end)
+    end, { buffer = buf, noremap = true, silent = true })
 end
 vim.keymap.set("n", "<leader>fs", session_chooser, { noremap = true, silent = true })
 
