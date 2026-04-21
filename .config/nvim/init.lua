@@ -92,21 +92,13 @@ autocmd('FileType', {
     end
 })
 
--- Fuzzy finder
-local function fuzzy_file_finder()
-    local cmd = "cat {}"
-    if vim.fn.executable("batcat") == 1 then
-        cmd = "batcat --theme=ansi --style=numbers --color=always {}"
-    end
-    local preview_cmd = vim.fn.shellescape(cmd)
-    -- local fzf_cmd = string.format("find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next \\) -prune -o -type f | fzf --preview=%s", preview_cmd)
-    local fzf_cmd = "find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next \\) -prune -o -type f | fzf"
-    local origin_win = vim.api.nvim_get_current_win()
-    local term_buf = vim.api.nvim_create_buf(false, true)
+-- Create floating window
+function create_window()
+    local buf = vim.api.nvim_create_buf(false, true)
     local ui = vim.api.nvim_list_uis()[1]
     local width = math.floor(ui.width * 0.8)
     local height = math.floor(ui.height * 0.8)
-    local term_win = vim.api.nvim_open_win(term_buf, true, {
+    local win = vim.api.nvim_open_win(buf, true, {
         relative = "editor",
         width = width,
         height = height - 5,
@@ -116,8 +108,16 @@ local function fuzzy_file_finder()
         border = "single",
     })
     vim.api.nvim_set_option_value("winhighlight", "Normal:Normal,FloatBorder:Normal", {
-        win = term_win,
+        win = win,
     })
+    return buf, win
+end
+
+-- Fuzzy finder
+local function fuzzy_file_finder()
+    local fzf_cmd = "find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next \\) -prune -o -type f | fzf"
+    local origin_win = vim.api.nvim_get_current_win()
+    local term_buf, term_win = create_window()
     vim.cmd("startinsert")
     vim.fn.termopen({ "/bin/sh", "-c", fzf_cmd }, {
         on_exit = function(job_id, code, event)
@@ -290,42 +290,19 @@ autocmd('FileType', {
 
 -- Built-in session chooser
 function session_chooser()
-    local list_sessions = 'ls -a ~/*.sock | fzf'
-    local term_buf = vim.api.nvim_create_buf(false, true)
-    local ui = vim.api.nvim_list_uis()[1]
-    local width = math.floor(ui.width * 0.8)
-    local height = math.floor(ui.height * 0.8)
-    local term_win = vim.api.nvim_open_win(term_buf, true, {
-        relative = "editor",
-        width = width,
-        height = height - 5,
-        col = math.floor((ui.width - width) / 2),
-        row = math.floor((ui.height - height) / 2),
-        style = "minimal",
-        border = "single",
-    })
-    vim.api.nvim_set_option_value("winhighlight", "Normal:Normal,FloatBorder:Normal", {
-        win = term_win,
-    })
-    vim.cmd("startinsert")
-    vim.fn.termopen({ '/bin/sh', '-c', list_sessions }, {
-        on_exit = function(job_id, code, event)
-            local raw_lines = vim.api.nvim_buf_get_lines(term_buf, 0, -1, false)
-            vim.api.nvim_win_close(term_win, true)
-            vim.api.nvim_buf_delete(term_buf, { force = true })
-            local selected = nil
-            for _, line in ipairs(raw_lines) do
-                if line ~= "" then
-                    selected = line
-                    break
-                end
-            end
-            if selected == nil then
-                return
-            end
-            vim.cmd("connect " .. vim.fn.fnameescape(selected))
+    local buf, win = create_window()
+    local items = vim.fn.systemlist("ls -a ~/*.sock")
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, items)
+    vim.api.nvim_set_option_value("modifiable", false, { buf = buf })
+    vim.api.nvim_set_option_value("readonly", true, { buf = buf })
+    vim.keymap.set('n', '<CR>', function()
+        local selected = vim.fn.getline('.')
+        vim.api.nvim_win_close(win, true)
+        if selected == nil then
+            return
         end
-    })
+        vim.cmd("connect " .. vim.fn.fnameescape(selected))
+    end)
 end
 vim.keymap.set("n", "<leader>fs", session_chooser, { noremap = true, silent = true })
 
