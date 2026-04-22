@@ -238,7 +238,6 @@ let g:plugins = [
     \ 'https://github.com/Ashik80/default16.vim',
     \ 'https://github.com/neoclide/coc.nvim',
     \ 'https://github.com/mhinz/vim-signify',
-    \ 'https://github.com/Ashik80/VimExplorer',
     \ ]
 
 call plugger#setup(g:plugins)
