@@ -120,7 +120,7 @@ end
 
 -- Fuzzy finder
 local function fuzzy_file_finder()
-    local fzf_cmd = "find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name .nx \\) -prune -o -type f | fzf"
+    local fzf_cmd = "find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx \\) -prune -o -type f | fzf"
     local origin_win = vim.api.nvim_get_current_win()
     local term_buf, term_win = create_window()
     vim.cmd("startinsert")
@@ -296,20 +296,70 @@ autocmd('FileType', {
 -- Built-in session chooser
 function session_chooser()
     local buf, win = create_window()
-    local items = vim.fn.systemlist("ls -a ~/*.sock")
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, items)
-    vim.api.nvim_set_option_value("modifiable", false, { buf = buf })
-    vim.api.nvim_set_option_value("readonly", true, { buf = buf })
-    vim.keymap.set('n', '<CR>', function()
-        local selected = vim.fn.getline('.')
-        vim.api.nvim_win_close(win, true)
-        if selected == nil then
-            return
+    local command = "ls -a ~/*.sock | fzf --layout reverse"
+    vim.cmd("startinsert")
+    vim.fn.termopen({ "/bin/sh", "-c", command }, {
+        on_exit = function(job_id, code, event)
+            local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+            vim.api.nvim_win_close(win, true)
+            vim.api.nvim_buf_delete(buf, { force = true })
+            local selected = nil
+            for _, line in ipairs(lines) do
+                if line ~= "" then
+                    selected = line
+                    break
+                end
+            end
+            if selected == nil then
+                return
+            end
+            vim.cmd("connect " .. vim.fn.fnameescape(selected))
         end
-        vim.cmd("connect " .. vim.fn.fnameescape(selected))
-    end, { buffer = buf, noremap = true, silent = true })
+    })
 end
 vim.keymap.set("n", "<leader>fs", session_chooser, { noremap = true, silent = true })
+
+-- Built-in session creator
+function session_creator()
+    local buf, win = create_window()
+    local gt_command = "find ~/src ~/Documents ~/projscripts ~/postgresql ~/dotfiles -type d \\( -name node_modules -o -name .git -o -name *cache* \\) -prune -o -type d -print | fzf --layout reverse"
+    vim.cmd("startinsert")
+    vim.fn.termopen({ "/bin/sh", "-c", gt_command }, {
+        on_exit = function(job_id, code, event)
+            local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+            vim.api.nvim_win_close(win, true)
+            vim.api.nvim_buf_delete(buf, { force = true })
+            local selected = nil
+            for _, line in pairs(lines) do
+                if line ~= "" then
+                    selected = line
+                end
+            end
+            if selected == nil then
+                return
+            end
+            local basename = selected:match("([^/]+)$")
+            local conn_command = string.format(
+                'nvim --listen ~/%s.sock -c "cd %s" > /dev/null 2>&1 &',
+                basename,
+                selected
+            )
+            vim.fn.jobstart(conn_command, {
+                detach = true
+            })
+            local sock_file_path = vim.fn.expand("~/" .. basename .. ".sock")
+            local function try_connect()
+                if vim.fn.filereadable(sock_file_path) == 1 then
+                    vim.cmd("connect " .. sock_file_path)
+                else
+                    vim.defer_fn(try_connect, 50)
+                end
+            end
+            try_connect()
+        end
+    })
+end
+vim.keymap.set("n", "<leader>fc", session_creator, { noremap = true, silent = true })
 
 -- Plugins
 local plugins = {
