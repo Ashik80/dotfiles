@@ -62,6 +62,11 @@ vim.api.nvim_create_user_command("CleanNoNameBuffers", function()
     vim.cmd [[bufdo if bufname('%') == '' && line('.') == 1 && getline('.') == '' | bdelete | endif]]
 end, {})
 
+-- Restart config
+vim.api.nvim_create_user_command("Restart", function()
+    vim.cmd[[ mksession! Session.vim | restart source Session.vim ]]
+end, {})
+
 -- Indent
 augroup('JSIndent', { clear = true })
 autocmd('FileType', {
