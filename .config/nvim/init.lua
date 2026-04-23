@@ -319,6 +319,21 @@ function session_chooser()
 end
 vim.keymap.set("n", "<leader>fs", session_chooser, { noremap = true, silent = true })
 
+-- Common session function
+function start_job_and_connect(conn_command, abs_path)
+    vim.fn.jobstart(conn_command, {
+        detach = true
+    })
+    local function try_connect()
+        if vim.fn.filereadable(abs_path) == 1 then
+            vim.cmd("connect " .. abs_path)
+        else
+            vim.defer_fn(try_connect, 50)
+        end
+    end
+    try_connect()
+end
+
 -- Built-in session creator
 function session_creator()
     local buf, win = create_window()
@@ -344,22 +359,28 @@ function session_creator()
                 basename,
                 selected
             )
-            vim.fn.jobstart(conn_command, {
-                detach = true
-            })
-            local sock_file_path = vim.fn.expand("~/" .. basename .. ".sock")
-            local function try_connect()
-                if vim.fn.filereadable(sock_file_path) == 1 then
-                    vim.cmd("connect " .. sock_file_path)
-                else
-                    vim.defer_fn(try_connect, 50)
-                end
-            end
-            try_connect()
+            local abs_path = vim.fn.expand("~/" .. basename .. ".sock")
+            start_job_and_connect(conn_command, abs_path)
         end
     })
 end
 vim.keymap.set("n", "<leader>fc", session_creator, { noremap = true, silent = true })
+
+-- Create a default session
+function default_session()
+    local path = "~/bash.sock"
+    local abs_path = vim.fn.expand(path)
+    if vim.fn.filereadable(abs_path) == 1 then
+        vim.cmd("connect " .. abs_path)
+    else
+        local conn_command = string.format(
+            'nvim --listen %s -c "cd ~" > /dev/null 2>&1 &',
+            path
+        )
+        start_job_and_connect(conn_command, abs_path)
+    end
+end
+vim.keymap.set("n", "<leader>fx", default_session, { noremap = true, silent = true })
 
 -- Plugins
 local plugins = {
