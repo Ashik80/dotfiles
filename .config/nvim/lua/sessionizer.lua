@@ -71,18 +71,33 @@ function session_creator()
 end
 vim.keymap.set("n", "<leader>fc", session_creator, { noremap = true, silent = true })
 
--- Create a default session
-function default_session()
-    local path = "~/bash.sock"
-    local abs_path = vim.fn.expand(path)
+-- Project specific sessions
+local default_sock = "~/bash.sock"
+local default_path = "~"
+local manzil_sock = "~/manzil.sock"
+local manzil_path = "~/src/ManzilApp/manzil/"
+local platform_be_sock = "~/platform-be.sock"
+local platform_be_path = "~/src/ManzilApp/platform-be/"
+local platform_fe_sock = "~/platform-fe.sock"
+local platform_fe_path = "~/src/ManzilApp/platform-fe/"
+local delserver_sock = "~/server.sock"
+local delserver_path = "~/src/Deltagram/server/"
+
+function create_project_session(sock_path, repo_path)
+    local abs_path = vim.fn.expand(sock_path)
     if vim.fn.filereadable(abs_path) == 1 then
         vim.cmd("connect " .. abs_path)
     else
         local conn_command = string.format(
-            'nvim --listen %s -c "cd ~" > /dev/null 2>&1 &',
-            path
+            'nvim --listen %s -c "cd %s" > /dev/null 2>&1 &',
+            sock_path,
+            repo_path
         )
         start_job_and_connect(conn_command, abs_path)
     end
 end
-vim.keymap.set("n", "<leader>fx", default_session, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>fx", function() create_project_session(default_sock, default_path) end, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>pm", function() create_project_session(manzil_sock, manzil_path) end, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>pb", function() create_project_session(platform_be_sock, platform_be_path) end, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>pf", function() create_project_session(platform_fe_sock, platform_fe_path) end, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>ps", function() create_project_session(delserver_sock, delserver_path) end, { noremap = true, silent = true })
