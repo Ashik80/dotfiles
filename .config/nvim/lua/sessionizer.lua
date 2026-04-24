@@ -72,18 +72,18 @@ end
 vim.keymap.set("n", "<leader>fc", session_creator, { noremap = true, silent = true })
 
 -- Project specific sessions
-local default_sock = "~/bash.sock"
-local default_path = "~"
-local manzil_sock = "~/manzil.sock"
-local manzil_path = "~/src/ManzilApp/manzil/"
-local platform_be_sock = "~/platform-be.sock"
-local platform_be_path = "~/src/ManzilApp/platform-be/"
-local platform_fe_sock = "~/platform-fe.sock"
-local platform_fe_path = "~/src/ManzilApp/platform-fe/"
-local delserver_sock = "~/server.sock"
-local delserver_path = "~/src/Deltagram/server/"
+local default = { sock_path = "~/bash.sock", repo_path = "~" }
+local manzil = { sock_path = "~/manzil.sock", repo_path = "~/src/ManzilApp/manzil/" }
+local platform_be = { sock_path = "~/platform-be.sock", repo_path = "~/src/ManzilApp/platform-be/" }
+local platform_fe = { sock_path = "~/platform-fe.sock", repo_path = "~/src/ManzilApp/platform-fe/" }
+local delserver = { sock_path = "~/server.sock", repo_path = "~/src/Deltagram/server/" }
+local dotfiles = { sock_path = "~/dotfiles.sock", repo_path = "~/dotfiles/" }
+local documents = { sock_path = "~/Documents.sock", repo_path = "~/Documents" }
 
-function create_project_session(sock_path, repo_path)
+--@param project { sock_path = string, repo_path = string }
+function create_project_session(project)
+    local sock_path = project.sock_path
+    local repo_path = project.repo_path
     local abs_path = vim.fn.expand(sock_path)
     if vim.fn.filereadable(abs_path) == 1 then
         vim.cmd("connect " .. abs_path)
@@ -96,8 +96,10 @@ function create_project_session(sock_path, repo_path)
         start_job_and_connect(conn_command, abs_path)
     end
 end
-vim.keymap.set("n", "<leader>fx", function() create_project_session(default_sock, default_path) end, { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>pm", function() create_project_session(manzil_sock, manzil_path) end, { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>pb", function() create_project_session(platform_be_sock, platform_be_path) end, { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>pf", function() create_project_session(platform_fe_sock, platform_fe_path) end, { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>ps", function() create_project_session(delserver_sock, delserver_path) end, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>fx", function() create_project_session(default) end, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>pm", function() create_project_session(manzil) end, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>pb", function() create_project_session(platform_be) end, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>pf", function() create_project_session(platform_fe) end, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>ps", function() create_project_session(delserver) end, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>pd", function() create_project_session(dotfiles) end, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>pD", function() create_project_session(documents) end, { noremap = true, silent = true })
