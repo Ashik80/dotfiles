@@ -27,6 +27,7 @@ vim.o.wildoptions = "pum"
 
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
+local command = vim.api.nvim_create_user_command
 
 -- Mappings
 -- vim.keymap.set('n', '-', '<cmd>Ex<CR>')
@@ -53,17 +54,17 @@ vim.o.grepformat = "%f:%l:%m"
 vim.keymap.set('n', '<leader>fg', ':grep!<space>')
 
 -- Open terminal in a tab
-vim.api.nvim_create_user_command("Term", function()
+command("Term", function()
     vim.cmd [[tabnew | terminal]]
 end, {})
 
 -- Clean no name buffers
-vim.api.nvim_create_user_command("CleanNoNameBuffers", function()
+command("CleanNoNameBuffers", function()
     vim.cmd [[bufdo if bufname('%') == '' && line('.') == 1 && getline('.') == '' | bdelete | endif]]
 end, {})
 
 -- Restart config
-vim.api.nvim_create_user_command("Restart", function()
+command("Restart", function()
     vim.cmd[[ mksession! Session.vim | restart source Session.vim ]]
 end, {})
 
@@ -165,7 +166,7 @@ local function find_files_to_qf(pattern)
     vim.fn.setqflist({}, " ", { items = items, title = "Find Files: " .. pattern })
     vim.cmd("cw")
 end
-vim.api.nvim_create_user_command("FindFiles", function(opts)
+command("FindFiles", function(opts)
     find_files_to_qf(opts.args)
 end, { nargs = 1 })
 vim.keymap.set("n", "<leader>fq", ":FindFiles<space>")
