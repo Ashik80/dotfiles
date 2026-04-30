@@ -41,6 +41,8 @@ vim.keymap.set('t', '<C-w>N', '<C-\\><C-n>')
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>')
 vim.keymap.set('t', '<C-w>w', '<C-\\><C-n><C-w>w')
 vim.keymap.set('t', '<C-w><C-w>', '<C-\\><C-n><C-w>w')
+vim.keymap.set('n', '<C-Left>', '<cmd>vertical resize -5<CR>')
+vim.keymap.set('n', '<C-Right>', '<cmd>vertical resize +5<CR>')
 vim.keymap.set('c', '<Down>', function()
   return vim.fn.pumvisible() == 1 and '<C-n>' or '<Down>'
 end, { expr = true })
