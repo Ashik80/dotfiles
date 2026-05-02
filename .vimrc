@@ -99,7 +99,7 @@ function! FuzzyFileFinder()
     if executable("batcat")
         let l:cmd = "batcat --theme=ansi --style=numbers --color=always {}"
     endif
-    execute "silent !find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx \\) -prune -o -type f | fzf | sed 's/$/:0:0/' > " . l:tmpfile
+    execute "silent !find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx \\) -prune -o -type f | fuzzy -p 'Files>' | sed 's/$/:0:0/' > " . l:tmpfile
     set efm=%f:%l:%c
     silent execute 'cfile ' . l:tmpfile
     redraw!

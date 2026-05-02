@@ -16,7 +16,8 @@ end
 -- Built-in session chooser
 function session_chooser()
     local buf, win = create_window()
-    local command = "ls -a ~/*.sock | fzf --layout reverse"
+    local command = "ls -a ~/*.sock | grep -Eo '[A-Za-z0-9_-]*.sock' | sed 's/.sock//' | fuzzy -p 'Sessions>'"
+    local home_path = vim.fn.expand("~")
     vim.cmd("startinsert")
     vim.fn.termopen({ "/bin/sh", "-c", command }, {
         on_exit = function(job_id, code, event)
@@ -33,7 +34,7 @@ function session_chooser()
             if selected == nil then
                 return
             end
-            vim.cmd("connect " .. vim.fn.fnameescape(selected))
+            vim.cmd("connect " .. home_path .. "/" .. vim.fn.fnameescape(selected) .. ".sock")
         end
     })
 end
@@ -42,7 +43,7 @@ vim.keymap.set("n", "<leader>fs", session_chooser, { noremap = true, silent = tr
 -- Built-in session creator
 function session_creator()
     local buf, win = create_window()
-    local gt_command = "find ~/src ~/Documents ~/projscripts ~/postgresql ~/dotfiles -type d \\( -name node_modules -o -name .git -o -name *cache* \\) -prune -o -type d -print | fzf --layout reverse"
+    local gt_command = "find ~/src ~/Documents ~/projscripts ~/postgresql ~/dotfiles -type d \\( -name node_modules -o -name .git -o -name *cache* \\) -prune -o -type d -print | fuzzy -p 'Create session>'"
     vim.cmd("startinsert")
     vim.fn.termopen({ "/bin/sh", "-c", gt_command }, {
         on_exit = function(job_id, code, event)
@@ -103,3 +104,6 @@ vim.keymap.set("n", "<leader>lf", function() create_project_session(platform_fe)
 vim.keymap.set("n", "<leader>ls", function() create_project_session(delserver) end, { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>ld", function() create_project_session(dotfiles) end, { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>lD", function() create_project_session(documents) end, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>fk", function()
+    vim.fn.jobstart("pkill -f 'nvim --listen'", { detach = true })
+end, { noremap = true, silent = true })
