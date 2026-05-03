@@ -42,23 +42,27 @@ vim.keymap.set("n", "<leader>fs", session_chooser, { noremap = true, silent = tr
 
 -- Built-in session creator
 function session_creator()
+    local outputfile = vim.fn.tempname()
     local buf, win = create_window()
-    local gt_command = "find ~/src ~/Documents ~/projscripts ~/postgresql ~/dotfiles -type d \\( -name node_modules -o -name .git -o -name *cache* \\) -prune -o -type d -print | fuzzy -p 'Create session>'"
+    local gt_command = string.format("find ~/src ~/Documents ~/projscripts ~/postgresql ~/dotfiles -type d \\( -name node_modules -o -name .git -o -name *cache* \\) -prune -o -type d -print | fuzzy -p 'Create session>' > %s", outputfile)
     vim.cmd("startinsert")
     vim.fn.termopen({ "/bin/sh", "-c", gt_command }, {
         on_exit = function(job_id, code, event)
-            local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+            -- local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+            local lines = vim.fn.readfile(outputfile)
             vim.api.nvim_win_close(win, true)
             vim.api.nvim_buf_delete(buf, { force = true })
             local selected = nil
             for _, line in pairs(lines) do
                 if line ~= "" then
                     selected = line
+                    break
                 end
             end
             if selected == nil then
                 return
             end
+            os.remove(outputfile)
             local basename = selected:match("([^/]+)$")
             local conn_command = string.format(
                 'nvim --listen ~/%s.sock -c "cd %s" > /dev/null 2>&1 &',

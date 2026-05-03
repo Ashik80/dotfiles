@@ -128,13 +128,14 @@ end
 
 -- Fuzzy finder
 local function fuzzy_file_finder()
-    local fzf_cmd = "find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx \\) -prune -o -type f | fuzzy -p \"Files>\""
+    local outputfile = vim.fn.tempname()
+    local fzf_cmd = string.format("find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx \\) -prune -o -type f | fuzzy -p \"Files>\" > %s", outputfile)
     local origin_win = vim.api.nvim_get_current_win()
     local term_buf, term_win = create_window()
     vim.cmd("startinsert")
     vim.fn.termopen({ "/bin/sh", "-c", fzf_cmd }, {
         on_exit = function(job_id, code, event)
-            local raw_lines = vim.api.nvim_buf_get_lines(term_buf, 0, -1, false)
+            local raw_lines = vim.fn.readfile(outputfile)
             vim.api.nvim_win_close(term_win, true)
             vim.api.nvim_buf_delete(term_buf, { force = true })
             local selected = nil
@@ -147,6 +148,7 @@ local function fuzzy_file_finder()
             if selected == nil then
                 return
             end
+            os.remove(outputfile)
             vim.api.nvim_set_current_win(origin_win)
             vim.cmd("edit " .. vim.fn.fnameescape(selected))
         end
