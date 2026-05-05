@@ -24,6 +24,10 @@ vim.o.list = true
 vim.o.fillchars = "eob: "
 vim.o.wildmenu = true
 vim.o.wildoptions = "pum"
+vim.o.autocomplete = true
+vim.o.complete = vim.o.complete..',o'
+vim.o.pumheight = 10
+vim.opt.completeopt = { "menuone", "noinsert", "popup", "preview" }
 
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
@@ -332,18 +336,11 @@ vim.diagnostic.config({ virtual_text = true })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { noremap = true, silent = true })
 vim.keymap.set('n', 'grs', vim.lsp.buf.workspace_symbol, { noremap = true, silent = true })
 
-vim.opt.completeopt = { "menuone", "noinsert", "popup" }
 autocmd('LspAttach', {
     callback = function (ev)
-        local bufnr = ev.buf
         local client = vim.lsp.get_client_by_id(ev.data.client_id)
         if client:supports_method("textDocument/completion") then
-            vim.lsp.completion.enable(true, client.id, bufnr, {
-                autotrigger = true,
-                convert = function(item)
-                    return { abbr = item.label:gsub("%b()", "") }
-                end,
-            })
+            vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true, })
         end
     end
 })
