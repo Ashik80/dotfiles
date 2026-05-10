@@ -53,6 +53,11 @@ end, { expr = true })
 vim.keymap.set('c', '<Up>', function()
   return vim.fn.pumvisible() == 1 and '<C-p>' or '<Up>'
 end, { expr = true })
+if vim.o.diff then
+    vim.keymap.set('n', '<leader>1', '<cmd>diffget LOCAL<CR>')
+    vim.keymap.set('n', '<leader>2', '<cmd>diffget BASE<CR>')
+    vim.keymap.set('n', '<leader>3', '<cmd>diffget REMOTE<CR>')
+end
 
 -- Grepping
 vim.o.grepprg = "grep -Rn --exclude-dir={node_modules,.git,dist,*cache*,android,ios,.next,.nx}"
