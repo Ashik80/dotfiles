@@ -30,10 +30,12 @@ end
 -- Built-in session chooser
 function session_chooser()
     local buf, win = create_window()
-    local command = "ls -a "..sessionizer_path.."/*.sock | grep -Eo '[A-Za-z0-9_-]*.sock' | sed 's/.sock//' | fuzzy -p 'Sessions>'"
+    local command = "ls -a "..sessionizer_path.."/*.sock | grep -Eo '[A-Za-z0-9_-]*.sock' | sed 's/.sock//' | fz -p 'Sessions>'"
     vim.cmd("startinsert")
     vim.fn.termopen({ "/bin/sh", "-c", command }, {
         on_exit = function(job_id, code, event)
+            vim.fn.jobstop(job_id)
+            vim.cmd("stopinsert")
             local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
             vim.api.nvim_win_close(win, true)
             vim.api.nvim_buf_delete(buf, { force = true })
@@ -58,10 +60,12 @@ vim.keymap.set("n", "<leader>fs", session_chooser, { noremap = true, silent = tr
 function session_creator()
     local outputfile = vim.fn.tempname()
     local buf, win = create_window()
-    local gt_command = string.format("find ~/src ~/Documents ~/projscripts ~/postgresql ~/dotfiles -type d \\( -name node_modules -o -name .git -o -name *cache* \\) -prune -o -type d -print | fuzzy -p 'Create session>' > %s", outputfile)
+    local gt_command = string.format("find ~/src ~/Documents ~/projscripts ~/postgresql ~/dotfiles -type d \\( -name node_modules -o -name .git -o -name *cache* \\) -prune -o -type d -print | fz -p 'Create session>' > %s", outputfile)
     vim.cmd("startinsert")
     vim.fn.termopen({ "/bin/sh", "-c", gt_command }, {
         on_exit = function(job_id, code, event)
+            vim.fn.jobstop(job_id)
+            vim.cmd("stopinsert")
             local lines = vim.fn.readfile(outputfile)
             vim.api.nvim_win_close(win, true)
             vim.api.nvim_buf_delete(buf, { force = true })

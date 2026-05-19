@@ -1,6 +1,6 @@
 function connect_to_pg_database()
     local buf, win = create_window()
-    local command = "PGPASSWORD=postgres psql -U postgres -c 'select datname from pg_database' | head -n -2 | tail -n +3 | sed 's/^\\s\\+//' | fuzzy -p 'Connect to database>'"
+    local command = "PGPASSWORD=postgres psql -U postgres -c 'select datname from pg_database' | head -n -2 | tail -n +3 | sed 's/^\\s\\+//' | fz -p 'Connect to database>'"
     vim.cmd("startinsert")
     vim.fn.termopen({'/bin/sh', '-c', command}, {
         on_exit = function()

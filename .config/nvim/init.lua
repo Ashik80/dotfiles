@@ -27,7 +27,7 @@ vim.o.wildoptions = "pum"
 vim.o.autocomplete = true
 vim.o.complete = vim.o.complete..',o'
 vim.o.pumheight = 10
-vim.opt.completeopt = { "menuone", "noinsert", "popup", "preview" }
+vim.opt.completeopt = { "menuone", "noinsert", "fuzzy", "popup", "preview" }
 
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
@@ -60,8 +60,10 @@ if vim.o.diff then
 end
 
 -- Grepping
-vim.o.grepprg = "grep -Rn --exclude-dir={node_modules,.git,dist,*cache*,android,ios,.next,.nx}"
-vim.o.grepformat = "%f:%l:%m"
+-- vim.o.grepprg = "grep -Rn --exclude-dir={node_modules,.git,dist,*cache*,android,ios,.next,.nx}"
+-- vim.o.grepformat = "%f:%l:%m"
+vim.o.grepprg = "kot"
+vim.o.grepformat = "%f:%l:%c:%m"
 vim.keymap.set('n', '<leader>fg', ':grep!<space>')
 
 -- Open terminal in a tab
@@ -138,7 +140,7 @@ end
 -- Fuzzy finder
 local function fuzzy_file_finder()
     local outputfile = vim.fn.tempname()
-    local fzf_cmd = string.format("find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx \\) -prune -o -type f | fuzzy -p \"Files>\" > %s", outputfile)
+    local fzf_cmd = string.format("find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx \\) -prune -o -type f | fz -p \"Files>\" > %s", outputfile)
     local origin_win = vim.api.nvim_get_current_win()
     local term_buf, term_win = create_window()
     vim.cmd("startinsert")

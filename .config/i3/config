@@ -2,7 +2,8 @@
 set $mod Mod4
 
 # Set the font
-font pango:Roboto Mono Nerd Font 15
+# font pango:Roboto Mono Nerd Font 15
+font pango:Iosevka Custom 15
 
 exec --no-startup-id dex --autostart --environment i3
 
@@ -35,7 +36,7 @@ floating_modifier $mod
 # tiling_drag modifier titlebar
 
 # start a terminal
-bindsym $mod+Return exec kitty
+bindsym $mod+Return exec ghostty
 
 # kill focused window
 bindsym $mod+Shift+q kill
