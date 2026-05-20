@@ -389,3 +389,6 @@ vim.cmd [[ colorscheme default16 ]]
 
 -- Sessionizer
 require("sessionizer")
+
+-- Compile
+require("compile")

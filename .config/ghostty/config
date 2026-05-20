@@ -18,3 +18,6 @@ confirm-close-surface = false
 
 # window-decoration = false
 window-decoration = server
+
+keybind = ctrl+page_up=unbind
+keybind = ctrl+page_down=unbind
