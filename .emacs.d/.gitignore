@@ -1,0 +1,8 @@
+backups/
+eln-cache/
+elpa/
+projects
+tree-sitter/
+auto-save-list/
+eshell/
+.cache/
