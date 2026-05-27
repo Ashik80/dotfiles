@@ -28,6 +28,8 @@ vim.o.autocomplete = true
 vim.o.complete = vim.o.complete..',o'
 vim.o.pumheight = 10
 vim.opt.completeopt = { "menuone", "noinsert", "fuzzy", "popup", "preview" }
+vim.opt.cursorline = true
+vim.opt.cursorlineopt = "number"
 
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
@@ -140,7 +142,7 @@ end
 -- Fuzzy finder
 local function fuzzy_file_finder()
     local outputfile = vim.fn.tempname()
-    local fzf_cmd = string.format("find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx \\) -prune -o -type f | fz -p \"Files>\" > %s", outputfile)
+    local fzf_cmd = string.format("find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx -o -name .serverless -o -name .venv -o -name .cdk \\) -prune -o -type f | fz -p \"Files>\" > %s", outputfile)
     local origin_win = vim.api.nvim_get_current_win()
     local term_buf, term_win = create_window()
     vim.cmd("startinsert")

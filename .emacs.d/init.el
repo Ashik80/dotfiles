@@ -151,3 +151,12 @@
   (setq evil-default-state 'emacs)
   :config
   (evil-mode 1))
+
+;; C indentation
+(add-hook 'c-mode-hook
+          (lambda ()
+            (setq c-basic-offset 4)))
+
+;; Whitespace characters
+(setq whitespace-style '(face trailing tabs tab-mark indentation))
+(global-whitespace-mode 1)

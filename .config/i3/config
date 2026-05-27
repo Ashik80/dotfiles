@@ -240,3 +240,5 @@ bindsym $mod+Mod1+Shift+Sys_Req exec --no-startup-id ~/dotfiles/projscripts/xscr
 
 # Enable this to remove title bar
 # default_border pixel 2
+
+bindsym --release $mod+t exec --no-startup-id emacs
