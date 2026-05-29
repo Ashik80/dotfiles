@@ -29,6 +29,11 @@
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 
+(use-package go-mode
+  :ensure t
+  :mode "\\.go\\'")
+(add-hook 'go-mode-hook #'eglot-ensure)
+
 ;; lsp
 (add-hook 'typescript-ts-mode-hook #'eglot-ensure)
 (add-hook 'tsx-ts-mode-hook #'eglot-ensure)
@@ -101,7 +106,7 @@
          (root (project-root project))
          (buf-name (format "*%s-shell*" (file-name-nondirectory (directory-file-name root)))))
     (if (get-buffer buf-name)
-	(switch-to-buffer buf-name)
+        (switch-to-buffer buf-name)
       (let ((eat-buf (save-window-excursion (eat))))
         (with-current-buffer eat-buf
           (rename-buffer buf-name))
@@ -150,7 +155,9 @@
   (setq evil-want-keybinding nil)
   (setq evil-default-state 'emacs)
   :config
-  (evil-mode 1))
+  (evil-mode 1)
+  (define-key evil-normal-state-map (kbd "C-u") #'evil-scroll-up)
+  (define-key evil-motion-state-map (kbd "C-u") #'evil-scroll-up))
 
 ;; C indentation
 (add-hook 'c-mode-hook
@@ -160,3 +167,15 @@
 ;; Whitespace characters
 (setq whitespace-style '(face trailing tabs tab-mark indentation))
 (global-whitespace-mode 1)
+
+;; eslint
+;; eslint via flymake
+(use-package flymake-eslint
+  :ensure t
+  :config
+  (defun my/enable-flymake-eslint ()
+    (when (or (locate-dominating-file default-directory ".eslintrc*")
+              (locate-dominating-file default-directory "eslint.config.mjs"))
+      (flymake-mode 1)
+      (flymake-eslint-enable)))
+  (add-hook 'eglot-managed-mode-hook #'my/enable-flymake-eslint))
