@@ -4,11 +4,14 @@ background = "#181820"
 foreground = "#dcd7ba"
 
 # font-family = Roboto Mono Nerd Font
-font-family = Iosevka Custom
-font-size = 15
+# font-family = Iosevka Custom
+font-family = Iosevka Custom Condensed
+font-size = 17
 
-adjust-cell-height = 30%
-adjust-cursor-height = 30%
+adjust-cell-height = 10%
+adjust-cursor-height = 10%
+# adjust-cell-height = 30%
+# adjust-cursor-height = 30%
 cursor-style-blink = false
 # custom-shader = shaders/cursor_smear.glsl
 
