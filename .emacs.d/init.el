@@ -11,6 +11,9 @@
 
 ;; font settings
 (set-face-attribute 'default nil :font "Iosevka Custom Condensed-17")
+(custom-set-faces
+ '(fixed-pitch ((t (:family "Iosevka Custom Condensed"))))
+ '(variable-pitch ((t (:family "Iosevka Custom Condensed")))))
 (setq-default line-spacing 0.1)
 
 ;; hide menu and tool
@@ -186,3 +189,24 @@
   (add-to-list 'eglot-server-programs
                '((python-mode python-ts-mode)
                  . ("basedpyright-langserver" "--stdio"))))
+
+;; markdown mode
+(use-package markdown-mode
+  :ensure t
+  :mode ("\\.md\\'" . markdown-mode))
+
+;; copy file paths
+(defun my/copy-absolute-path ()
+  (interactive)
+  (kill-new (buffer-file-name))
+  (message "Copied: %s" (buffer-file-name)))
+(keymap-global-set "C-c a p" #'my/copy-absolute-path)
+
+(defun my/copy-project-relative-path ()
+  "Copy the current file path relative to the project root."
+  (interactive)
+  (let* ((root (project-root (project-current t)))
+         (rel  (file-relative-name buffer-file-name root)))
+    (kill-new rel)
+    (message "Copied: %s" rel)))
+(keymap-global-set "C-c c p" #'my/copy-project-relative-path)
