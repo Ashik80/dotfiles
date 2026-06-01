@@ -107,12 +107,14 @@
          (buf-name (format "*%s-shell*" (file-name-nondirectory (directory-file-name root)))))
     (if (get-buffer buf-name)
         (switch-to-buffer buf-name)
-      (let ((eat-buf (save-window-excursion (eat))))
-        (with-current-buffer eat-buf
-          (rename-buffer buf-name))
-        (switch-to-buffer buf-name)))))
+      (let ((default-directory root))
+        (let ((eat-buf (save-window-excursion (eat))))
+          (with-current-buffer eat-buf
+            (rename-buffer buf-name))
+          (switch-to-buffer buf-name))))))
 
 (keymap-set project-prefix-map "s" #'my/project-eat)
+(keymap-global-set "C-c s" #'eat)
 
 ;; auto read changes
 (global-auto-revert-mode 1)
@@ -169,7 +171,6 @@
 (global-whitespace-mode 1)
 
 ;; eslint
-;; eslint via flymake
 (use-package flymake-eslint
   :ensure t
   :config
@@ -179,3 +180,9 @@
       (flymake-mode 1)
       (flymake-eslint-enable)))
   (add-hook 'eglot-managed-mode-hook #'my/enable-flymake-eslint))
+
+;; python mode
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '((python-mode python-ts-mode)
+                 . ("basedpyright-langserver" "--stdio"))))
