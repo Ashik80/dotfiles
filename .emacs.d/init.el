@@ -210,3 +210,24 @@
     (kill-new rel)
     (message "Copied: %s" rel)))
 (keymap-global-set "C-c c p" #'my/copy-project-relative-path)
+
+;; Prettier
+(defun my/prettier-format ()
+  "Format current buffer using Prettier."
+  (interactive)
+  (when (and buffer-file-name
+             (executable-find "prettier"))
+    (let ((p (point)))
+      (shell-command-on-region
+       (point-min)
+       (point-max)
+       (format "prettier --stdin-filepath %s"
+               (shell-quote-argument buffer-file-name))
+       (current-buffer)
+       t)
+      (goto-char p))))
+
+(add-hook 'typescript-ts-mode-hook
+          (lambda () (add-hook 'before-save-hook #'my/prettier-format nil t)))
+(add-hook 'tsx-ts-mode-hook
+          (lambda () (add-hook 'before-save-hook #'my/prettier-format nil t)))
