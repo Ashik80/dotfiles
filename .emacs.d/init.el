@@ -28,6 +28,10 @@
   (set-display-table-slot table 'truncation ?\ )
   (setq standard-display-table table))
 
+;; Open splits vertically
+(setq split-height-threshold nil)
+(setq split-width-threshold 0)
+
 ;; typescript and tsx highlighting with treesitter
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
