@@ -29,8 +29,8 @@
   (setq standard-display-table table))
 
 ;; Open splits vertically
-(setq split-height-threshold nil)
-(setq split-width-threshold 0)
+;; (setq split-height-threshold 80)
+;; (setq split-width-threshold 160)
 
 ;; typescript and tsx highlighting with treesitter
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
