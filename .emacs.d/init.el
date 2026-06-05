@@ -36,14 +36,11 @@
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 
+;; Go mode
 (use-package go-mode
   :ensure t
   :mode "\\.go\\'")
 (add-hook 'go-mode-hook #'eglot-ensure)
-
-;; lsp
-(add-hook 'typescript-ts-mode-hook #'eglot-ensure)
-(add-hook 'tsx-ts-mode-hook #'eglot-ensure)
 
 ;; this package is need so that emacs can read variables from PATH
 (use-package exec-path-from-shell
@@ -81,13 +78,6 @@
               ("C-p" . copilot-previous-completion)))
 (setq-default copilot--indent-warning-printed-p t)
 (setq copilot-indent-offset-warning-disable t)
-
-;; increase lsp performance
-(setq eglot-events-buffer-size 0)
-(setq eglot-send-changes-idle-time 0.5)
-(setq eglot-ignored-server-capabilities
-      '(:documentHighlightProvider
-        :inlayHintProvider))
 
 ;; completion mode for commands
 (use-package vertico
@@ -188,12 +178,6 @@
       (flymake-eslint-enable)))
   (add-hook 'eglot-managed-mode-hook #'my/enable-flymake-eslint))
 
-;; python mode
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               '((python-mode python-ts-mode)
-                 . ("basedpyright-langserver" "--stdio"))))
-
 ;; markdown mode
 (use-package markdown-mode
   :ensure t
@@ -235,3 +219,68 @@
           (lambda () (add-hook 'before-save-hook #'my/prettier-format nil t)))
 (add-hook 'tsx-ts-mode-hook
           (lambda () (add-hook 'before-save-hook #'my/prettier-format nil t)))
+
+;; Indents
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+(setq indent-line-function 'insert-tab)
+
+;; API package
+(use-package verb
+  :ensure t
+  :bind-keymap ("C-c v" . verb-command-map))
+
+(setq verb-suppress-load-unsecure-prelude-warning t)
+
+;; Disable evil in eat buffers
+(add-hook 'eat-mode-hook #'evil-emacs-state)
+
+;; Copy buffer name
+(defun my/copy-buffer-name ()
+  "Copy the current buffer name to the clipboard and display a message."
+  (interactive)
+  (kill-new (buffer-name))
+  (message "Copied buffer name: %s" (buffer-name)))
+(keymap-global-set "C-c c b" #'my/copy-buffer-name)
+
+;; Python formatter with black
+(defun my/black-format ()
+  "Format current buffer using Black via uv."
+  (interactive)
+  (when (and buffer-file-name
+             (executable-find "uv"))
+    (let ((p (point)))
+      (shell-command-on-region
+       (point-min)
+       (point-max)
+       (format "uv run black --quiet --stdin-filename %s -"
+               (shell-quote-argument buffer-file-name))
+       (current-buffer)
+       t)
+      (goto-char p))))
+(add-hook 'python-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook #'my/black-format nil t)))
+
+;; Rust mode
+(use-package rust-mode
+  :ensure t
+  :mode ("\\.rs\\'" . rust-mode))
+
+;; Eglot setup
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '((python-mode python-ts-mode)
+                 . ("basedpyright-langserver" "--stdio"))))
+(add-hook 'python-mode-hook #'eglot-ensure)
+(add-hook 'python-ts-mode-hook #'eglot-ensure)
+
+(add-hook 'typescript-ts-mode-hook #'eglot-ensure)
+(add-hook 'tsx-ts-mode-hook #'eglot-ensure)
+
+;; increase lsp performance
+(setq eglot-events-buffer-size 0)
+(setq eglot-send-changes-idle-time 0.5)
+(setq eglot-ignored-server-capabilities
+      '(:documentHighlightProvider
+        :inlayHintProvider))
