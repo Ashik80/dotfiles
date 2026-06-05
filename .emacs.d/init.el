@@ -16,6 +16,10 @@
  '(variable-pitch ((t (:family "Iosevka Custom Condensed")))))
 (setq-default line-spacing 0.1)
 
+;; turn off sound
+(setq visible-bell nil)
+(setq ring-bell-function 'ignore)
+
 ;; hide menu and tool
 (menu-bar-mode -1)
 (tool-bar-mode -1)
