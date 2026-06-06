@@ -10,10 +10,11 @@
 (package-initialize)
 
 ;; font settings
-(set-face-attribute 'default nil :font "Iosevka Custom Condensed-17")
+(defvar my-font "Iosevka Custom Condensed")
+(set-face-attribute 'default nil :font (concat my-font "-17"))
 (custom-set-faces
- '(fixed-pitch ((t (:family "Iosevka Custom Condensed"))))
- '(variable-pitch ((t (:family "Iosevka Custom Condensed")))))
+ '(fixed-pitch ((t (:family my-font))))
+ '(variable-pitch ((t (:family my-font)))))
 (setq-default line-spacing 0.1)
 
 ;; turn off sound
