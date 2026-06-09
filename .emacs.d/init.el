@@ -157,11 +157,18 @@
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
-  (setq evil-default-state 'emacs)
+  (setq evil-want-minibuffer t)
+  (setq evil-undo-system 'undo-redo)
+  ;; (setq evil-default-state 'emacs)
   :config
   (evil-mode 1)
   (define-key evil-normal-state-map (kbd "C-u") #'evil-scroll-up)
   (define-key evil-motion-state-map (kbd "C-u") #'evil-scroll-up))
+
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init))
 
 ;; C indentation
 (add-hook 'c-mode-hook
@@ -289,3 +296,6 @@
 (setq eglot-ignored-server-capabilities
       '(:documentHighlightProvider
         :inlayHintProvider))
+
+;; Recognize submodules as separate projects
+(setq project-vc-merge-submodules nil)
