@@ -299,3 +299,24 @@
 
 ;; Recognize submodules as separate projects
 (setq project-vc-merge-submodules nil)
+
+;; Git blame
+(defun my/git-blame-file()
+  "Blame current file with colors"
+  (interactive)
+  (async-shell-command (concat "git-blame-colored " (buffer-name))))
+
+(defun my/git-blame-region()
+  "Blame region with colors"
+  (interactive)
+  (let ((region-start (number-to-string (line-number-at-pos (region-beginning))))
+        (region-finish (number-to-string (- (line-number-at-pos (region-end)) 1))))
+    (async-shell-command (concat "git-blame-colored " (buffer-name) " -L" region-start "," region-finish))))
+
+(defun my/git-blame-dwim()
+  (interactive)
+  (if (use-region-p)
+      (my/git-blame-region)
+    (my/git-blame-file)))
+
+(keymap-global-set "C-c g h" #'my/git-blame-dwim)
