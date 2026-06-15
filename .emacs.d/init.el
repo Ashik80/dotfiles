@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 ;; Custom file
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror)
@@ -104,16 +105,13 @@
 (defun my/project-eat ()
   "Open or switch to an Eat terminal for this project."
   (interactive)
-  (let* ((project (project-current t))
-         (root (project-root project))
-         (buf-name (format "*%s-shell*" (file-name-nondirectory (directory-file-name root)))))
-    (if (get-buffer buf-name)
-        (switch-to-buffer buf-name)
-      (let ((default-directory root))
-        (let ((eat-buf (save-window-excursion (eat))))
-          (with-current-buffer eat-buf
-            (rename-buffer buf-name))
-          (switch-to-buffer buf-name))))))
+  (let* ((root (project-root (project-current t)))
+        (buf-name (format "*%s-shell*" (file-name-nondirectory (directory-file-name root))))
+        (eat-buf (or (get-buffer buf-name)
+                       (eat))))
+      (with-current-buffer eat-buf
+        (rename-buffer buf-name))
+      (switch-to-buffer buf-name)))
 
 (keymap-set project-prefix-map "s" #'my/project-eat)
 (keymap-global-set "C-c s" #'eat)
@@ -320,3 +318,25 @@
     (my/git-blame-file)))
 
 (keymap-global-set "C-c g h" #'my/git-blame-dwim)
+
+;; [MANZIL] Launch Platform Be
+(defun my/project-run-command-in-eat (name command)
+  (let ((eat-buf (or (get-buffer name)
+                     (eat)))
+        (buf-name name))
+    (with-current-buffer eat-buf
+      (rename-buffer name))
+    (run-with-timer
+     0.5 nil
+     (lambda ()
+       (let ((proc (get-buffer-process buf-name)))
+         (eat--send-string proc (concat command "\n"))))
+     )))
+
+(defun my/launch-platform-be()
+  "Launches Manzil project platform be"
+  (interactive)
+  (let ((default-directory "~/src/ManzilApp/platform-be"))
+    (my/project-run-command-in-eat "*platform-be-shell*" "uv run ./scripts.sh serve")
+    (my/project-run-command-in-eat "*platform-be-shell-queue*" "./scripts.sh sls:queue:serve")
+    (my/project-run-command-in-eat "*platform-be-shell-sls*" "cd .serverless && nvm use && cd - && ./scripts.sh sls:serve")))
