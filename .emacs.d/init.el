@@ -71,20 +71,6 @@
   (completion-category-overrides
    '((eglot (styles basic)))))
 
-;; AI autocomplete
-(use-package copilot
-  :ensure t
-  :hook (prog-mode . copilot-mode)
-  :bind (:map copilot-completion-map
-              ("<tab>" . copilot-accept-completion)
-              ("TAB" . copilot-accept-completion)
-              ("C-<tab>" . copilot-accept-completion-by-word)
-              ("C-TAB" . copilot-accept-completion-by-word)
-              ("C-n" . copilot-next-completion)
-              ("C-p" . copilot-previous-completion)))
-(setq-default copilot--indent-warning-printed-p t)
-(setq copilot-indent-offset-warning-disable t)
-
 ;; completion mode for commands
 (use-package vertico
   :ensure t
@@ -168,6 +154,26 @@
   :config
   (evil-collection-init))
 
+;; Reselect after indent
+(defun my/visual-shift-left ()
+  "Reselect after indenting left"
+  (interactive)
+  (if (evil-visual-state-p)
+      (progn
+        (call-interactively #'evil-shift-left)
+        (evil-visual-restore))
+    (call-interactively #'evil-shift-left)))
+(defun my/visual-shift-right ()
+  "Reselect after indeting right"
+  (interactive)
+  (if (evil-visual-state-p)
+      (progn
+        (call-interactively #'evil-shift-right)
+        (evil-visual-restore))
+    (call-interactively #'evil-shift-right)))
+(keymap-set evil-normal-state-map "<" #'my/visual-shift-left)
+(keymap-set evil-normal-state-map ">" #'my/visual-shift-right)
+
 ;; C indentation
 (add-hook 'c-mode-hook
           (lambda ()
@@ -234,13 +240,6 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 (setq indent-line-function 'insert-tab)
-
-;; API package
-(use-package verb
-  :ensure t
-  :bind-keymap ("C-c v" . verb-command-map))
-
-(setq verb-suppress-load-unsecure-prelude-warning t)
 
 ;; Disable evil in eat buffers
 (add-hook 'eat-mode-hook #'evil-emacs-state)
@@ -317,7 +316,29 @@
       (my/git-blame-region)
     (my/git-blame-file)))
 
-(keymap-global-set "C-c g h" #'my/git-blame-dwim)
+(keymap-global-set "C-c g b" #'my/git-blame-dwim)
+
+;; Run kot in project root
+(defun my/project-kot-compile-dwim ()
+  "Run kot in project root in compile mode"
+  (interactive)
+  (let ((compile-command "kot -i "))
+    (if-let ((proj (project-current nil)))
+        (call-interactively #'project-compile)
+      (call-interactively #'compile))))
+(keymap-global-set "C-c f g" #'my/project-kot-compile-dwim)
+
+;; Launch project AI shell
+(defun my/launch-ai-shell ()
+  "Launches a shell named with suffix -shell-AI for a project"
+  (interactive)
+  (let* ((proj (project-root (project-current t)))
+         (buf-name (format "*%s-shell-AI*" (file-name-nondirectory (directory-file-name proj))))
+         (eat-buf (or (get-buffer buf-name)
+                      (eat))))
+    (with-current-buffer eat-buf
+      (rename-buffer buf-name))
+    (switch-to-buffer buf-name)))
 
 ;; [MANZIL] Launch Platform Be
 (defun my/project-run-command-in-eat (name command)
@@ -330,8 +351,7 @@
      0.5 nil
      (lambda ()
        (let ((proc (get-buffer-process buf-name)))
-         (eat--send-string proc (concat command "\n"))))
-     )))
+         (eat--send-string proc (concat command "\n")))))))
 
 (defun my/launch-platform-be()
   "Launches Manzil project platform be"
