@@ -3,7 +3,7 @@ set $mod Mod4
 
 # Set the font
 # font pango:Roboto Mono Nerd Font 15
-font pango:Iosevka Custom 15
+font pango:Iosevka Custom Extended 15
 
 exec --no-startup-id dex --autostart --environment i3
 

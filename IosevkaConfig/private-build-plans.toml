@@ -1,6 +1,6 @@
 [buildPlans.IosevkaCustom]
 family = "Iosevka Custom"
-spacing = "fixed"
+spacing = "normal"
 serifs = "sans"
 noCvSs = true
 exportGlyphNames = true
@@ -15,15 +15,20 @@ shape = 700
 menu = 700
 css = 700
 
-[buildPlans.IosevkaCustom.widths.Condensed]
-shape = 500
-menu = 3
-css = "condensed"
-
 [buildPlans.IosevkaCustom.widths.Normal]
-shape = 600
+shape = 500
 menu = 5
 css = "normal"
+
+[buildPlans.IosevkaCustom.widths.Extended]
+shape = 600
+menu = 7
+css = "expanded"
+
+[buildPlans.IosevkaCustom.widths.SemiExtended]
+shape = 548
+menu = 6
+css = "semi-expanded"
 
 [buildPlans.IosevkaCustom.slopes.Upright]
 angle = 0

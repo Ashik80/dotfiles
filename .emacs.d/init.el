@@ -11,7 +11,7 @@
 (package-initialize)
 
 ;; font settings
-(defvar my-font "Iosevka Custom Condensed")
+(defvar my-font "Iosevka Custom Semi-Extended")
 (set-face-attribute 'default nil :font (concat my-font "-17"))
 (custom-set-faces
  '(fixed-pitch ((t (:family my-font))))

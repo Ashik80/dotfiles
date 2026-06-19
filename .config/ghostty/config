@@ -5,7 +5,7 @@ foreground = "#dcd7ba"
 
 # font-family = Roboto Mono Nerd Font
 # font-family = Iosevka Custom
-font-family = Iosevka Custom Condensed
+font-family = Iosevka Custom Semi-Extended
 font-size = 17
 
 adjust-cell-height = 10%
