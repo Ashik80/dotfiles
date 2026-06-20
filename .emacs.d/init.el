@@ -34,6 +34,9 @@
   (set-display-table-slot table 'truncation ?\ )
   (setq standard-display-table table))
 
+;; Make cursor not blink
+(setq blink-cursor-mode nil)
+
 ;; Open splits vertically
 ;; (setq split-height-threshold 80)
 ;; (setq split-width-threshold 160)
