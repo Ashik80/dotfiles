@@ -40,7 +40,8 @@
 ;; Org agenda configuration
 (setq org-agenda-files '("~/Documents/todo.org"))
 (setq org-time-stamp-formats '("%Y-%m-%d %a" . "%Y-%m-%d %a %I:%M %p"))
-(keymap-set org-mode-map "C-c o" #'org-agenda)
+(with-eval-after-load 'org
+  (keymap-set org-mode-map "C-c o" #'org-agenda))
 
 ;; Open splits vertically
 ;; (setq split-height-threshold 80)
@@ -358,7 +359,6 @@
   (let* ((output (shell-command-to-string "PGPASSWORD=postgres psql -U postgres -c 'select datname from pg_database' | head -n -2 | tail -n +3 | sed 's/^\\s\\+//'"))
         (items (split-string output "\n" t)))
     (setq my/pgsql-selected-db (completing-read "Select a database: " items nil t))))
-(keymap-set sql-mode-map "C-c l" #'my/list-pgsql-databases)
 
 (defun my/compile-sql-file()
   "Compiles the PostgreSQL file to show data in compilation buffer"
@@ -366,7 +366,9 @@
   (let* ((file (buffer-name))
          (compile-command (format "PGPASSWORD=postgres psql -U postgres -d %s -f %s" my/pgsql-selected-db file)))
     (compile compile-command)))
-(keymap-set sql-mode-map "C-c b" #'my/compile-sql-file)
+(with-eval-after-load 'sql
+  (keymap-set sql-mode-map "C-c l" #'my/list-pgsql-databases)
+  (keymap-set sql-mode-map "C-c b" #'my/compile-sql-file))
 
 ;; [MANZIL] Launch Platform Be
 (defun my/project-run-command-in-eat (name command)
@@ -382,9 +384,16 @@
          (eat--send-string proc (concat command "\n")))))))
 
 (defun my/launch-platform-be()
-  "Launches Manzil project platform be"
+  "Launches necessary commands for platform-be in different shells"
   (interactive)
   (let ((default-directory "~/src/ManzilApp/platform-be"))
     (my/project-run-command-in-eat "*platform-be-shell*" "uv run ./scripts.sh serve")
     (my/project-run-command-in-eat "*platform-be-shell-queue*" "./scripts.sh sls:queue:serve")
     (my/project-run-command-in-eat "*platform-be-shell-sls*" "cd .serverless && nvm use && cd - && ./scripts.sh sls:serve")))
+
+(defun my/launch-manzil-be()
+  "Launches necessary commands for manzil-mobile-be in different shells"
+  (interactive)
+  (let ((default-directory "~/src/ManzilApp/manzil"))
+    (my/project-run-command-in-eat "*manzil-shell*" "nvm use 18 && npm run be:serve")
+    (my/project-run-command-in-eat "*manzil-shell-local*" "npm run init-local-s3")))
