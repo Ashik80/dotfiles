@@ -37,6 +37,11 @@
 ;; Make cursor not blink
 (setq blink-cursor-mode nil)
 
+;; Org agenda configuration
+(setq org-agenda-files '("~/Documents/todo.org"))
+(setq org-time-stamp-formats '("%Y-%m-%d %a" . "%Y-%m-%d %a %I:%M %p"))
+(keymap-set org-mode-map "C-c o" #'org-agenda)
+
 ;; Open splits vertically
 ;; (setq split-height-threshold 80)
 ;; (setq split-width-threshold 160)
@@ -342,6 +347,26 @@
     (with-current-buffer eat-buf
       (rename-buffer buf-name))
     (switch-to-buffer buf-name)))
+
+;; SQL functions
+(defvar my/pgsql-selected-db nil
+  "The PostgreSQL database to run query on")
+
+(defun my/list-pgsql-databases()
+  "Interactively select a PostgreSQL to run query on"
+  (interactive)
+  (let* ((output (shell-command-to-string "PGPASSWORD=postgres psql -U postgres -c 'select datname from pg_database' | head -n -2 | tail -n +3 | sed 's/^\\s\\+//'"))
+        (items (split-string output "\n" t)))
+    (setq my/pgsql-selected-db (completing-read "Select a database: " items nil t))))
+(keymap-set sql-mode-map "C-c l" #'my/list-pgsql-databases)
+
+(defun my/compile-sql-file()
+  "Compiles the PostgreSQL file to show data in compilation buffer"
+  (interactive)
+  (let* ((file (buffer-name))
+         (compile-command (format "PGPASSWORD=postgres psql -U postgres -d %s -f %s" my/pgsql-selected-db file)))
+    (compile compile-command)))
+(keymap-set sql-mode-map "C-c b" #'my/compile-sql-file)
 
 ;; [MANZIL] Launch Platform Be
 (defun my/project-run-command-in-eat (name command)
