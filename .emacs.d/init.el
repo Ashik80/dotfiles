@@ -381,6 +381,21 @@
   (keymap-set sql-mode-map "C-c l" #'my/list-pgsql-databases)
   (keymap-set sql-mode-map "C-c b" #'my/compile-sql-file))
 
+;; Edit journal
+(defun my/edit-journal ()
+  "Open journal file to journal stuff"
+  (interactive)
+  (let* ((current-date (format-time-string "%B,%Y"))
+         (default-directory "~/Documents/Journal/")
+         (filepath (format "~/Documents/Journal/%s" current-date)))
+    (find-file filepath)))
+
+;; Enter current date in buffer
+(defun my/insert-date ()
+  "Insert date in the current buffer with format YYYY-MM-DD"
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d")))
+
 ;; [MANZIL] Launch Platform Be
 (defun my/project-run-command-in-eat (name command)
   (let ((eat-buf (or (get-buffer name)
