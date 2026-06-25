@@ -39,13 +39,18 @@
 
 ;; Org agenda configuration
 (setq org-agenda-files '("~/Documents/todo.org"))
-(setq org-time-stamp-formats '("%Y-%m-%d %a" . "%Y-%m-%d %a %I:%M %p"))
+;; This causes issues in agenda buffer
+;; (setq org-time-stamp-formats '("%Y-%m-%d %a" . "%Y-%m-%d %a %I:%M %p"))
 (with-eval-after-load 'org
+  (keymap-set org-mode-map "C-c i" #'org-indent-mode)
   (keymap-set org-mode-map "C-c o" #'org-agenda))
 
-;; Open splits vertically
-;; (setq split-height-threshold 80)
-;; (setq split-width-threshold 160)
+;; Revert buffer with keybind
+(defun my/revert-buffer ()
+  "Reverts buffer without confirming"
+  (interactive)
+  (revert-buffer nil t))
+(keymap-global-set "C-c r" #'my/revert-buffer)
 
 ;; typescript and tsx highlighting with treesitter
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
@@ -101,15 +106,20 @@
   "Open or switch to an Eat terminal for this project."
   (interactive)
   (let* ((root (project-root (project-current t)))
-        (buf-name (format "*%s-shell*" (file-name-nondirectory (directory-file-name root))))
-        (eat-buf (or (get-buffer buf-name)
-                       (eat))))
-      (with-current-buffer eat-buf
-        (rename-buffer buf-name))
-      (switch-to-buffer buf-name)))
+         (default-directory root)
+         (buf-name (format "*%s-shell*" (file-name-nondirectory (directory-file-name root))))
+         (eat-buf (or (get-buffer buf-name)
+                      (eat))))
+    (with-current-buffer eat-buf
+      (rename-buffer buf-name))
+    (switch-to-buffer buf-name)))
 
 (keymap-set project-prefix-map "s" #'my/project-eat)
 (keymap-global-set "C-c s" #'eat)
+
+(with-eval-after-load 'eat
+  (define-key eat-semi-char-mode-map (kbd "M-<left>")  (kbd "M-b"))
+  (define-key eat-semi-char-mode-map (kbd "M-<right>") (kbd "M-f")))
 
 ;; auto read changes
 (global-auto-revert-mode 1)
@@ -145,43 +155,43 @@
 (setq auto-save-default nil)
 
 ;; evil mode
-(use-package evil
-  :ensure t
-  :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-minibuffer t)
-  (setq evil-undo-system 'undo-redo)
-  ;; (setq evil-default-state 'emacs)
-  :config
-  (evil-mode 1)
-  (define-key evil-normal-state-map (kbd "C-u") #'evil-scroll-up)
-  (define-key evil-motion-state-map (kbd "C-u") #'evil-scroll-up))
+;; (use-package evil
+;;   :ensure t
+;;   :init
+;;   (setq evil-want-integration t)
+;;   (setq evil-want-keybinding nil)
+;;   (setq evil-want-minibuffer t)
+;;   (setq evil-undo-system 'undo-redo)
+;;   (setq evil-default-state 'emacs)
+;;   :config
+;;   ;; (evil-mode 1)
+;;   (define-key evil-normal-state-map (kbd "C-u") #'evil-scroll-up)
+;;   (define-key evil-motion-state-map (kbd "C-u") #'evil-scroll-up))
 
-(use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init))
+;; (use-package evil-collection
+;;   :after evil
+;;   :config
+;;   (evil-collection-init))
 
 ;; Reselect after indent
-(defun my/visual-shift-left ()
-  "Reselect after indenting left"
-  (interactive)
-  (if (evil-visual-state-p)
-      (progn
-        (call-interactively #'evil-shift-left)
-        (evil-visual-restore))
-    (call-interactively #'evil-shift-left)))
-(defun my/visual-shift-right ()
-  "Reselect after indeting right"
-  (interactive)
-  (if (evil-visual-state-p)
-      (progn
-        (call-interactively #'evil-shift-right)
-        (evil-visual-restore))
-    (call-interactively #'evil-shift-right)))
-(keymap-set evil-normal-state-map "<" #'my/visual-shift-left)
-(keymap-set evil-normal-state-map ">" #'my/visual-shift-right)
+;; (defun my/visual-shift-left ()
+;;   "Reselect after indenting left"
+;;   (interactive)
+;;   (if (evil-visual-state-p)
+;;       (progn
+;;         (call-interactively #'evil-shift-left)
+;;         (evil-visual-restore))
+;;     (call-interactively #'evil-shift-left)))
+;; (defun my/visual-shift-right ()
+;;   "Reselect after indeting right"
+;;   (interactive)
+;;   (if (evil-visual-state-p)
+;;       (progn
+;;         (call-interactively #'evil-shift-right)
+;;         (evil-visual-restore))
+;;     (call-interactively #'evil-shift-right)))
+;; (keymap-set evil-normal-state-map "<" #'my/visual-shift-left)
+;; (keymap-set evil-normal-state-map ">" #'my/visual-shift-right)
 
 ;; C indentation
 (add-hook 'c-mode-hook
@@ -251,7 +261,7 @@
 (setq indent-line-function 'insert-tab)
 
 ;; Disable evil in eat buffers
-(add-hook 'eat-mode-hook #'evil-emacs-state)
+;; (add-hook 'eat-mode-hook #'evil-emacs-state)
 
 ;; Copy buffer name
 (defun my/copy-buffer-name ()
@@ -342,6 +352,7 @@
   "Launches a shell named with suffix -shell-AI for a project"
   (interactive)
   (let* ((proj (project-root (project-current t)))
+         (default-directory proj)
          (buf-name (format "*%s-shell-AI*" (file-name-nondirectory (directory-file-name proj))))
          (eat-buf (or (get-buffer buf-name)
                       (eat))))
