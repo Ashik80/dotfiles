@@ -6,3 +6,4 @@ tree-sitter/
 auto-save-list/
 eshell/
 .cache/
+transient/
