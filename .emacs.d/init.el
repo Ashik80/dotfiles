@@ -40,6 +40,12 @@
 ;; Make cursor not blink
 (setq blink-cursor-mode nil)
 
+;; Bind the project prefix map to C-x j
+(keymap-unset ctl-x-map "p")
+(keymap-set ctl-x-map "j" project-prefix-map)
+
+(setopt project-vc-extra-root-markers '(".project"))
+
 ;; Org agenda configuration
 (setq org-agenda-files '("~/Documents/todo.org"))
 ;; This causes issues in agenda buffer
@@ -103,7 +109,8 @@
 (use-package ghostel
   :ensure t)
 
-(setq ghostel-buffer-name-function nil)
+(setq ghostel-buffer-name-function nil) ;; stop changing buffer name
+(setq ghostel-readonly-fast-exit nil) ;; do not exit out of copy/emacs mode
 
 (defun my/project-ghostel ()
   "Open or switch to an Ghostel terminal for this project"

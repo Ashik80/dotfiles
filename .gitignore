@@ -1,1 +1,24 @@
 .config/nvim/nvim-pack-lock.json
+.config/Code/*Cache*
+.config/Code/*Cookies*
+.config/Code/*Cookies*
+.config/Code/Local*
+.config/Code/Crashpad/
+.config/Code/DIPS
+.config/Code/Dictionaries/
+.config/Code/Network Persistent State
+.config/Code/Preferences
+.config/Code/Service Worker/
+.config/Code/Session Storage/
+.config/Code/Shared Dictionary/
+.config/Code/SharedStorage
+.config/Code/TransportSecurity
+.config/Code/Trust Tokens
+.config/Code/Trust Tokens-journal
+.config/Code/User/chatLanguageModels.json
+.config/Code/User/globalStorage/
+.config/Code/User/workspaceStorage/
+.config/Code/WebStorage/
+.config/Code/languagepacks.json
+.config/Code/logs/
+.config/Code/machineid
