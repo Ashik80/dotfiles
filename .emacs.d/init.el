@@ -339,9 +339,18 @@
   (let* ((file (buffer-name))
          (compile-command (format "PGPASSWORD=postgres psql -U postgres -d %s -f %s" my/pgsql-selected-db file)))
     (compile compile-command)))
+
+(defun my/pgsql-list-tables()
+  "select table_name from information_schema.tables where table_schema = 'public';"
+  (interactive)
+  (let* ((output (shell-command-to-string (format "PGPASSWORD=postgres psql -U postgres -d %s -c \"select table_name from information_schema.tables where table_schema = 'public'\" -tA" my/pgsql-selected-db)))
+         (items (split-string output "\n" t)))
+    (completion-in-region (point) (point) items)))
+
 (with-eval-after-load 'sql
   (keymap-set sql-mode-map "C-c l" #'my/list-pgsql-databases)
-  (keymap-set sql-mode-map "C-c b" #'my/compile-sql-file))
+  (keymap-set sql-mode-map "C-c b" #'my/compile-sql-file)
+  (keymap-set sql-mode-map "C-c n" #'my/pgsql-list-tables))
 
 ;; Edit journal
 (defun my/edit-journal ()
@@ -357,6 +366,21 @@
   "Insert date in the current buffer with format YYYY-MM-DD"
   (interactive)
   (insert (format-time-string "%Y-%m-%d")))
+
+;; Move lines
+(defun move-line-up ()
+  (interactive)
+  (transpose-lines 1)
+  (previous-line 2))
+
+(defun move-line-down ()
+  (interactive)
+  (next-line 1)
+  (transpose-lines 1)
+  (previous-line 1))
+
+(keymap-global-set "C-S-<up>" #'move-line-up)
+(keymap-global-set "C-S-<down>" #'move-line-down)
 
 ;; [MANZIL] Launch Platform Be
 (defun my/project-run-command-in-ghostel (name command)
