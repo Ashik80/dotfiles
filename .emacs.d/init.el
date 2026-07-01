@@ -22,6 +22,9 @@
 (setq visible-bell nil)
 (setq ring-bell-function 'ignore)
 
+;; Enable narrowing
+(put 'narrow-to-region 'disabled nil)
+
 ;; hide menu and tool
 (menu-bar-mode -1)
 (tool-bar-mode -1)
