@@ -51,8 +51,9 @@
 ;; This causes issues in agenda buffer
 ;; (setq org-time-stamp-formats '("%Y-%m-%d %a" . "%Y-%m-%d %a %I:%M %p"))
 (with-eval-after-load 'org
-  (keymap-set org-mode-map "C-c i" #'org-indent-mode)
-  (keymap-set org-mode-map "C-c o" #'org-agenda))
+  (keymap-set org-mode-map "C-c i" #'org-indent-mode))
+
+(keymap-global-set "C-c o" #'org-agenda)
 
 ;; Revert buffer with keybind
 (defun my/revert-buffer ()
@@ -122,8 +123,20 @@
                   (ghostel))))
     (switch-to-buffer buf)))
 
+(defun my/ghostel (arg)
+  "Switch to the default Ghostel buffer. Use C-u to create new if one already exists"
+  (interactive "P")
+  (let ((buf (get-buffer "*ghostel*")))
+    (cond
+     (buf
+      (switch-to-buffer buf))
+     (current-prefix-arg
+      (ghostel current-prefix-arg))
+     (t
+      (ghostel)))))
+
 (keymap-set project-prefix-map "s" #'my/project-ghostel)
-(keymap-global-set "C-c s o" #'ghostel)
+(keymap-global-set "C-c s o" #'my/ghostel)
 
 (add-to-list 'project-switch-commands '(my/project-ghostel "Ghostel") t)
 
@@ -200,6 +213,14 @@
     (kill-new rel)
     (message "Copied: %s" rel)))
 (keymap-global-set "C-c c p" #'my/copy-project-relative-path)
+
+(defun my/copy-file-path-from-dired ()
+  "Copy the absolute path of the file under cursor in dired mode"
+  (interactive)
+  (let ((filename (dired-get-file-for-visit)))
+    (kill-new filename)
+    (message "Copied: %s" filename)))
+(keymap-set dired-mode-map "C-c a p" #'my/copy-file-path-from-dired)
 
 ;; Prettier
 (defun my/prettier-format ()
