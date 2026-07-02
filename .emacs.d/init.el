@@ -164,11 +164,11 @@
 (use-package magit
   :ensure t)
 
-;; theme
-(use-package gruvbox-theme
-  :ensure t
-  :config
-  (load-theme 'gruvbox-dark-hard t))
+;; theme is now being loaded from early-init.el
+;; (use-package gruvbox-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'gruvbox-dark-hard t))
 
 ;; keep changes in specific directory
 (setq make-backup-files t)
