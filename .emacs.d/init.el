@@ -25,6 +25,10 @@
 ;; Enable narrowing
 (put 'narrow-to-region 'disabled nil)
 
+;; Allowing up/down casing region
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+
 ;; hide menu and tool
 (menu-bar-mode -1)
 (tool-bar-mode -1)
