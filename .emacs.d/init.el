@@ -47,6 +47,9 @@
 ;; Make cursor not blink
 (setq blink-cursor-mode nil)
 
+;; Duplicate line
+(keymap-global-set "C-c C-j" #'duplicate-line)
+
 ;; Bind the project prefix map to C-x j
 (keymap-unset ctl-x-map "p")
 (keymap-set ctl-x-map "j" project-prefix-map)
@@ -173,6 +176,10 @@
 ;;   :ensure t
 ;;   :config
 ;;   (load-theme 'gruvbox-dark-hard t))
+;; (use-package kanagawa-themes
+;;   :ensure t
+;;   :config
+;;   (load-theme 'kanagawa-lotus t))
 
 ;; keep changes in specific directory
 (setq make-backup-files t)

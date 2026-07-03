@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("ff8921cac0f1e24434184fad125536d6d6508dda67dcab87738710f3aee5de8e" "853cdfa7be986211a14895f57cab04bc1c25cd68a6aad0a1bb656433cf37908d" "d4095915e676340cd6c8f97eafb28544410a9fbc8852cdd4dcbb9c9d86bd2f4a" "51fa6edfd6c8a4defc2681e4c438caf24908854c12ea12a1fbfd4d055a9647a3" "5a0ddbd75929d24f5ef34944d78789c6c3421aa943c15218bac791c199fc897d" "8363207a952efb78e917230f5a4d3326b2916c63237c1f61d7e5fe07def8d378" default))
+   '("135f7bab9820978071ee172c72cf90401adafd7fdc9ab7aec971e22470b905b9" "ed378e20b7a29019cb613a7cf374e815fe35caf7a04da8b934b8df7d0ab10e6a" "73d5813da95b1fef3c01e2b766116d6d451406f7bc6eec7de7c8b0e7bb1ce162" "179eb9bf737a16a08ff99792ac9a002f1adf012fa36cb111aad6756cb950de05" default))
  '(package-selected-packages
    '(ghostel vertico rust-mode orderless markdown-mode marginalia magit go-mode flymake-eslint exec-path-from-shell diff-hl corfu)))
 (custom-set-faces

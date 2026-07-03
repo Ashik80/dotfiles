@@ -30,6 +30,7 @@
  '(font-lock-number-face ((((class color) (min-colors 16777215)) (:foreground "#d3869b")) (((class color) (min-colors 255)) (:foreground "#d787af"))))
  '(font-lock-variable-name-face ((((class color) (min-colors 16777215)) (:foreground "#83a598")) (((class color) (min-colors 255)) (:foreground "#87afaf"))))
  '(font-lock-type-face ((((class color) (min-colors 16777215)) (:foreground "#d3869b")) (((class color) (min-colors 255)) (:foreground "#d787af"))))
+ '(font-lock-property-use-face ((((class color) (min-colors 16777215)) (:foreground "#83a598")) (((class color) (min-colors 255)) (:foreground "#87afaf"))))
  '(font-lock-property-face ((((class color) (min-colors 16777215)) (:foreground "#83a598")) (((class color) (min-colors 255)) (:foreground "#87afaf"))))
  '(font-lock-warning-face ((((class color) (min-colors 16777215)) (:foreground "#fb4933" :bold t)) (((class color) (min-colors 255)) (:foreground "#d75f5f" :bold t))))
  '(error ((((class color) (min-colors 16777215)) (:foreground "#fb4933" :bold t)) (((class color) (min-colors 255)) (:foreground "#d75f5f" :bold t))))
