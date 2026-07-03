@@ -181,6 +181,10 @@
 ;;   :config
 ;;   (load-theme 'kanagawa-lotus t))
 
+;; Rainbow mode
+(use-package rainbow-mode
+  :ensure t)
+
 ;; keep changes in specific directory
 (setq make-backup-files t)
 (setq backup-directory-alist
