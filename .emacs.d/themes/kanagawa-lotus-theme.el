@@ -110,7 +110,7 @@
  '(org-footnote ((t (:foreground "#5e857a"))))
  '(org-indent ((t (:foreground "#f2ecbc" :background "#f2ecbc"))))
  '(org-hide ((t (:inherit org-indent))))
- '(org-date ((t (:foreground "#b5cbd2"))))
+ '(org-date ((t (:foreground "#6693bf"))))
  '(org-ellipsis ((t (:foreground "#b5cbd2" :weight bold))))
  '(org-level-1 ((t (:foreground "#b35b79" :height 1.3 :weight bold))))
  '(org-level-2 ((t (:foreground "#4d699b" :height 1.2 :weight bold))))

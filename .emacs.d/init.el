@@ -58,9 +58,10 @@
 
 ;; Org agenda configuration
 (setq org-agenda-files '("~/Documents/todo.org"))
-;; This causes issues in agenda buffer
-;; (setq org-time-stamp-formats '("%Y-%m-%d %a" . "%Y-%m-%d %a %I:%M %p"))
 (with-eval-after-load 'org
+  (add-hook 'org-mode-hook #'visual-line-mode)
+  ;; Enable typescript highlighting for typescript
+  (add-to-list 'org-src-lang-modes '("typescript" . typescript-ts))
   (keymap-set org-mode-map "C-c i" #'org-indent-mode))
 
 (keymap-global-set "C-c o" #'org-agenda)
@@ -397,7 +398,7 @@
   (interactive)
   (let* ((current-date (format-time-string "%B,%Y"))
          (default-directory "~/Documents/Journal/")
-         (filepath (format "~/Documents/Journal/%s" current-date)))
+         (filepath (format "~/Documents/Journal/%s.org" current-date)))
     (find-file filepath)))
 
 ;; Enter current date in buffer
