@@ -73,6 +73,10 @@
   (revert-buffer nil t))
 (keymap-global-set "C-c r" #'my/revert-buffer)
 
+;; Json mode
+(add-hook 'js-json-mode-hook
+          (lambda () (setq-local js-indent-level 2)))
+
 ;; typescript and tsx highlighting with treesitter
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
