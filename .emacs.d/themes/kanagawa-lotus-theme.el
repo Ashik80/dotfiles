@@ -461,6 +461,7 @@
  '(diredfl-write-priv ((t (:foreground "#545464"))))
  '(markdown-header-delimiter-face ((t (:foreground "#a09cac" :background "#f2ecbc"))))
  '(markdown-markup-face ((t (:foreground "#a09cac" :background "#f2ecbc"))))
+ '(whitespace-tab ((t (:foreground "#8a8980" :background "#f2ecbc"))))
  '(default ((t (:foreground "#545464" :background "#f2ecbc")))))
 
 (provide-theme 'kanagawa-lotus)

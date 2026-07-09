@@ -116,7 +116,6 @@
 (use-package go-mode
   :ensure t
   :mode "\\.go\\'")
-(add-hook 'go-mode-hook #'eglot-ensure)
 
 ;; this package is need so that emacs can read variables from PATH
 (use-package exec-path-from-shell
@@ -321,22 +320,24 @@
   :mode ("\\.rs\\'" . rust-mode))
 
 ;; Eglot setup
-(with-eval-after-load 'eglot
+(use-package eglot
+  :ensure nil
+  :hook
+  (python-mode . eglot-ensure)
+  (python-ts-mode . eglot-ensure)
+  (typescript-ts-mode . eglot-ensure)
+  (tsx-ts-mode . eglot-ensure)
+  (go-mode . eglot-ensure)
+  :custom
+  (eglot-events-buffer-size 0)
+  (eglot-send-changes-idle-time 0.5)
+  (eglot-ignored-server-capabilities
+      '(:documentHighlightProvider
+        :inlayHintProvider))
+  :config
   (add-to-list 'eglot-server-programs
                '((python-mode python-ts-mode)
                  . ("basedpyright-langserver" "--stdio"))))
-(add-hook 'python-mode-hook #'eglot-ensure)
-(add-hook 'python-ts-mode-hook #'eglot-ensure)
-
-(add-hook 'typescript-ts-mode-hook #'eglot-ensure)
-(add-hook 'tsx-ts-mode-hook #'eglot-ensure)
-
-;; increase lsp performance
-(setq eglot-events-buffer-size 0)
-(setq eglot-send-changes-idle-time 0.5)
-(setq eglot-ignored-server-capabilities
-      '(:documentHighlightProvider
-        :inlayHintProvider))
 
 ;; Recognize submodules as separate projects
 (setq project-vc-merge-submodules nil)
