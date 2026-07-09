@@ -12,11 +12,16 @@
 
 ;; font settings
 (defvar my-font "Iosevka Custom Semi-Extended")
-(set-face-attribute 'default nil :font (concat my-font "-17"))
-(custom-set-faces
- '(fixed-pitch ((t (:family my-font))))
- '(variable-pitch ((t (:family my-font)))))
-(setq-default line-spacing 0.1)
+(defun my/apply-fonts (&optional frame)
+  (with-selected-frame (or frame (selected-frame))
+    (when (display-graphic-p)
+      (set-face-attribute 'default nil :font (format "%s-17" my-font))
+      (set-face-attribute 'fixed-pitch nil :family my-font)
+      (set-face-attribute 'variable-pitch nil :family my-font)
+      (setq-default line-spacing 0.1))))
+(if (daemonp)
+    (add-hook 'after-make-frame-functions #'my/apply-fonts)
+  (my/apply-fonts))
 
 ;; turn off sound
 (setq visible-bell nil)
@@ -423,8 +428,8 @@
   (transpose-lines 1)
   (previous-line 1))
 
-(keymap-global-set "C-S-<up>" #'move-line-up)
-(keymap-global-set "C-S-<down>" #'move-line-down)
+(keymap-global-set "C-M-<up>" #'move-line-up)
+(keymap-global-set "C-M-<down>" #'move-line-down)
 
 ;; [MANZIL] Launch Platform Be
 (defun my/project-run-command-in-ghostel (name command)

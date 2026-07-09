@@ -259,7 +259,7 @@
  '(org-todo ((((class color) (min-colors 16777215)) (:foreground "#fb4933" :weight bold :bold t)) (((class color) (min-colors 255)) (:foreground "#d75f5f" :weight bold :bold t))))
  '(org-done ((((class color) (min-colors 16777215)) (:foreground "#8ec07c" :weight bold :bold t)) (((class color) (min-colors 255)) (:foreground "#87af87" :weight bold :bold t))))
  '(org-agenda-done ((((class color) (min-colors 16777215)) (:foreground "#8ec07c")) (((class color) (min-colors 255)) (:foreground "#87af87"))))
- '(org-headline-done ((((class color) (min-colors 16777215)) (:foreground "#8ec07c")) (((class color) (min-colors 255)) (:foreground "#87af87"))))
+ '(org-headline-done ((((class color) (min-colors 16777215)) (:foreground "#8ec07c" :strike-through t)) (((class color) (min-colors 255)) (:foreground "#87af87"))))
  '(org-table ((((class color) (min-colors 16777215)) (:foreground "#83a598")) (((class color) (min-colors 255)) (:foreground "#87afaf"))))
  '(org-block ((((class color) (min-colors 16777215)) (:background "#32302f")) (((class color) (min-colors 255)) (:background "#303030"))))
  '(org-block-begin-line ((((class color) (min-colors 16777215)) (:background "#3c3836")) (((class color) (min-colors 255)) (:background "#3a3a3a"))))
