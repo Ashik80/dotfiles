@@ -91,3 +91,25 @@
      (lambda ()
        (let ((proc (get-buffer-process buf-name)))
          (eat--send-string proc (concat command "\n")))))))
+
+;; [MANZIL] Launch Platform Be
+(defun my/project-run-command-in-ghostel (name command)
+  (let* ((ghostel-buffer-name name)
+         (buf (or (get-buffer ghostel-buffer-name)
+                  (ghostel))))
+    (ghostel-send-string (concat command "\n"))))
+
+(defun my/launch-platform-be()
+  "Launches necessary commands for platform-be in different shells"
+  (interactive)
+  (let ((default-directory "~/src/ManzilApp/platform-be"))
+    (my/project-run-command-in-ghostel "*platform-be-shell*" "uv run ./scripts.sh serve")
+    (my/project-run-command-in-ghostel "*platform-be-shell-queue*" "./scripts.sh sls:queue:serve")
+    (my/project-run-command-in-ghostel "*platform-be-shell-sls*" "cd .serverless && nvm use && cd - && ./scripts.sh sls:serve")))
+
+(defun my/launch-manzil-be()
+  "Launches necessary commands for manzil-mobile-be in different shells"
+  (interactive)
+  (let ((default-directory "~/src/ManzilApp/manzil"))
+    (my/project-run-command-in-ghostel "*manzil-shell*" "nvm use 18 && npm run be:serve")
+    (my/project-run-command-in-ghostel "*manzil-shell-local*" "npm run init-local-s3")))

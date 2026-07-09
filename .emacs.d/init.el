@@ -27,6 +27,12 @@
 (setq visible-bell nil)
 (setq ring-bell-function 'ignore)
 
+;; globally enable line numbers
+(global-display-line-numbers-mode 1)
+(defun my/disable-line-number ()
+  (display-line-numbers-mode 0))
+(add-hook 'eshell-mode-hook #'my/disable-line-number)
+
 ;; Enable narrowing
 (put 'narrow-to-region 'disabled nil)
 
@@ -42,6 +48,12 @@
 ;; Suppress the warnings buffer from popping up automatically
 (setq warning-minimum-level :error)
 
+;; keep changes in specific directory
+(setq make-backup-files t)
+(setq backup-directory-alist
+      `(("." . "~/.emacs.d/backups")))
+(setq auto-save-default nil)
+
 ;; hide line wrap icons
 (setq-default fringe-indicator-alist nil)
 (let ((table (or standard-display-table (make-display-table))))
@@ -52,8 +64,15 @@
 ;; Make cursor not blink
 (setq blink-cursor-mode nil)
 
+;; auto read changes
+(global-auto-revert-mode 1)
+
 ;; Duplicate line
 (keymap-global-set "C-c C-j" #'duplicate-line)
+
+;; Whitespace characters
+(setq whitespace-style '(face trailing tabs tab-mark indentation))
+(global-whitespace-mode 1)
 
 ;; Bind the project prefix map to C-x j
 (keymap-unset ctl-x-map "p")
@@ -63,12 +82,13 @@
 
 ;; Org agenda configuration
 (setq org-agenda-files '("~/Documents/todo.org"))
-(with-eval-after-load 'org
+(use-package org
+  :ensure nil
+  :config
   (add-hook 'org-mode-hook #'visual-line-mode)
   ;; Enable typescript highlighting for typescript
   (add-to-list 'org-src-lang-modes '("typescript" . typescript-ts))
   (keymap-set org-mode-map "C-c i" #'org-indent-mode))
-
 (keymap-global-set "C-c o" #'org-agenda)
 
 ;; Revert buffer with keybind
@@ -86,6 +106,12 @@
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 
+;; Savehist mode
+(use-package savehist
+  :ensure nil
+  :init
+  (savehist-mode))
+
 ;; Go mode
 (use-package go-mode
   :ensure t
@@ -102,11 +128,12 @@
 (use-package corfu
   :ensure t
   :init
-  (global-corfu-mode))
+  (global-corfu-mode)
+  :config
+  (setq corfu-auto t)
+  (setq corfu-auto-delay 0.2)
+  (setq corfu-auto-prefix 3))
 
-(setq corfu-auto t)
-(setq corfu-auto-delay 0.2)
-(setq corfu-auto-prefix 3)
 
 (use-package orderless
   :ensure t
@@ -128,45 +155,40 @@
 
 ;; a better terminal that supports interactive programs
 (use-package ghostel
-  :ensure t)
+  :ensure t
+  :demand t
+  :custom
+  (ghostel-buffer-name-function nil) ;; stop changing buffer name
+  (ghostel-readonly-fast-exit nil) ;; do not exit out of copy/emacs mode
+  :hook
+  (ghostel-mode . my/disable-line-number)
+  :config
+  (defun my/project-ghostel ()
+    "Open or switch to an Ghostel terminal for this project"
+    (interactive)
+    (let* ((root (project-root (project-current t)))
+           (default-directory root)
+           (ghostel-buffer-name (format "*%s-shell*" (file-name-nondirectory (directory-file-name root))))
+           (buf (or (get-buffer ghostel-buffer-name)
+                    (ghostel))))
+      (switch-to-buffer buf)))
 
-(setq ghostel-buffer-name-function nil) ;; stop changing buffer name
-(setq ghostel-readonly-fast-exit nil) ;; do not exit out of copy/emacs mode
+  (defun my/ghostel (arg)
+    "Switch to the default Ghostel buffer. Use C-u to create new if one already exists"
+    (interactive "P")
+    (let ((buf (get-buffer "*ghostel*")))
+      (cond
+       (buf
+        (switch-to-buffer buf))
+       (current-prefix-arg
+        (ghostel current-prefix-arg))
+       (t
+        (ghostel)))))
 
-(defun my/project-ghostel ()
-  "Open or switch to an Ghostel terminal for this project"
-  (interactive)
-  (let* ((root (project-root (project-current t)))
-         (default-directory root)
-         (ghostel-buffer-name (format "*%s-shell*" (file-name-nondirectory (directory-file-name root))))
-         (buf (or (get-buffer ghostel-buffer-name)
-                  (ghostel))))
-    (switch-to-buffer buf)))
-
-(defun my/ghostel (arg)
-  "Switch to the default Ghostel buffer. Use C-u to create new if one already exists"
-  (interactive "P")
-  (let ((buf (get-buffer "*ghostel*")))
-    (cond
-     (buf
-      (switch-to-buffer buf))
-     (current-prefix-arg
-      (ghostel current-prefix-arg))
-     (t
-      (ghostel)))))
-
-(keymap-set project-prefix-map "s" #'my/project-ghostel)
-(keymap-global-set "C-c s o" #'my/ghostel)
-
-(add-to-list 'project-switch-commands '(my/project-ghostel "Ghostel") t)
-
-;; auto read changes
-(global-auto-revert-mode 1)
-
-;; globally enable line numbers
-(global-display-line-numbers-mode 1)
-(add-hook 'eshell-mode-hook (lambda () (display-line-numbers-mode 0)))
-(add-hook 'ghostel-mode-hook (lambda () (display-line-numbers-mode 0)))
+  (add-to-list 'project-switch-commands '(my/project-ghostel "Ghostel") t)
+  :bind
+  ("C-c s o" . my/ghostel)
+  (:map project-prefix-map ("s" . my/project-ghostel)))
 
 ;; display git changes in gutter
 (use-package diff-hl
@@ -195,20 +217,10 @@
 (use-package rainbow-mode
   :ensure t)
 
-;; keep changes in specific directory
-(setq make-backup-files t)
-(setq backup-directory-alist
-      `(("." . "~/.emacs.d/backups")))
-(setq auto-save-default nil)
-
 ;; C indentation
 (add-hook 'c-mode-hook
           (lambda ()
             (setq c-basic-offset 4)))
-
-;; Whitespace characters
-(setq whitespace-style '(face trailing tabs tab-mark indentation))
-(global-whitespace-mode 1)
 
 ;; eslint
 (use-package flymake-eslint
@@ -430,25 +442,3 @@
 
 (keymap-global-set "C-M-<up>" #'move-line-up)
 (keymap-global-set "C-M-<down>" #'move-line-down)
-
-;; [MANZIL] Launch Platform Be
-(defun my/project-run-command-in-ghostel (name command)
-  (let* ((ghostel-buffer-name name)
-         (buf (or (get-buffer ghostel-buffer-name)
-                  (ghostel))))
-    (ghostel-send-string (concat command "\n"))))
-
-(defun my/launch-platform-be()
-  "Launches necessary commands for platform-be in different shells"
-  (interactive)
-  (let ((default-directory "~/src/ManzilApp/platform-be"))
-    (my/project-run-command-in-ghostel "*platform-be-shell*" "uv run ./scripts.sh serve")
-    (my/project-run-command-in-ghostel "*platform-be-shell-queue*" "./scripts.sh sls:queue:serve")
-    (my/project-run-command-in-ghostel "*platform-be-shell-sls*" "cd .serverless && nvm use && cd - && ./scripts.sh sls:serve")))
-
-(defun my/launch-manzil-be()
-  "Launches necessary commands for manzil-mobile-be in different shells"
-  (interactive)
-  (let ((default-directory "~/src/ManzilApp/manzil"))
-    (my/project-run-command-in-ghostel "*manzil-shell*" "nvm use 18 && npm run be:serve")
-    (my/project-run-command-in-ghostel "*manzil-shell-local*" "npm run init-local-s3")))
