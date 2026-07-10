@@ -1,0 +1,25 @@
+* Increase layers for vial
+
+Clone repo: https://github.com/foostan/kbd_firmware.git
+
+Get submodules with this command:
+#+begin_src shell
+  make git-submodule
+#+end_src
+
+add this to the file ~keyboards/crkbd/vial-kb/vial-qmk/keymaps/vial/config.h~
+
+#+begin_src C
+  #undef DYNAMIC_KEYMAP_LAYER_COUNT
+  #define DYNAMIC_KEYMAP_LAYER_COUNT 8
+#+end_src
+
+compile with these commands
+
+#+begin_src shell
+  make vial-qmk-clean
+  kb=crkbd make vial-qmk-init
+  kb=crkbd kr=rev4_1/standard km=vial make vial-qmk-compile
+#+end_src
+
+the artifact location would be in the directory ~keyboards/crkbd/vial-kb/vial-qmk/.build~
