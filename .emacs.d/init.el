@@ -443,3 +443,21 @@
 
 (keymap-global-set "C-M-<up>" #'move-line-up)
 (keymap-global-set "C-M-<down>" #'move-line-down)
+
+;; Execute bash script
+(use-package sh-script
+  :config
+  (defun my/execute-bash-buffer ()
+    "Run the current buffer as a bash script."
+    (interactive)
+    (mark-whole-buffer)
+    (let ((buf (get-buffer-create "*bash output*")))
+      (shell-command-on-region
+       (point-min)
+       (point-max)
+       "bash"
+       buf)
+      (display-buffer buf))
+    (keyboard-quit))
+  :bind
+  ("C-c b" . my/execute-bash-buffer))
