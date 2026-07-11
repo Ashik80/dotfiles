@@ -68,7 +68,7 @@
 (global-auto-revert-mode 1)
 
 ;; Duplicate line
-(keymap-global-set "C-c C-j" #'duplicate-line)
+(keymap-global-set "C-c d" #'duplicate-line)
 
 ;; Whitespace characters
 (setq whitespace-style '(face trailing tabs tab-mark indentation))
