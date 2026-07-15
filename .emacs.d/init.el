@@ -461,3 +461,33 @@
     (keyboard-quit))
   :bind
   ("C-c b" . my/execute-bash-buffer))
+
+;; Add console.log for typescript/tsx
+(defun my/add-immediate-console-log ()
+  (interactive)
+  (kill-ring-save (point-min) (point-max) t)
+  (move-end-of-line 1)
+  (newline)
+  (let ((text (current-kill 0)))
+    (insert (format "console.log(\"%s\", %s);" text text)))
+  (indent-for-tab-command))
+
+(defun my/add-blank-line-console-log ()
+  (interactive)
+  (kill-ring-save (point-min) (point-max) t)
+  (forward-paragraph)
+  (let ((text (current-kill 0)))
+    (insert (format "console.log(\"%s\", %s);" text text)))
+  (newline)
+  (indent-for-tab-command))
+
+(add-hook 'typescript-ts-mode-hook (lambda () (keymap-set typescript-ts-mode-map "C-c l" #'my/add-immediate-console-log)))
+(add-hook 'tsx-ts-mode-hook (lambda () (keymap-set tsx-ts-mode-map "C-c l" #'my/add-immediate-console-log)))
+(add-hook 'typescript-ts-mode-hook (lambda () (keymap-set typescript-ts-mode-map "C-c C-l" #'my/add-blank-line-console-log)))
+(add-hook 'tsx-ts-mode-hook (lambda () (keymap-set tsx-ts-mode-map "C-c C-l" #'my/add-blank-line-console-log)))
+
+;; [MANZIL]
+(defun my/insert-manzil-command ()
+  "Insert command to run manzil containers"
+  (interactive)
+  (ghostel-send-string "docker compose -f .devcontainer/docker-compose.yml --profile platform --profile aws --profile manzil-mobile-be up -d"))
