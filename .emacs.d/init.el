@@ -430,19 +430,37 @@
   (insert (format-time-string "%Y-%m-%d")))
 
 ;; Move lines
-(defun move-line-up ()
-  (interactive)
-  (transpose-lines 1)
-  (previous-line 2))
+(defun my/move-region (start end lines)
+  (let ((region (delete-and-extract-region start end)))
+    (forward-line lines)
+    (let ((new-point (point)))
+      (insert region)
+      (setq deactivate-mark nil)
+      (set-mark new-point))))
 
-(defun move-line-down ()
-  (interactive)
-  (next-line 1)
-  (transpose-lines 1)
-  (previous-line 1))
+(defun my/move-region-up ()
+  (my/move-region (region-beginning) (region-end) -1))
 
-(keymap-global-set "C-M-<up>" #'move-line-up)
-(keymap-global-set "C-M-<down>" #'move-line-down)
+(defun my/move-region-down ()
+  (my/move-region (region-beginning) (region-end) 1))
+
+(defun move-lines-up ()
+  (interactive)
+  (if (use-region-p)
+      (my/move-region-up)
+    (transpose-lines 1)
+    (previous-line 2)))
+
+(defun move-lines-down ()
+  (interactive)
+  (if (use-region-p)
+      (my/move-region-down)
+    (next-line 1)
+    (transpose-lines 1)
+    (previous-line 1)))
+
+(keymap-global-set "C-M-<up>" #'move-lines-up)
+(keymap-global-set "C-M-<down>" #'move-lines-down)
 
 ;; Execute bash script
 (use-package sh-script
@@ -485,6 +503,15 @@
 (add-hook 'tsx-ts-mode-hook (lambda () (keymap-set tsx-ts-mode-map "C-c l" #'my/add-immediate-console-log)))
 (add-hook 'typescript-ts-mode-hook (lambda () (keymap-set typescript-ts-mode-map "C-c C-l" #'my/add-blank-line-console-log)))
 (add-hook 'tsx-ts-mode-hook (lambda () (keymap-set tsx-ts-mode-map "C-c C-l" #'my/add-blank-line-console-log)))
+
+;; File tree
+(use-package treemacs
+  :ensure t
+  :defer t
+  :bind
+  ("C-c t" . treemacs)
+  :custom
+  (treemacs-follow-after-init t))
 
 ;; [MANZIL]
 (defun my/insert-manzil-command ()
