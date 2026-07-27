@@ -221,7 +221,7 @@ bindsym --release $mod+y exec --no-startup-id sh -c '$BROWSER --new-window --app
 bindsym --release $mod+c exec --no-startup-id sh -c '$BROWSER --new-window --app="https://calendar.google.com/calendar" --profile-directory="Profile 1"'
 bindsym --release $mod+g exec --no-startup-id sh -c 'signal-desktop --password-store="gnome-libsecret"'
 bindsym --release $mod+Shift+g exec --no-startup-id sh -c '$BROWSER --new-window --app="https://web.whatsapp.com" --profile-directory="Default"'
-bindsym --release Mod1+g exec --no-startup-id sh -c '$BROWSER --new-window --app="https://getmanzil.slack.com" --profile-directory="Profile 1"'
+bindsym --release Mod1+Shift+g exec --no-startup-id sh -c '$BROWSER --new-window --app="https://getmanzil.slack.com" --profile-directory="Profile 1"'
 bindsym --release $mod+Ctrl+g exec --no-startup-id sh -c '$BROWSER --new-window --app="https://discord.com/channels/@me" --profile-directory="Profile 1"'
 
 # set wallpaper

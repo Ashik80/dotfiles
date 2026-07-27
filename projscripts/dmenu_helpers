@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DMENU_FONT="Roboto Mono Nerd Font:size=15"
+DMENU_FONT="Iosevka Custom Extended:size=15"
 DMENU_NB="#181820"
 DMENU_NF="#dcd7ba"
 DMENU_SB="#f9d791"
