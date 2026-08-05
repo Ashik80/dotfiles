@@ -78,6 +78,12 @@
 (keymap-unset ctl-x-map "p")
 (keymap-set ctl-x-map "j" project-prefix-map)
 
+(with-eval-after-load 'project
+  (setq project-switch-commands
+        (assq-delete-all 'project-vc-dir project-switch-commands))
+  (setq project-switch-commands
+        (assq-delete-all 'project-eshell project-switch-commands)))
+
 (setopt project-vc-extra-root-markers '(".project"))
 
 ;; Org agenda configuration
@@ -200,7 +206,16 @@
 
 ;; git client
 (use-package magit
-  :ensure t)
+  :ensure t
+  :config
+  (defun my/project-magit ()
+    "Opens magit in project root"
+    (interactive)
+    (let ((root (project-root (project-current t))))
+      (magit-status root)))
+  (add-to-list 'project-switch-commands '(my/project-magit "Magit") t)
+  :bind
+  (:map project-prefix-map ("m" . my/project-magit)))
 
 ;; theme is now being loaded from early-init.el
 ;; (use-package gruvbox-theme
