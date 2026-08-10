@@ -274,7 +274,8 @@
   (let ((filename (dired-get-file-for-visit)))
     (kill-new filename)
     (message "Copied: %s" filename)))
-(keymap-set dired-mode-map "C-c a p" #'my/copy-file-path-from-dired)
+(with-eval-after-load 'dired
+  (keymap-set dired-mode-map "C-c a p" #'my/copy-file-path-from-dired))
 
 ;; Prettier
 (defun my/prettier-format ()
@@ -523,10 +524,16 @@
 (use-package treemacs
   :ensure t
   :defer t
-  :bind
-  ("C-c t" . treemacs)
   :custom
-  (treemacs-follow-after-init t))
+  (treemacs-follow-after-init t)
+  :config
+  (defun my/toggle-treemacs ()
+    (interactive)
+    (if (eq (treemacs-current-visibility) 'visible)
+        (treemacs)
+      (treemacs-display-current-project-exclusively)))
+  :bind
+  ("C-c t" . my/toggle-treemacs))
 
 ;; [MANZIL]
 (defun my/insert-manzil-command ()
