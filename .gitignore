@@ -22,3 +22,12 @@
 .config/Code/languagepacks.json
 .config/Code/logs/
 .config/Code/machineid
+
+# AI harness credentials and runtime state (never commit)
+.pi/agent/auth.json
+.pi/agent/sessions/
+.pi/agent/trust.json
+.pi/agent/models-store.json
+.pi/agent/git/
+.pi/agent/bin/
+.asana/config.json

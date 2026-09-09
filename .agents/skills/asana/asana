@@ -1,0 +1,1011 @@
+#!/usr/bin/env python3
+"""asana - dependency-free CLI for the Asana REST API (v1.0).
+
+Auth: personal access token from https://app.asana.com/0/my-apps
+Resolution order: $ASANA_TOKEN, $ASANA_ACCESS_TOKEN, ~/.asana/config.json
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import mimetypes
+import os
+import re
+import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+import uuid
+
+API = os.environ.get("ASANA_API_BASE", "https://app.asana.com/api/1.0")
+CONFIG_DIR = os.path.expanduser(os.environ.get("ASANA_CONFIG_DIR", "~/.asana"))
+CONFIG_PATH = os.path.join(CONFIG_DIR, "config.json")
+
+TASK_FIELDS = (
+    "name,completed,due_on,due_at,assignee.name,permalink_url,resource_subtype,"
+    "parent.name,projects.name,memberships.section.name,memberships.project.name,num_subtasks"
+)
+TASK_DETAIL_FIELDS = (
+    TASK_FIELDS + ",notes,html_notes,created_at,modified_at,completed_at,start_on,"
+    "tags.name,followers.name,custom_fields,dependencies,dependents,liked,num_likes,workspace.name"
+)
+
+
+# --------------------------------------------------------------------------- io
+
+def die(msg: str, code: int = 1):
+    print(f"error: {msg}", file=sys.stderr)
+    sys.exit(code)
+
+
+def warn(msg: str):
+    print(f"note: {msg}", file=sys.stderr)
+
+
+def load_config() -> dict:
+    if os.path.exists(CONFIG_PATH):
+        try:
+            with open(CONFIG_PATH) as fh:
+                return json.load(fh)
+        except (OSError, ValueError) as exc:
+            die(f"cannot read {CONFIG_PATH}: {exc}")
+    return {}
+
+
+def save_config(cfg: dict):
+    os.makedirs(CONFIG_DIR, mode=0o700, exist_ok=True)
+    tmp = CONFIG_PATH + ".tmp"
+    with open(tmp, "w") as fh:
+        json.dump(cfg, fh, indent=2)
+        fh.write("\n")
+    os.chmod(tmp, 0o600)
+    os.replace(tmp, CONFIG_PATH)
+    os.chmod(CONFIG_PATH, 0o600)
+
+
+CFG = load_config()
+
+
+def token() -> str:
+    tok = (
+        os.environ.get("ASANA_TOKEN")
+        or os.environ.get("ASANA_ACCESS_TOKEN")
+        or CFG.get("token")
+    )
+    tok_file = os.environ.get("ASANA_TOKEN_FILE")
+    if not tok and tok_file and os.path.exists(os.path.expanduser(tok_file)):
+        tok = open(os.path.expanduser(tok_file)).read().strip()
+    if not tok:
+        die(
+            "no access token. Create one at https://app.asana.com/0/my-apps then run:\n"
+            "  asana config set-token <TOKEN>\n"
+            "or export ASANA_TOKEN=<TOKEN>"
+        )
+    return tok.strip()
+
+
+# ---------------------------------------------------------------------- request
+
+def request(method: str, path: str, params: dict | None = None,
+            data: dict | None = None, upload: str | None = None) -> dict:
+    url = path if path.startswith("http") else API + ("" if path.startswith("/") else "/") + path
+    params = {k: v for k, v in (params or {}).items() if v not in (None, "", [])}
+    if params:
+        flat = {k: ",".join(map(str, v)) if isinstance(v, (list, tuple)) else
+                ("true" if v is True else "false" if v is False else str(v))
+                for k, v in params.items()}
+        url += ("&" if "?" in url else "?") + urllib.parse.urlencode(flat)
+
+    body: bytes | None = None
+    headers = {"Authorization": f"Bearer {token()}", "Accept": "application/json"}
+
+    if upload:
+        boundary = "----asanacli" + uuid.uuid4().hex
+        fname = os.path.basename(upload)
+        ctype = mimetypes.guess_type(fname)[0] or "application/octet-stream"
+        parts = []
+        for key, val in (data or {}).items():
+            parts.append(
+                f'--{boundary}\r\nContent-Disposition: form-data; name="{key}"\r\n\r\n{val}\r\n'
+                .encode()
+            )
+        with open(upload, "rb") as fh:
+            payload = fh.read()
+        parts.append(
+            f'--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="{fname}"\r\n'
+            f"Content-Type: {ctype}\r\n\r\n".encode() + payload + b"\r\n"
+        )
+        parts.append(f"--{boundary}--\r\n".encode())
+        body = b"".join(parts)
+        headers["Content-Type"] = f"multipart/form-data; boundary={boundary}"
+    elif data is not None:
+        body = json.dumps({"data": data}).encode()
+        headers["Content-Type"] = "application/json"
+
+    for attempt in range(4):
+        req = urllib.request.Request(url, data=body, headers=headers, method=method)
+        try:
+            with urllib.request.urlopen(req) as resp:
+                raw = resp.read()
+            return json.loads(raw) if raw else {}
+        except urllib.error.HTTPError as exc:
+            raw = exc.read()
+            try:
+                payload = json.loads(raw)
+            except ValueError:
+                payload = {}
+            msgs = "; ".join(
+                e.get("message", "") for e in payload.get("errors", [])
+            ) or raw.decode(errors="replace")[:400]
+            if exc.code == 429 and attempt < 3:
+                delay = float(exc.headers.get("Retry-After") or 2 ** attempt)
+                warn(f"rate limited, retrying in {delay:.0f}s")
+                time.sleep(delay)
+                continue
+            if exc.code in (500, 502, 503) and attempt < 3:
+                time.sleep(2 ** attempt)
+                continue
+            err = RuntimeError(f"HTTP {exc.code} {method} {url.split('?')[0]}: {msgs}")
+            err.status = exc.code  # type: ignore[attr-defined]
+            raise err
+        except urllib.error.URLError as exc:
+            if attempt < 3:
+                time.sleep(2 ** attempt)
+                continue
+            die(f"network error: {exc.reason}")
+    return {}
+
+
+def get_all(path: str, params: dict | None = None, limit: int | None = None) -> list:
+    """GET a collection, following next_page until `limit` items (None = all)."""
+    params = dict(params or {})
+    params.setdefault("limit", 100 if limit is None else min(limit, 100))
+    items: list = []
+    while True:
+        res = request("GET", path, params)
+        items.extend(res.get("data") or [])
+        if limit is not None and len(items) >= limit:
+            return items[:limit]
+        nxt = (res.get("next_page") or {}).get("offset")
+        if not nxt:
+            return items
+        params["offset"] = nxt
+
+
+# --------------------------------------------------------------------- resolve
+
+GID_RE = re.compile(r"^\d+$")
+
+
+URL_KEYS = {
+    "task": "task", "item": "task",
+    "project": "project", "list": "project",
+    "board": "view", "timeline": "view", "calendar": "view", "files": "view",
+    "portfolio": "portfolio", "goal": "goal", "team": "team", "user": "user",
+}
+
+
+def parse_url(value: str) -> dict:
+    """Map an Asana URL to {task, project, workspace, ...} gids."""
+    out: dict = {}
+    if "asana.com" not in value:
+        return out
+    segs = [s for s in urllib.parse.urlsplit(value).path.split("/") if s]
+    for i, seg in enumerate(segs):
+        key = URL_KEYS.get(seg)
+        if key and i + 1 < len(segs) and segs[i + 1].isdigit():
+            out.setdefault(key, segs[i + 1])
+    if segs and segs[0] == "1" and len(segs) > 1 and segs[1].isdigit():
+        out.setdefault("workspace", segs[1])
+    if segs and segs[0] == "0":  # legacy /0/<project>/<task>
+        nums = [s for s in segs[1:] if s.isdigit()]
+        if len(nums) >= 2:
+            out.setdefault("project", nums[0])
+            out.setdefault("task", nums[1])
+        elif len(nums) == 1:
+            out.setdefault("any", nums[0])
+    return out
+
+
+def gid_from_url(value: str) -> str | None:
+    parsed = parse_url(value)
+    for key in ("task", "project", "portfolio", "goal", "any"):
+        if parsed.get(key):
+            return parsed[key]
+    return None
+
+
+def resolve(value: str, kind: str = "task") -> str:
+    """Accept a gid, an Asana URL, or a config alias."""
+    if not value:
+        die(f"missing {kind}")
+    value = value.strip()
+    aliases = CFG.get("aliases") or {}
+    if value in aliases:
+        return str(aliases[value])
+    if GID_RE.match(value):
+        return value
+    if "asana.com" in value:
+        parsed = parse_url(value)
+        hit = parsed.get(kind) or parsed.get("any")
+        if hit:
+            return hit
+        die(f"URL contains no {kind} gid: {value}")
+    if kind == "project":
+        matches = [p for p in projects_cache() if p["name"].lower() == value.lower()]
+        if not matches:
+            matches = [p for p in projects_cache() if value.lower() in p["name"].lower()]
+        if len(matches) == 1:
+            return matches[0]["gid"]
+        if len(matches) > 1:
+            names = ", ".join(f"{p['name']} ({p['gid']})" for p in matches[:8])
+            die(f"ambiguous project '{value}': {names}")
+    die(f"cannot resolve {kind} '{value}' (use a gid, Asana URL, or alias)")
+
+
+_PROJECTS: list | None = None
+
+
+def projects_cache() -> list:
+    global _PROJECTS
+    if _PROJECTS is None:
+        _PROJECTS = get_all("/projects", {"workspace": workspace(), "archived": False,
+                                          "opt_fields": "name"})
+    return _PROJECTS
+
+
+_WS: str | None = None
+
+
+def workspace(explicit: str | None = None) -> str:
+    global _WS
+    if explicit:
+        return resolve(explicit, "workspace")
+    if _WS:
+        return _WS
+    _WS = os.environ.get("ASANA_WORKSPACE") or CFG.get("workspace")
+    if not _WS:
+        spaces = get_all("/workspaces", {"opt_fields": "name"})
+        if len(spaces) == 1:
+            _WS = spaces[0]["gid"]
+        else:
+            names = "\n  ".join(f"{w['gid']}  {w['name']}" for w in spaces)
+            die(f"multiple workspaces; pass --workspace or run 'asana config set-workspace <gid>':\n  {names}")
+    return str(_WS)
+
+
+def resolve_user(value: str) -> str:
+    if not value or value in ("me", "self"):
+        return "me"
+    if GID_RE.match(value) or "@" in value:
+        return value
+    people = get_all(f"/workspaces/{workspace()}/users", {"opt_fields": "name,email"})
+    low = value.lower()
+    hits = [u for u in people if low == (u.get("name") or "").lower()] or \
+           [u for u in people if low in (u.get("name") or "").lower()]
+    if len(hits) == 1:
+        return hits[0]["gid"]
+    if len(hits) > 1:
+        die("ambiguous user '%s': %s" % (value, ", ".join(f"{u['name']} ({u['gid']})" for u in hits[:8])))
+    die(f"no user matching '{value}' in workspace")
+
+
+def parse_fields(pairs: list[str]) -> dict:
+    """--field <gid>=<value>; resolves enum option names to option gids."""
+    out: dict = {}
+    for pair in pairs or []:
+        if "=" not in pair:
+            die(f"--field expects gid=value, got '{pair}'")
+        gid, val = pair.split("=", 1)
+        gid, val = gid.strip(), val.strip()
+        if not GID_RE.match(gid):
+            die(f"--field key must be a custom field gid (got '{gid}'); "
+                "list them with: asana custom-fields --project <p>")
+        if val == "":
+            out[gid] = None
+            continue
+        meta = request("GET", f"/custom_fields/{gid}",
+                       {"opt_fields": "resource_subtype,enum_options.name,enum_options.gid,"
+                                      "multi_enum_options.name,multi_enum_options.gid"}).get("data", {})
+        sub = meta.get("resource_subtype")
+        if sub == "enum" and not GID_RE.match(val):
+            opts = meta.get("enum_options") or []
+            hit = next((o for o in opts if o["name"].lower() == val.lower()), None)
+            if not hit:
+                die(f"'{val}' is not an option of field {gid}: "
+                    + ", ".join(o["name"] for o in opts))
+            out[gid] = hit["gid"]
+        elif sub == "multi_enum":
+            opts = meta.get("multi_enum_options") or meta.get("enum_options") or []
+            gids = []
+            for piece in val.split("|"):
+                piece = piece.strip()
+                if GID_RE.match(piece):
+                    gids.append(piece)
+                    continue
+                hit = next((o for o in opts if o["name"].lower() == piece.lower()), None)
+                if not hit:
+                    die(f"'{piece}' is not an option of field {gid}")
+                gids.append(hit["gid"])
+            out[gid] = gids
+        elif sub == "number":
+            out[gid] = float(val) if "." in val else int(val)
+        else:
+            out[gid] = val
+    return out
+
+
+# ---------------------------------------------------------------------- format
+
+def emit(args, payload, text_fn):
+    if getattr(args, "json", False):
+        print(json.dumps(payload, indent=2, ensure_ascii=False))
+    else:
+        text_fn(payload)
+
+
+def section_of(task: dict) -> str:
+    for m in task.get("memberships") or []:
+        sec = (m.get("section") or {}).get("name")
+        if sec:
+            return sec
+    return ""
+
+
+def task_line(t: dict) -> str:
+    mark = "x" if t.get("completed") else " "
+    bits = [f"[{mark}] {t.get('gid','')}  {t.get('name','(no name)')}"]
+    extra = []
+    who = (t.get("assignee") or {}).get("name")
+    if who:
+        extra.append(f"@{who}")
+    if t.get("due_on") or t.get("due_at"):
+        extra.append("due " + str(t.get("due_on") or t.get("due_at"))[:10])
+    sec = section_of(t)
+    if sec:
+        extra.append(f"§{sec}")
+    if t.get("num_subtasks"):
+        extra.append(f"{t['num_subtasks']} subtasks")
+    if extra:
+        bits.append("  (" + ", ".join(extra) + ")")
+    return "".join(bits)
+
+
+def print_tasks(tasks: list):
+    if not tasks:
+        print("(no tasks)")
+    for t in tasks:
+        print(task_line(t))
+
+
+def print_named(items: list, *extra_fields):
+    if not items:
+        print("(none)")
+    for it in items:
+        extra = " ".join(str(it.get(f)) for f in extra_fields if it.get(f) is not None)
+        name = it.get("name") or it.get("text") or ""
+        print(f"{str(it.get('gid') or '-'):<20} {name}" + (f"  {extra}" if extra else ""))
+
+
+def print_task_detail(t: dict):
+    print(f"{t.get('name')}")
+    print(f"gid       {t.get('gid')}")
+    print(f"url       {t.get('permalink_url')}")
+    print(f"status    {'completed' if t.get('completed') else 'open'}"
+          + (f" (at {t['completed_at'][:10]})" if t.get("completed_at") else ""))
+    print(f"assignee  {(t.get('assignee') or {}).get('name') or '-'}")
+    print(f"dates     start={t.get('start_on') or '-'} due={t.get('due_on') or (t.get('due_at') or '-')}")
+    projs = ", ".join(p.get("name", "") for p in t.get("projects") or []) or "-"
+    print(f"projects  {projs}")
+    sec = section_of(t)
+    if sec:
+        print(f"section   {sec}")
+    if t.get("parent"):
+        print(f"parent    {t['parent'].get('name')} ({t['parent'].get('gid')})")
+    if t.get("tags"):
+        print("tags      " + ", ".join(x.get("name", "") for x in t["tags"]))
+    if t.get("followers"):
+        print("followers " + ", ".join(x.get("name", "") for x in t["followers"]))
+    for dep_key, label in (("dependencies", "blocked by"), ("dependents", "blocks")):
+        if t.get(dep_key):
+            print(f"{label:<9} " + ", ".join(d.get("gid", "") for d in t[dep_key]))
+    fields = [f for f in t.get("custom_fields") or [] if f.get("display_value") not in (None, "")]
+    if fields:
+        print("custom fields:")
+        for f in fields:
+            print(f"  {f.get('name')} = {f.get('display_value')}   [{f.get('gid')}]")
+    if t.get("num_subtasks"):
+        print(f"subtasks  {t['num_subtasks']}  (asana subtasks {t.get('gid')})")
+    notes = (t.get("notes") or "").rstrip()
+    print("-" * 60)
+    print(notes if notes else "(no description)")
+
+
+def print_stories(stories: list):
+    if not stories:
+        print("(no comments)")
+    for s in stories:
+        who = (s.get("created_by") or {}).get("name", "unknown")
+        when = (s.get("created_at") or "")[:16].replace("T", " ")
+        kind = s.get("resource_subtype", "")
+        text = (s.get("text") or "").rstrip()
+        head = f"[{when}] {who}"
+        if kind and kind != "comment_added":
+            head += f" ({kind})"
+        print(f"{head}  gid={s.get('gid')}")
+        for line in text.splitlines() or [""]:
+            print(f"    {line}")
+        print()
+
+
+# --------------------------------------------------------------------- commands
+
+def cmd_config(args):
+    if args.action == "show":
+        cfg = dict(CFG)
+        if cfg.get("token"):
+            cfg["token"] = cfg["token"][:6] + "…" + cfg["token"][-4:]
+        print(json.dumps(cfg, indent=2))
+        print(f"\nconfig file: {CONFIG_PATH}")
+        return
+    cfg = load_config()
+    rest = args.rest
+    if args.action == "set-token":
+        if len(rest) != 1:
+            die("usage: asana config set-token <token>")
+        cfg["token"] = rest[0]
+    elif args.action == "set-workspace":
+        if len(rest) != 1:
+            die("usage: asana config set-workspace <gid-or-url>")
+        cfg["workspace"] = parse_url(rest[0]).get("workspace") or rest[0]
+    elif args.action == "alias":
+        if len(rest) != 2:
+            die("usage: asana config alias <name> <gid-or-url>")
+        cfg.setdefault("aliases", {})[rest[0]] = gid_from_url(rest[1]) or rest[1]
+    elif args.action == "unalias":
+        if len(rest) != 1:
+            die("usage: asana config unalias <name>")
+        (cfg.get("aliases") or {}).pop(rest[0], None)
+    save_config(cfg)
+    print(f"saved -> {CONFIG_PATH}")
+
+
+def cmd_whoami(args):
+    me = request("GET", "/users/me", {"opt_fields": "name,email,workspaces.name"}).get("data", {})
+    emit(args, me, lambda d: (
+        print(f"{d.get('name')} <{d.get('email')}>  gid={d.get('gid')}"),
+        print("workspaces:"),
+        [print(f"  {w['gid']:<20} {w['name']}") for w in d.get("workspaces", [])],
+    ))
+
+
+def cmd_workspaces(args):
+    data = get_all("/workspaces", {"opt_fields": "name"})
+    emit(args, data, print_named)
+
+
+def cmd_projects(args):
+    params = {"workspace": workspace(args.workspace), "opt_fields": "name,archived,current_status.title",
+              "archived": None if args.all else False}
+    if args.team:
+        params = {"team": resolve(args.team, "team"), "opt_fields": params["opt_fields"]}
+    data = get_all("/projects", params, args.limit)
+    if args.grep:
+        data = [p for p in data if args.grep.lower() in (p.get("name") or "").lower()]
+    emit(args, data, print_named)
+
+
+def cmd_sections(args):
+    data = get_all(f"/projects/{resolve(args.project, 'project')}/sections", {"opt_fields": "name"})
+    emit(args, data, print_named)
+
+
+def cmd_users(args):
+    data = get_all(f"/workspaces/{workspace(args.workspace)}/users", {"opt_fields": "name,email"})
+    if args.grep:
+        low = args.grep.lower()
+        data = [u for u in data if low in (u.get("name") or "").lower() or low in (u.get("email") or "").lower()]
+    emit(args, data, lambda d: print_named(d, "email"))
+
+
+def cmd_tags(args):
+    data = get_all(f"/workspaces/{workspace(args.workspace)}/tags", {"opt_fields": "name"})
+    emit(args, data, print_named)
+
+
+def cmd_custom_fields(args):
+    settings = get_all(f"/projects/{resolve(args.project, 'project')}/custom_field_settings",
+                       {"opt_fields": "custom_field.name,custom_field.resource_subtype,"
+                                      "custom_field.enum_options.name,custom_field.enum_options.gid,"
+                                      "custom_field.enum_options.enabled"})
+    fields = [s.get("custom_field", {}) for s in settings]
+
+    def show(items):
+        for f in items:
+            print(f"{f.get('gid'):<20} {f.get('name')}  ({f.get('resource_subtype')})")
+            for o in f.get("enum_options") or []:
+                if o.get("enabled", True):
+                    print(f"    {o['gid']:<18} {o['name']}")
+    emit(args, fields, show)
+
+
+def cmd_tasks(args):
+    fields = TASK_FIELDS
+    if args.section:
+        data = get_all(f"/sections/{resolve(args.section, 'section')}/tasks",
+                       {"opt_fields": fields}, args.limit)
+    elif args.project:
+        params = {"project": resolve(args.project, "project"), "opt_fields": fields}
+        if args.completed_since:
+            params["completed_since"] = args.completed_since
+        data = get_all("/tasks", params, args.limit)
+    elif args.assignee:
+        data = get_all("/tasks", {"assignee": resolve_user(args.assignee),
+                                  "workspace": workspace(args.workspace),
+                                  "completed_since": args.completed_since
+                                  or (None if args.include_done else "now"),
+                                  "opt_fields": fields}, args.limit)
+    else:
+        die("pass --project, --section or --assignee")
+    if not args.include_done and not args.completed_since:
+        data = [t for t in data if not t.get("completed")]
+    if args.grep:
+        data = [t for t in data if args.grep.lower() in (t.get("name") or "").lower()]
+    emit(args, data, print_tasks)
+
+
+def cmd_search(args):
+    ws = workspace(args.workspace)
+    params = {"opt_fields": TASK_FIELDS, "limit": min(args.limit or 50, 100), "text": args.text}
+    if args.project:
+        params["projects.any"] = resolve(args.project, "project")
+    if args.assignee:
+        params["assignee.any"] = resolve_user(args.assignee)
+    if not args.include_done:
+        params["completed"] = False
+    if args.modified_since:
+        params["modified_at.after"] = args.modified_since
+    try:
+        data = request("GET", f"/workspaces/{ws}/tasks/search", params).get("data", [])
+    except RuntimeError as exc:
+        if getattr(exc, "status", None) in (402, 403):
+            warn("advanced search needs a paid Asana plan; falling back to typeahead")
+            data = request("GET", f"/workspaces/{ws}/typeahead",
+                           {"resource_type": "task", "query": args.text,
+                            "count": min(args.limit or 20, 100),
+                            "opt_fields": TASK_FIELDS}).get("data", [])
+        else:
+            die(str(exc))
+    emit(args, data, print_tasks)
+
+
+def cmd_task(args):
+    data = request("GET", f"/tasks/{resolve(args.task)}",
+                   {"opt_fields": TASK_DETAIL_FIELDS}).get("data", {})
+    emit(args, data, print_task_detail)
+
+
+def cmd_subtasks(args):
+    data = get_all(f"/tasks/{resolve(args.task)}/subtasks", {"opt_fields": TASK_FIELDS})
+    emit(args, data, print_tasks)
+
+
+def cmd_comments(args):
+    stories = get_all(f"/tasks/{resolve(args.task)}/stories",
+                      {"opt_fields": "text,created_at,created_by.name,resource_subtype,type"})
+    if not args.all:
+        stories = [s for s in stories if s.get("resource_subtype") == "comment_added"]
+    emit(args, stories, print_stories)
+
+
+def cmd_comment(args):
+    text = args.text
+    if text == "-" or (args.file and args.file == "-"):
+        text = sys.stdin.read()
+    elif args.file:
+        text = open(os.path.expanduser(args.file)).read()
+    if not text:
+        die("nothing to post (pass text, --file, or '-' for stdin)")
+    payload = {"html_text": text} if args.html else {"text": text}
+    data = request("POST", f"/tasks/{resolve(args.task)}/stories", data=payload).get("data", {})
+    emit(args, data, lambda d: print(f"commented (story {d.get('gid')})"))
+
+
+def _body_from_args(args) -> dict:
+    body: dict = {}
+    if getattr(args, "name", None):
+        body["name"] = args.name
+    notes = getattr(args, "notes", None)
+    if notes == "-":
+        notes = sys.stdin.read()
+    if getattr(args, "notes_file", None):
+        notes = sys.stdin.read() if args.notes_file == "-" else open(os.path.expanduser(args.notes_file)).read()
+    if notes is not None:
+        body["html_notes" if getattr(args, "html", False) else "notes"] = notes
+    if getattr(args, "assignee", None):
+        body["assignee"] = resolve_user(args.assignee)
+    if getattr(args, "unassign", False):
+        body["assignee"] = None
+    if getattr(args, "due", None) is not None:
+        body["due_on"] = args.due or None
+    if getattr(args, "start", None) is not None:
+        body["start_on"] = args.start or None
+    if getattr(args, "field", None):
+        body["custom_fields"] = parse_fields(args.field)
+    return body
+
+
+def cmd_create(args):
+    body = _body_from_args(args)
+    if not body.get("name"):
+        die("--name is required")
+    if args.parent:
+        body["parent"] = resolve(args.parent)
+    projects = [resolve(p, "project") for p in (args.project or [])]
+    if projects:
+        body["projects"] = projects
+    if not projects and not args.parent:
+        body["workspace"] = workspace(args.workspace)
+    if args.followers:
+        body["followers"] = [resolve_user(f) for f in args.followers]
+    if args.tag:
+        body["tags"] = [resolve(t, "tag") for t in args.tag]
+    task = request("POST", "/tasks", {"opt_fields": TASK_FIELDS}, body).get("data", {})
+    gid = task.get("gid")
+    if args.section and gid:
+        request("POST", f"/sections/{resolve(args.section, 'section')}/addTask", data={"task": gid})
+    emit(args, task, lambda d: print(f"created {d.get('gid')}  {d.get('name')}\n{d.get('permalink_url')}"))
+
+
+def cmd_update(args):
+    body = _body_from_args(args)
+    if args.complete:
+        body["completed"] = True
+    if args.reopen:
+        body["completed"] = False
+    if not body:
+        die("nothing to update")
+    data = request("PUT", f"/tasks/{resolve(args.task)}", {"opt_fields": TASK_FIELDS}, body).get("data", {})
+    emit(args, data, lambda d: print("updated " + task_line(d)))
+
+
+def _simple_update(args, body: dict, label: str):
+    data = request("PUT", f"/tasks/{resolve(args.task)}", {"opt_fields": TASK_FIELDS}, body).get("data", {})
+    emit(args, data, lambda d: print(f"{label} " + task_line(d)))
+
+
+def cmd_complete(args):
+    _simple_update(args, {"completed": True}, "completed")
+
+
+def cmd_reopen(args):
+    _simple_update(args, {"completed": False}, "reopened")
+
+
+def cmd_assign(args):
+    _simple_update(args, {"assignee": None if args.to in ("none", "") else resolve_user(args.to)}, "assigned")
+
+
+def cmd_due(args):
+    _simple_update(args, {"due_on": args.date or None},
+                   "due date set:" if args.date else "due date cleared:")
+
+
+def cmd_move(args):
+    gid = resolve(args.task)
+    section = resolve(args.section, "section")
+    body = {"task": gid}
+    if args.before:
+        body["insert_before"] = resolve(args.before)
+    elif args.after:
+        body["insert_after"] = resolve(args.after)
+    request("POST", f"/sections/{section}/addTask", data=body)
+    print(f"moved {gid} -> section {section}")
+
+
+def cmd_add_project(args):
+    gid = resolve(args.task)
+    body = {"project": resolve(args.project, "project")}
+    if args.section:
+        body["section"] = resolve(args.section, "section")
+    request("POST", f"/tasks/{gid}/addProject", data=body)
+    print(f"added {gid} to project {body['project']}")
+
+
+def cmd_remove_project(args):
+    gid = resolve(args.task)
+    request("POST", f"/tasks/{gid}/removeProject", data={"project": resolve(args.project, "project")})
+    print(f"removed {gid} from project")
+
+
+def cmd_tag(args):
+    gid = resolve(args.task)
+    action = "removeTag" if args.remove else "addTag"
+    request("POST", f"/tasks/{gid}/{action}", data={"tag": resolve(args.tag_gid, "tag")})
+    print(f"{'removed' if args.remove else 'added'} tag on {gid}")
+
+
+def cmd_follow(args):
+    gid = resolve(args.task)
+    action = "removeFollowers" if args.remove else "addFollowers"
+    request("POST", f"/tasks/{gid}/{action}",
+            data={"followers": [resolve_user(u) for u in args.users]})
+    print(f"{'removed' if args.remove else 'added'} followers on {gid}")
+
+
+def cmd_depend(args):
+    gid = resolve(args.task)
+    key = "dependents" if args.blocks else "dependencies"
+    verb = "remove" if args.remove else "add"
+    request("POST", f"/tasks/{gid}/{verb}{key.capitalize()}",
+            data={key: [resolve(t) for t in args.on]})
+    print(f"{'removed' if args.remove else 'added'} {key} on {gid}")
+
+
+def cmd_subtask(args):
+    parent = resolve(args.task)
+    body = _body_from_args(args)
+    if not body.get("name"):
+        die("--name is required")
+    data = request("POST", f"/tasks/{parent}/subtasks", {"opt_fields": TASK_FIELDS}, body).get("data", {})
+    emit(args, data, lambda d: print(f"created subtask {d.get('gid')}  {d.get('name')}"))
+
+
+def cmd_attach(args):
+    gid = resolve(args.task)
+    path = os.path.expanduser(args.file)
+    if not os.path.exists(path):
+        die(f"no such file: {path}")
+    data = request("POST", "/attachments", data={"parent": gid}, upload=path).get("data", {})
+    emit(args, data, lambda d: print(f"attached {d.get('name')} ({d.get('gid')})"))
+
+
+def cmd_attachments(args):
+    data = get_all("/attachments", {"parent": resolve(args.task),
+                                    "opt_fields": "name,download_url,created_at"})
+    emit(args, data, lambda d: print_named(d, "created_at"))
+
+
+def cmd_delete(args):
+    gid = resolve(args.task)
+    if not args.yes:
+        die(f"refusing to delete {gid} without --yes")
+    request("DELETE", f"/tasks/{gid}")
+    print(f"deleted {gid}")
+
+
+def cmd_project(args):
+    data = request("GET", f"/projects/{resolve(args.project, 'project')}",
+                   {"opt_fields": "name,notes,archived,public,color,created_at,modified_at,"
+                                  "due_on,start_on,owner.name,team.name,current_status.title,"
+                                  "current_status.text,permalink_url"}).get("data", {})
+
+    def show(d):
+        print(d.get("name"))
+        print(f"gid    {d.get('gid')}")
+        print(f"url    {d.get('permalink_url')}")
+        print(f"owner  {(d.get('owner') or {}).get('name') or '-'}   team {(d.get('team') or {}).get('name') or '-'}")
+        print(f"dates  start={d.get('start_on') or '-'} due={d.get('due_on') or '-'}  archived={d.get('archived')}")
+        st = d.get("current_status") or {}
+        if st:
+            print(f"status {st.get('title')}: {(st.get('text') or '')[:200]}")
+        print("-" * 60)
+        print((d.get("notes") or "(no description)").rstrip())
+    emit(args, data, show)
+
+
+def cmd_raw(args):
+    data = None
+    if args.data:
+        raw = sys.stdin.read() if args.data == "-" else args.data
+        try:
+            parsed = json.loads(raw)
+        except ValueError as exc:
+            die(f"--data is not valid JSON: {exc}")
+        data = parsed.get("data", parsed) if isinstance(parsed, dict) else parsed
+    params = {}
+    for p in args.param or []:
+        if "=" not in p:
+            die(f"--param expects k=v, got '{p}'")
+        k, v = p.split("=", 1)
+        params[k] = v
+    res = request(args.method.upper(), args.path, params, data)
+    print(json.dumps(res, indent=2, ensure_ascii=False))
+
+
+def cmd_url(args):
+    gid = gid_from_url(args.url) or args.url
+    print(gid)
+
+
+# ------------------------------------------------------------------------ main
+
+def build_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(
+        prog="asana", description="Asana CLI (read, write, comment, act on tasks)")
+    p.add_argument("--json", action="store_true", help="raw JSON output")
+    sub = p.add_subparsers(dest="cmd", required=True)
+
+    def add(name, fn, help_, **kw):
+        sp = sub.add_parser(name, help=help_, **kw)
+        sp.set_defaults(func=fn)
+        sp.add_argument("--json", action="store_true", help=argparse.SUPPRESS)
+        return sp
+
+    c = add("config", cmd_config, "show/set token, workspace, aliases")
+    c.add_argument("action", choices=["show", "set-token", "set-workspace", "alias", "unalias"])
+    c.add_argument("rest", nargs="*", metavar="VALUE")
+
+    add("whoami", cmd_whoami, "current user + workspaces")
+    add("workspaces", cmd_workspaces, "list workspaces")
+
+    c = add("projects", cmd_projects, "list projects")
+    c.add_argument("--workspace")
+    c.add_argument("--team")
+    c.add_argument("--grep")
+    c.add_argument("--all", action="store_true", help="include archived")
+    c.add_argument("--limit", type=int)
+
+    c = add("project", cmd_project, "project detail")
+    c.add_argument("project")
+
+    c = add("sections", cmd_sections, "list sections/columns of a project")
+    c.add_argument("--project", required=True)
+
+    c = add("users", cmd_users, "list workspace users")
+    c.add_argument("--workspace")
+    c.add_argument("--grep")
+
+    c = add("tags", cmd_tags, "list workspace tags")
+    c.add_argument("--workspace")
+
+    c = add("custom-fields", cmd_custom_fields, "list a project's custom fields + option gids")
+    c.add_argument("--project", required=True)
+
+    c = add("tasks", cmd_tasks, "list tasks in a project/section/for a user")
+    c.add_argument("--project")
+    c.add_argument("--section")
+    c.add_argument("--assignee", help="me | name | gid | email")
+    c.add_argument("--workspace")
+    c.add_argument("--grep")
+    c.add_argument("--include-done", action="store_true")
+    c.add_argument("--completed-since", help="ISO date/time or 'now'")
+    c.add_argument("--limit", type=int)
+
+    c = add("search", cmd_search, "search tasks by text")
+    c.add_argument("text")
+    c.add_argument("--workspace")
+    c.add_argument("--project")
+    c.add_argument("--assignee")
+    c.add_argument("--include-done", action="store_true")
+    c.add_argument("--modified-since")
+    c.add_argument("--limit", type=int)
+
+    c = add("task", cmd_task, "show a task (gid, URL or alias)")
+    c.add_argument("task")
+
+    c = add("subtasks", cmd_subtasks, "list subtasks")
+    c.add_argument("task")
+
+    c = add("comments", cmd_comments, "read comments (--all for full activity)")
+    c.add_argument("task")
+    c.add_argument("--all", action="store_true")
+
+    c = add("comment", cmd_comment, "post a comment")
+    c.add_argument("task")
+    c.add_argument("text", nargs="?", help="text, or '-' for stdin")
+    c.add_argument("--file")
+    c.add_argument("--html", action="store_true", help="text is Asana HTML (<body>…</body>)")
+
+    def write_flags(sp, with_name=True):
+        if with_name:
+            sp.add_argument("--name")
+        sp.add_argument("--notes", help="description, '-' for stdin")
+        sp.add_argument("--notes-file")
+        sp.add_argument("--html", action="store_true", help="notes are Asana HTML")
+        sp.add_argument("--assignee")
+        sp.add_argument("--due", help="YYYY-MM-DD (empty string clears)")
+        sp.add_argument("--start", help="YYYY-MM-DD")
+        sp.add_argument("--field", action="append", metavar="GID=VALUE")
+        return sp
+
+    c = write_flags(add("create", cmd_create, "create a task"))
+    c.add_argument("--project", action="append", help="repeatable")
+    c.add_argument("--section")
+    c.add_argument("--parent", help="create as subtask of this task")
+    c.add_argument("--workspace")
+    c.add_argument("--followers", action="append")
+    c.add_argument("--tag", action="append")
+
+    c = write_flags(add("subtask", cmd_subtask, "create a subtask under a task"))
+    c.add_argument("task")
+
+    c = write_flags(add("update", cmd_update, "update fields of a task"))
+    c.add_argument("task")
+    c.add_argument("--unassign", action="store_true")
+    c.add_argument("--complete", action="store_true")
+    c.add_argument("--reopen", action="store_true")
+
+    for name, fn, help_ in (("complete", cmd_complete, "mark task done"),
+                            ("reopen", cmd_reopen, "mark task not done")):
+        c = add(name, fn, help_)
+        c.add_argument("task")
+
+    c = add("assign", cmd_assign, "assign a task (use 'none' to clear)")
+    c.add_argument("task")
+    c.add_argument("to")
+
+    c = add("due", cmd_due, "set/clear due date")
+    c.add_argument("task")
+    c.add_argument("date", nargs="?", default="", help="YYYY-MM-DD, omit to clear")
+
+    c = add("move", cmd_move, "move task to a section/column")
+    c.add_argument("task")
+    c.add_argument("--section", required=True)
+    c.add_argument("--before")
+    c.add_argument("--after")
+
+    c = add("add-project", cmd_add_project, "add task to a project (optionally a section)")
+    c.add_argument("task")
+    c.add_argument("--project", required=True)
+    c.add_argument("--section")
+
+    c = add("remove-project", cmd_remove_project, "remove task from a project")
+    c.add_argument("task")
+    c.add_argument("--project", required=True)
+
+    c = add("tag", cmd_tag, "add/remove a tag")
+    c.add_argument("task")
+    c.add_argument("tag_gid", metavar="tag")
+    c.add_argument("--remove", action="store_true")
+
+    c = add("follow", cmd_follow, "add/remove followers")
+    c.add_argument("task")
+    c.add_argument("users", nargs="+")
+    c.add_argument("--remove", action="store_true")
+
+    c = add("depend", cmd_depend, "manage dependencies (default: task is blocked by ON)")
+    c.add_argument("task")
+    c.add_argument("on", nargs="+")
+    c.add_argument("--blocks", action="store_true", help="ON depends on task instead")
+    c.add_argument("--remove", action="store_true")
+
+    c = add("attach", cmd_attach, "upload a file to a task")
+    c.add_argument("task")
+    c.add_argument("file")
+
+    c = add("attachments", cmd_attachments, "list task attachments")
+    c.add_argument("task")
+
+    c = add("delete", cmd_delete, "delete a task (needs --yes)")
+    c.add_argument("task")
+    c.add_argument("--yes", action="store_true")
+
+    c = add("raw", cmd_raw, "call any endpoint: raw GET /tasks/123")
+    c.add_argument("method")
+    c.add_argument("path")
+    c.add_argument("--data", help="JSON body ('-' for stdin)")
+    c.add_argument("--param", action="append", metavar="K=V")
+
+    c = add("url", cmd_url, "extract the gid from an Asana URL")
+    c.add_argument("url")
+
+    return p
+
+
+def main():
+    args = build_parser().parse_args()
+    try:
+        args.func(args)
+    except BrokenPipeError:
+        pass
+    except RuntimeError as exc:
+        die(str(exc))
+    except KeyboardInterrupt:
+        sys.exit(130)
+
+
+if __name__ == "__main__":
+    main()
