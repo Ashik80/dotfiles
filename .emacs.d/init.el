@@ -190,9 +190,13 @@
        (t
         (ghostel)))))
 
+  ;; pi subagent live views (C-c s v) live in pi-subagent-views.el
+  (load (expand-file-name "pi-subagent-views.el" user-emacs-directory))
+
   (add-to-list 'project-switch-commands '(my/project-ghostel "Ghostel") t)
   :bind
   ("C-c s o" . my/ghostel)
+  ("C-c s v" . my/pi-subagent-views)
   (:map project-prefix-map ("s" . my/project-ghostel)))
 
 ;; display git changes in gutter
@@ -540,3 +544,7 @@
   "Insert command to run manzil containers"
   (interactive)
   (ghostel-send-string "docker compose -f .devcontainer/docker-compose.yml --profile platform --profile aws --profile manzil-mobile-be up -d"))
+
+;; Pi specific
+(require 'server)
+(unless (server-running-p) (server-start))

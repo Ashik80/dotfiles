@@ -27,5 +27,6 @@
     "mermaid": "streaming"
   },
   "packages": [],
-  "lastChangelogVersion": "0.85.1"
+  "lastChangelogVersion": "0.85.1",
+  "hideThinkingBlock": true
 }
