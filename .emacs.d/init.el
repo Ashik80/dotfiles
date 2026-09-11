@@ -539,12 +539,12 @@
   :bind
   ("C-c t" . my/toggle-treemacs))
 
+;; Pi specific
+(require 'server)
+(unless (server-running-p) (server-start))
+
 ;; [MANZIL]
 (defun my/insert-manzil-command ()
   "Insert command to run manzil containers"
   (interactive)
   (ghostel-send-string "docker compose -f .devcontainer/docker-compose.yml --profile platform --profile aws --profile manzil-mobile-be up -d"))
-
-;; Pi specific
-(require 'server)
-(unless (server-running-p) (server-start))
