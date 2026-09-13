@@ -8,12 +8,22 @@ STAMP="$(date +%Y%m%d-%H%M%S)"
 
 link_path() {
     local source="$1" destination="$2"
-    mkdir -p "$(dirname "$destination")"
+    local resolved_source resolved_destination
 
-    if [[ -L "$destination" ]] && [[ "$(readlink -f "$destination")" == "$(readlink -f "$source")" ]]; then
-        printf 'already linked: %s\n' "$destination"
+    if [[ ! -e "$source" && ! -L "$source" ]]; then
+        printf 'error: link source does not exist: %s\n' "$source" >&2
+        return 1
+    fi
+
+    resolved_source="$(readlink -f "$source" 2>/dev/null || true)"
+    resolved_destination="$(readlink -f "$destination" 2>/dev/null || true)"
+    if [[ "$source" == "$destination" ]] ||
+        [[ -n "$resolved_source" && "$resolved_source" == "$resolved_destination" ]]; then
+        printf 'already in place: %s\n' "$destination"
         return
     fi
+
+    mkdir -p "$(dirname "$destination")"
 
     if [[ -e "$destination" || -L "$destination" ]]; then
         local backup="${destination}.before-dotfiles-${STAMP}"
@@ -42,28 +52,13 @@ for agent in "$DOTFILES"/.pi/agent/agents/*.md; do
     link_path "$agent" "$HOME/.pi/agent/agents/$(basename "$agent")"
 done
 
-# Link selected extensions from the active pi installation so upgrades are followed.
-PI_BIN="$(command -v pi || true)"
-if [[ -z "$PI_BIN" ]]; then
-    printf 'error: pi is not installed or not in PATH\n' >&2
-    exit 1
-fi
-PI_ROOT="$(cd "$(dirname "$(readlink -f "$PI_BIN")")/../.." && pwd)"
-EXTENSION_EXAMPLES="$PI_ROOT/examples/extensions"
-if [[ ! -d "$EXTENSION_EXAMPLES" ]]; then
-    printf 'error: pi extension examples not found at %s\n' "$EXTENSION_EXAMPLES" >&2
-    exit 1
-fi
-
-for extension in confirm-destructive.ts git-checkpoint.ts notify.ts preset.ts protected-paths.ts todo.ts; do
-    link_path "$EXTENSION_EXAMPLES/$extension" "$HOME/.pi/agent/extensions/$extension"
+# Extensions are kept in dotfiles so every machine installs the same versions.
+for extension in confirm-destructive.ts generate-image git-checkpoint.ts notify.ts preset.ts protected-paths.ts subagent todo.ts; do
+    link_path "$DOTFILES/.pi/agent/extensions/$extension" "$HOME/.pi/agent/extensions/$extension"
 done
-link_path "$DOTFILES/.pi/agent/extensions/generate-image" "$HOME/.pi/agent/extensions/generate-image"
-link_path "$EXTENSION_EXAMPLES/subagent/index.ts" "$HOME/.pi/agent/extensions/subagent/index.ts"
-link_path "$EXTENSION_EXAMPLES/subagent/agents.ts" "$HOME/.pi/agent/extensions/subagent/agents.ts"
 
-# Subagent workflow prompts come from pi; custom GPT agent definitions come from dotfiles.
-for prompt in "$EXTENSION_EXAMPLES"/subagent/prompts/*.md; do
+# Install the workflow prompts bundled with the subagent extension.
+for prompt in "$DOTFILES"/.pi/agent/extensions/subagent/prompts/*.md; do
     link_path "$prompt" "$HOME/.pi/agent/prompts/$(basename "$prompt")"
 done
 
