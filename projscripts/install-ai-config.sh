@@ -58,6 +58,7 @@ fi
 for extension in confirm-destructive.ts git-checkpoint.ts notify.ts preset.ts protected-paths.ts todo.ts; do
     link_path "$EXTENSION_EXAMPLES/$extension" "$HOME/.pi/agent/extensions/$extension"
 done
+link_path "$DOTFILES/.pi/agent/extensions/generate-image" "$HOME/.pi/agent/extensions/generate-image"
 link_path "$EXTENSION_EXAMPLES/subagent/index.ts" "$HOME/.pi/agent/extensions/subagent/index.ts"
 link_path "$EXTENSION_EXAMPLES/subagent/agents.ts" "$HOME/.pi/agent/extensions/subagent/agents.ts"
 
