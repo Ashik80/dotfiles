@@ -3,7 +3,8 @@
 # Existing paths are preserved as timestamped backups.
 set -euo pipefail
 
-DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+DOTFILES="$(cd "$(dirname "$SCRIPT_PATH")/.." && pwd)"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 
 link_path() {
@@ -39,6 +40,10 @@ link_path() {
 link_path "$DOTFILES/.agents/skills" "$HOME/.agents/skills"
 link_path "$DOTFILES/.agents/skills" "$HOME/.claude/skills"
 link_path "$DOTFILES/.agents/.skill-lock.json" "$HOME/.agents/.skill-lock.json"
+
+# Global instructions for each coding agent.
+link_path "$DOTFILES/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+link_path "$DOTFILES/.codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
 
 # Portable pi configuration. Authentication and runtime files remain local.
 link_path "$DOTFILES/.pi/agent/AGENTS.md" "$HOME/.pi/agent/AGENTS.md"

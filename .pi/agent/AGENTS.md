@@ -18,6 +18,7 @@ These apply to every project. Repo-level `AGENTS.md` / `CLAUDE.md` files layer o
 - Never run destructive git operations (`push --force`, `reset --hard`, `clean -fdx`, branch deletion) without asking.
 - Do not `git commit` or `git push` unless explicitly asked.
 - Do not disable, skip, or delete tests to make a build pass.
+- Never add `ponytail:` comments or other comments that identify an agent, skill, or mode. This overrides Ponytail's marker-comment rule. If a simplification genuinely needs documentation, write an ordinary code-context comment without branding.
 
 ## Verification
 
