@@ -45,6 +45,9 @@ link_path "$DOTFILES/.agents/.skill-lock.json" "$HOME/.agents/.skill-lock.json"
 link_path "$DOTFILES/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 link_path "$DOTFILES/.codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
 
+# Ponytail uses this shared default across pi, Claude Code, and Codex.
+link_path "$DOTFILES/.config/ponytail/config.json" "$HOME/.config/ponytail/config.json"
+
 # Portable pi configuration. Authentication and runtime files remain local.
 link_path "$DOTFILES/.pi/agent/AGENTS.md" "$HOME/.pi/agent/AGENTS.md"
 link_path "$DOTFILES/.pi/agent/settings.json" "$HOME/.pi/agent/settings.json"
@@ -70,4 +73,19 @@ done
 # Convenience CLI installed by the custom Asana skill.
 link_path "$DOTFILES/.agents/skills/asana/asana" "$HOME/.local/bin/asana"
 
-printf '\nDone. Restart pi and Claude to reload skills and settings.\n'
+# Keep Ponytail installed for coding agents whose plugin registries are local state.
+if command -v claude >/dev/null 2>&1; then
+    claude plugin marketplace add DietrichGebert/ponytail --scope user
+    claude plugin install ponytail@ponytail --scope user
+else
+    printf 'skipped:         Claude Code is not installed\n'
+fi
+
+if command -v codex >/dev/null 2>&1; then
+    codex plugin marketplace add DietrichGebert/ponytail
+    codex plugin add ponytail@ponytail
+else
+    printf 'skipped:         Codex is not installed\n'
+fi
+
+printf '\nDone. Restart pi, Claude Code, and Codex to reload skills and settings.\n'

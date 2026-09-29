@@ -24,6 +24,7 @@
 .config/Code/machineid
 
 # AI harness credentials and runtime state (never commit)
+.agents/skills/synced/
 .pi/agent/auth.json
 .pi/agent/sessions/
 .pi/agent/trust.json

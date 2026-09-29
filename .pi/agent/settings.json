@@ -26,7 +26,10 @@
   "markdown": {
     "mermaid": "streaming"
   },
-  "packages": [],
-  "lastChangelogVersion": "0.85.1",
-  "hideThinkingBlock": true
+  "packages": [
+    "npm:pi-zcode-provider",
+    "git:github.com/DietrichGebert/ponytail"
+  ],
+  "lastChangelogVersion": "0.87.1",
+  "hideThinkingBlock": false
 }
