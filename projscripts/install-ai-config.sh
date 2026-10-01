@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
-# Link shared Agent Skills and portable pi configuration from this dotfiles checkout.
+# Install shared Agent Skills, their npm dependencies, and portable pi configuration.
 # Existing paths are preserved as timestamped backups.
 set -euo pipefail
 
-SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+for command in node npm git; do
+    if ! command -v "$command" >/dev/null 2>&1; then
+        printf 'error: install %s before running this script\n' "$command" >&2
+        exit 1
+    fi
+done
+node -e 'const [major, minor] = process.versions.node.split(".").map(Number); if (major < 22 || (major === 22 && minor < 19)) { console.error("error: Node.js 22.19 or newer is required"); process.exit(1); }'
+
+SCRIPT_PATH="$(node -e 'console.log(require("node:fs").realpathSync(process.argv[1]))' "${BASH_SOURCE[0]}")"
 DOTFILES="$(cd "$(dirname "$SCRIPT_PATH")/.." && pwd)"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 
@@ -16,8 +24,8 @@ link_path() {
         return 1
     fi
 
-    resolved_source="$(readlink -f "$source" 2>/dev/null || true)"
-    resolved_destination="$(readlink -f "$destination" 2>/dev/null || true)"
+    resolved_source="$(node -e 'try { console.log(require("node:fs").realpathSync(process.argv[1])); } catch {}' "$source")"
+    resolved_destination="$(node -e 'try { console.log(require("node:fs").realpathSync(process.argv[1])); } catch {}' "$destination")"
     if [[ "$source" == "$destination" ]] ||
         [[ -n "$resolved_source" && "$resolved_source" == "$resolved_destination" ]]; then
         printf 'already in place: %s\n' "$destination"
@@ -60,7 +68,7 @@ for agent in "$DOTFILES"/.pi/agent/agents/*.md; do
     link_path "$agent" "$HOME/.pi/agent/agents/$(basename "$agent")"
 done
 
-# Extensions are kept in dotfiles so every machine installs the same versions.
+# Custom extensions are kept in dotfiles; package extensions are installed below.
 for extension in confirm-destructive.ts generate-image git-checkpoint.ts notify.ts preset.ts protected-paths.ts subagent todo.ts; do
     link_path "$DOTFILES/.pi/agent/extensions/$extension" "$HOME/.pi/agent/extensions/$extension"
 done
@@ -72,6 +80,18 @@ done
 
 # Convenience CLI installed by the custom Asana skill.
 link_path "$DOTFILES/.agents/skills/asana/asana" "$HOME/.local/bin/asana"
+
+# Install Pi if needed, then reconcile packages declared in the linked settings.
+if ! command -v pi >/dev/null 2>&1; then
+    npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+fi
+pi update --extensions --no-approve
+
+# Shared skills contain instructions, not their npm dependencies or global CLIs.
+# browser-start uses the system Chrome/Chromium, so do not download another browser.
+PUPPETEER_SKIP_DOWNLOAD=true npm ci --prefix "$DOTFILES/.agents/skills/browser-tools"
+npm install --prefix "$DOTFILES/.agents/skills/youtube-transcript" --package-lock=false
+npm install -g --ignore-scripts @mariozechner/gccli @mariozechner/gdcli @mariozechner/gmcli
 
 # Keep Ponytail installed for coding agents whose plugin registries are local state.
 if command -v claude >/dev/null 2>&1; then
@@ -88,4 +108,16 @@ else
     printf 'skipped:         Codex is not installed\n'
 fi
 
+# OS applications and credentials are deliberately not installed or copied.
+for command in python3 gh code rsync ffmpeg; do
+    if ! command -v "$command" >/dev/null 2>&1; then
+        printf 'manual setup:    %s (needed by optional skills)\n' "$command"
+    fi
+done
+if ! python3 -c 'import yaml' >/dev/null 2>&1; then
+    printf 'manual setup:    PyYAML for review-pr posting (install for your Python interpreter)\n'
+fi
+printf 'manual setup:    Chrome/Chromium for browser-tools; transcribe needs Apple Silicon macOS\n'
+printf 'manual setup:    pi /login, OpenRouter key, Google CLI accounts, Asana token, gh auth login\n'
+printf 'unchanged:       ignored synced skills and machine-local credentials/runtime state\n'
 printf '\nDone. Restart pi, Claude Code, and Codex to reload skills and settings.\n'

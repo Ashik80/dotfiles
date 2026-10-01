@@ -1,5 +1,6 @@
 let g:mapleader = " "
 
+set nocompatible
 filetype plugin indent on
 syntax on
 set bg=light
@@ -231,6 +232,7 @@ function! RunShellBuffer() abort
 endfunction
 
 " Plugins
+let g:codeium_enabled = v:false
 let g:plugins = [
     \ 'https://github.com/Exafunction/windsurf.vim',
     \ 'https://github.com/SilentGlasses/colorhighlighter',

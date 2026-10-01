@@ -1,6 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, extname, resolve } from "node:path";
-import { builtinImagesModels } from "@earendil-works/pi-ai/providers/all";
+import { builtinModels } from "@earendil-works/pi-ai/providers/all";
 import { StringEnum } from "@earendil-works/pi-ai";
 import { type ExtensionAPI, withFileMutationQueue } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
@@ -12,7 +12,7 @@ import {
 	type ImageModelPreference,
 } from "./helpers.ts";
 
-const imageModels = builtinImagesModels();
+const imageModels = builtinModels();
 
 export default function (pi: ExtensionAPI) {
 	pi.registerTool({
@@ -44,7 +44,7 @@ export default function (pi: ExtensionAPI) {
 			const difficulty = (params.difficulty ?? "auto") as ImageDifficulty;
 			const preference = (params.model ?? "auto") as ImageModelPreference;
 			const modelId = selectImageModel(params.prompt, difficulty, preference);
-			const catalogModel = imageModels.getModel("openrouter", modelId);
+			const catalogModel = imageModels.getModelOfType("image", "openrouter", modelId);
 			if (!catalogModel) throw new Error(`OpenRouter image model not found: ${modelId}`);
 
 			const resolvedAuth = await ctx.modelRegistry.getProviderAuth("openrouter");

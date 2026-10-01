@@ -1,9 +1,8 @@
 {
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-sol",
+  "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "medium",
   "theme": "dark",
-  "externalEditor": "emacsclient --reuse-frame",
   "tuiMode": "regular",
   "showCacheMissNotices": true,
   "doubleEscapeAction": "tree",
@@ -30,6 +29,6 @@
     "npm:pi-zcode-provider",
     "git:github.com/DietrichGebert/ponytail"
   ],
-  "lastChangelogVersion": "0.87.1",
+  "lastChangelogVersion": "0.99.2",
   "hideThinkingBlock": false
 }
