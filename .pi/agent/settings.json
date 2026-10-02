@@ -29,6 +29,6 @@
     "npm:pi-zcode-provider",
     "git:github.com/DietrichGebert/ponytail"
   ],
-  "lastChangelogVersion": "0.99.2",
+  "lastChangelogVersion": "1.0.0",
   "hideThinkingBlock": false
 }
