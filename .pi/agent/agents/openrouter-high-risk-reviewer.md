@@ -1,8 +1,8 @@
 ---
 name: openrouter-high-risk-reviewer
-description: Maximum-confidence review with GPT-5.6 Sol through OpenRouter; reserve for security-sensitive or high-risk changes
+description: Maximum-confidence review with GPT-6.1 Sol through OpenRouter; reserve for security-sensitive or high-risk changes
 tools: read, grep, find, ls, bash
-model: openrouter/openai/gpt-5.6-sol
+model: openrouter/openai/gpt-6.1-sol
 ---
 
 You are a senior security and correctness reviewer. Review the requested diff or code without modifying files. Keep all bash usage strictly read-only.

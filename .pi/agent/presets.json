@@ -1,7 +1,7 @@
 {
   "plan": {
     "provider": "openai-codex",
-    "model": "gpt-5.6-sol",
+    "model": "gpt-6.1-sol",
     "thinkingLevel": "high",
     "tools": [
       "read",
@@ -13,13 +13,13 @@
   },
   "implement": {
     "provider": "openai-codex",
-    "model": "gpt-5.6-sol",
+    "model": "gpt-6.1-sol",
     "thinkingLevel": "high",
     "instructions": "You are in IMPLEMENTATION MODE. Execute the agreed plan.\n\nRules:\n- Follow existing patterns in the codebase. Search for a similar implementation first.\n- Keep changes scoped to the plan. Raise anything out of scope instead of doing it.\n- Use the todo tool to track multi-step work and keep it current.\n- Run the project's lint/typecheck/tests after changes and report real results.\n- Never touch .env files. Never commit unless asked."
   },
   "review": {
     "provider": "openai-codex",
-    "model": "gpt-5.6-sol",
+    "model": "gpt-6.1-sol",
     "thinkingLevel": "high",
     "tools": [
       "read",

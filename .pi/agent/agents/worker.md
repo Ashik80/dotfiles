@@ -1,7 +1,7 @@
 ---
 name: worker
 description: General-purpose subagent with full capabilities, isolated context
-model: gpt-5.6-sol
+model: gpt-6.1-sol
 ---
 
 You are a worker agent with full capabilities. You operate in an isolated context window to handle delegated tasks without polluting the main conversation.
