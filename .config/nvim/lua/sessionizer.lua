@@ -30,7 +30,7 @@ end
 -- Built-in session chooser
 function session_chooser()
     local buf, win = create_window()
-    local command = "ls -a "..sessionizer_path.."/*.sock | grep -Eo '[A-Za-z0-9_-]*.sock' | sed 's/.sock//' | fz -p 'Sessions>'"
+    local command = "ls -a "..sessionizer_path.."/*.sock | grep -Eo '[A-Za-z0-9_-]*.sock' | sed 's/.sock//' | fzf --layout reverse"
     vim.cmd("startinsert")
     vim.fn.termopen({ "/bin/sh", "-c", command }, {
         on_exit = function(job_id, code, event)
@@ -60,7 +60,7 @@ vim.keymap.set("n", "<leader>fs", session_chooser, { noremap = true, silent = tr
 function session_creator()
     local outputfile = vim.fn.tempname()
     local buf, win = create_window()
-    local gt_command = string.format("find ~/src ~/Documents ~/projscripts ~/postgresql ~/dotfiles -type d \\( -name node_modules -o -name .git -o -name *cache* \\) -prune -o -type d -print | fz -p 'Create session>' > %s", outputfile)
+    local gt_command = string.format("find ~/src ~/Documents ~/projscripts ~/postgresql ~/dotfiles -type d \\( -name node_modules -o -name .git -o -name *cache* \\) -prune -o -type d -print | fzf --layout reverse > %s", outputfile)
     vim.cmd("startinsert")
     vim.fn.termopen({ "/bin/sh", "-c", gt_command }, {
         on_exit = function(job_id, code, event)

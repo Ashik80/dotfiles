@@ -142,7 +142,7 @@ end
 -- Fuzzy finder
 local function fuzzy_file_finder()
     local outputfile = vim.fn.tempname()
-    local fzf_cmd = string.format("find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx -o -name .serverless -o -name .venv -o -name .cdk \\) -prune -o -type f | fz -p \"Files>\" > %s", outputfile)
+    local fzf_cmd = string.format("find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx -o -name .serverless -o -name .venv -o -name .cdk \\) -prune -o -type f | fzf > %s", outputfile)
     local origin_win = vim.api.nvim_get_current_win()
     local term_buf, term_win = create_window()
     vim.cmd("startinsert")
