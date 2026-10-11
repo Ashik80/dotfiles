@@ -31,4 +31,5 @@
 .pi/agent/models-store.json
 .pi/agent/git/
 .pi/agent/bin/
+.agents/skills/.trash/
 .asana/config.json

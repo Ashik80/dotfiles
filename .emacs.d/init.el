@@ -190,13 +190,15 @@
        (t
         (ghostel)))))
 
-  ;; pi subagent live views (C-c s v) live in pi-subagent-views.el
+  ;; pi subagent live views: C-c s v (right), s b (bottom), s f (full frame)
   (load (expand-file-name "pi-subagent-views.el" user-emacs-directory))
 
   (add-to-list 'project-switch-commands '(my/project-ghostel "Ghostel") t)
   :bind
   ("C-c s o" . my/ghostel)
   ("C-c s v" . my/pi-subagent-views)
+  ("C-c s b" . my/pi-subagent-views-bottom)
+  ("C-c s f" . my/pi-subagent-views-fullscreen)
   (:map project-prefix-map ("s" . my/project-ghostel)))
 
 ;; display git changes in gutter

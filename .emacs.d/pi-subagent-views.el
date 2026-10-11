@@ -58,8 +58,9 @@
             "  "
             (and file (file-name-base file)))))
 
-(defun my/pi-subagent-views ()
-  "Choose a mirrored pi subagent and open its live transcript."
+(defun my/pi-subagent-views (&optional side)
+  "Choose a mirrored pi subagent and open its live transcript.
+SIDE defaults to right; use bottom for a bottom window or full for the frame."
   (interactive)
   (let* ((files (my/pi-subagent-transcripts))
          (entries
@@ -77,13 +78,26 @@
       (user-error "No pi subagent transcripts under %s"
                   my/pi-subagent-views-root))
     (setq choice (completing-read "Subagent view: " labels nil t nil nil choice))
-    (my/pi-open-subagent-view (cdr (assoc choice entries)))))
+    (my/pi-open-subagent-view (cdr (assoc choice entries)) side)))
+
+(defun my/pi-subagent-views-bottom ()
+  "Choose a mirrored pi subagent and open its live transcript at the bottom."
+  (interactive)
+  (my/pi-subagent-views 'bottom))
 
 (defvar-local my/pi-subagent-transcript-file nil
   "Transcript file followed by the current ghostel subagent view.")
 
-(defun my/pi-open-subagent-view (file)
-  "Open FILE as a live tail in a right-side ghostel buffer.
+(defun my/pi-subagent-views-fullscreen ()
+  "Expand the current subagent viewer to fill the Emacs frame.
+Outside a viewer, choose a transcript first."
+  (interactive)
+  (if my/pi-subagent-transcript-file
+      (my/pi-open-subagent-view my/pi-subagent-transcript-file 'full)
+    (my/pi-subagent-views 'full)))
+
+(defun my/pi-open-subagent-view (file &optional side)
+  "Open FILE as a live tail in a ghostel buffer on SIDE (default right).
 The buffer is named \"*pi-subagent:<basename>*\".  Use
 `ghostel-send-C-c' (normally C-c C-c) to stop tail; ghostel then
 kills the buffer automatically."
@@ -99,11 +113,18 @@ kills the buffer automatically."
     (with-current-buffer buf
       (setq-local my/pi-subagent-transcript-file (expand-file-name file))
       (setq-local header-line-format '(:eval (my/pi-subagent-view-header))))
-    (pop-to-buffer
-     buf
-     '((display-buffer-in-side-window)
-       (side . right)
-       (window-width . 0.45)))
+    (if (eq side 'full)
+        (progn
+          ;; Side windows cannot be made the frame's only window.
+          (pop-to-buffer buf '((display-buffer-use-some-window)))
+          (delete-other-windows))
+      (pop-to-buffer
+       buf
+       `((display-buffer-in-side-window)
+         (side . ,(or side 'right))
+         ,(if (eq side 'bottom)
+              '(window-height . 0.35)
+            '(window-width . 0.45)))))
     (message "Opened %s — C-c C-c closes the view" name)))
 
 (provide 'pi-subagent-views)
