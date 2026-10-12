@@ -17,6 +17,7 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 export type ViewStatus = "running" | "done" | "aborted" | "error";
 
@@ -60,6 +61,57 @@ export function cleanupViewSession(): void {
 	}
 	_sessionDir = undefined;
 	_seq = 0;
+}
+
+export async function openRunningSubagentView(
+	pi: Pick<ExtensionAPI, "exec">,
+	ctx: Pick<ExtensionContext, "mode"> & { ui: Pick<ExtensionContext["ui"], "select" | "notify"> },
+): Promise<void> {
+	if (ctx.mode !== "tui") return;
+	const pane = process.env.TMUX_PANE;
+	if (!process.env.TMUX || !pane) {
+		ctx.ui.notify("Subagent views require tmux.", "warning");
+		return;
+	}
+	if (!viewsEnabled()) {
+		ctx.ui.notify("Subagent transcript mirroring is disabled (PI_SUBAGENT_VIEW=0).", "warning");
+		return;
+	}
+
+	const running = new Map<string, string>();
+	try {
+		// Reading the picker must not create a session directory.
+		if (_sessionDir) {
+			const registry = JSON.parse(fs.readFileSync(path.join(_sessionDir, "registry.json"), "utf-8"));
+			if (registry && typeof registry === "object" && !Array.isArray(registry)) {
+				for (const [key, value] of Object.entries(registry)) {
+					const entry = value as { status?: unknown; transcript?: unknown } | null;
+					if (entry?.status === "running" && typeof entry.transcript === "string" &&
+						path.dirname(entry.transcript) === _sessionDir && entry.transcript.endsWith(".log")) {
+						running.set(key, entry.transcript);
+					}
+				}
+			}
+		}
+	} catch {
+		/* missing or incomplete registry */
+	}
+	if (running.size === 0) {
+		ctx.ui.notify("No running subagents in this parent session.", "info");
+		return;
+	}
+	const selected = await ctx.ui.select("Running subagents", [...running.keys()]);
+	const transcript = selected === undefined ? undefined : running.get(selected);
+	if (!transcript) return;
+
+	// -F also handles selecting before the first batched transcript write.
+	const command = `exec tail -n +1 -F -- '${transcript.replace(/'/g, "'\\''")}'`;
+	try {
+		const result = await pi.exec("tmux", ["split-window", "-h", "-t", pane, command], { timeout: 5000 });
+		if (result.code !== 0) throw new Error(result.stderr || "tmux failed");
+	} catch {
+		ctx.ui.notify("Could not open the subagent view in tmux.", "error");
+	}
 }
 
 /** Read-time helpers used by index.ts */

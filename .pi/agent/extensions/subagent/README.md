@@ -69,6 +69,12 @@ $XDG_CACHE_HOME/pi/subagent-views/session-<pid>/<agent>-<n>.log
 disable transcript mirroring. Files are mode `0600` inside a mode `0700`
 session directory and are removed when the parent pi session exits.
 
+Inside pi running in tmux, press **Ctrl+Alt+S** to pick a running subagent
+from the current parent session. Enter opens its read-only live transcript in
+a side pane; Escape cancels. The pane follows output from the beginning and
+never starts or attaches to an interactive agent. Press **Ctrl+C in the view
+pane** to close it without interrupting the subagent. Mirroring must be enabled.
+
 The matching dotfiles Emacs configuration provides `M-x my/pi-subagent-views`
 (or `C-c s v`). It prompts for one mirrored subagent, opens its transcript in
 a ghostel side window, and follows new output with `tail -f`. Views are never

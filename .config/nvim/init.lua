@@ -324,6 +324,7 @@ local plugins = {
     'https://github.com/brenoprata10/nvim-highlight-colors',
     'https://github.com/Ashik80/VimExplorer',
     'https://github.com/Ashik80/default16.vim',
+    'https://github.com/nanotech/jellybeans.vim',
 }
 local plugger = require("plugger")
 plugger.setup(plugins)
@@ -387,7 +388,17 @@ vim.g.vimexplorer_show_hidden = 1
 vim.g.vimexplorer_show_header = 0
 
 -- Theme
-vim.cmd [[ colorscheme default16 ]]
+-- vim.cmd [[ colorscheme default16 ]]
+vim.cmd [[ colorscheme jellybeans ]]
+vim.cmd [[
+hi SignColumn guibg=NONE ctermbg=NONE
+hi Normal guibg=NONE ctermbg=NONE
+hi NonText guibg=NONE ctermbg=NONE
+hi LineNr guibg=NONE ctermbg=NONE
+hi Comment gui=NONE cterm=NONE
+hi StatusLine gui=NONE cterm=NONE guifg=#e8e8d3 guibg=NONE
+hi StatusLineNC gui=NONE cterm=NONE
+]]
 
 -- Sessionizer
 require("sessionizer")

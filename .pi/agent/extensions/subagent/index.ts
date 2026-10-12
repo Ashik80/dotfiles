@@ -26,11 +26,11 @@ import {
 	getMarkdownTheme,
 	withFileMutationQueue,
 } from "@earendil-works/pi-coding-agent";
-import { Container, Markdown, Spacer, Text } from "@earendil-works/pi-tui";
+import { Container, Key, Markdown, Spacer, Text } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 import { type AgentConfig, type AgentScope, discoverAgents } from "./agents.ts";
 import { ActiveSubagentStatus, SUBAGENT_STATUS_KEY } from "./status.ts";
-import { SubagentView, cleanupViewSession, viewsEnabled } from "./view.ts";
+import { SubagentView, cleanupViewSession, openRunningSubagentView, viewsEnabled } from "./view.ts";
 
 const MAX_PARALLEL_TASKS = 8;
 const MAX_CONCURRENCY = 4;
@@ -601,6 +601,11 @@ const SubagentParams = Type.Object({
 
 export default function (pi: ExtensionAPI) {
 	const activeSubagents = new ActiveSubagentStatus();
+
+	pi.registerShortcut(Key.ctrlAlt("s"), {
+		description: "View a running subagent in a tmux side pane",
+		handler: (ctx) => openRunningSubagentView(pi, ctx),
+	});
 
 	pi.registerTool({
 		name: "subagent",
