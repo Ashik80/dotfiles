@@ -17,7 +17,6 @@ mkdir -p \
     "$SANDBOX/.pi/agent/agents" \
     "$SANDBOX/bin" \
     "$SANDBOX/.pi/agent/prompts" \
-    "$SANDBOX/.pi/agent/extensions/plan-mode" \
     "$SANDBOX/.pi/agent/extensions/generate-image" \
     "$SANDBOX/.pi/agent/extensions/subagent/prompts"
 cp "$REPO_ROOT/projscripts/install-ai-config.sh" "$SANDBOX/projscripts/"
@@ -36,8 +35,6 @@ printf '%s\n' '{}' > "$SANDBOX/.pi/agent/presets.json"
 printf '%s\n' test > "$SANDBOX/.pi/agent/prompts/commit.md"
 printf '%s\n' test > "$SANDBOX/.pi/agent/prompts/review.md"
 printf '%s\n' test > "$SANDBOX/.pi/agent/agents/test.md"
-printf '%s\n' test > "$SANDBOX/.pi/agent/extensions/plan-mode/index.ts"
-printf '%s\n' test > "$SANDBOX/.pi/agent/extensions/plan-mode/utils.ts"
 printf '%s\n' test > "$SANDBOX/.pi/agent/extensions/generate-image/index.ts"
 printf '%s\n' test > "$SANDBOX/.pi/agent/extensions/subagent/index.ts"
 printf '%s\n' test > "$SANDBOX/.pi/agent/extensions/subagent/prompts/test.md"
@@ -73,9 +70,9 @@ AI_CONFIG_COMMAND_LOG="$COMMAND_LOG" PATH="$SANDBOX/bin:$PATH" HOME="$SANDBOX" "
 GLOBAL_HOME="$SANDBOX/home"
 mkdir -p "$GLOBAL_HOME"
 AI_CONFIG_COMMAND_LOG="$COMMAND_LOG" PATH="$SANDBOX/bin:$PATH" HOME="$GLOBAL_HOME" "$REPO_ROOT/projscripts/install-ai-config.sh" >/dev/null
-[[ -L "$GLOBAL_HOME/.pi/agent/extensions/plan-mode" ]] || { printf 'error: plan-mode extension was not linked\n' >&2; exit 1; }
-[[ -f "$GLOBAL_HOME/.pi/agent/extensions/plan-mode/index.ts" ]]
-[[ -f "$GLOBAL_HOME/.pi/agent/extensions/plan-mode/utils.ts" ]]
+[[ ! -e "$GLOBAL_HOME/.pi/agent/extensions/plan-mode" && ! -L "$GLOBAL_HOME/.pi/agent/extensions/plan-mode" ]] || { printf 'error: removed plan-mode extension was linked\n' >&2; exit 1; }
+[[ -L "$GLOBAL_HOME/.pi/agent/extensions/preset.ts" ]]
+[[ "$(readlink -f "$GLOBAL_HOME/.pi/agent/presets.json")" == "$REPO_ROOT/.pi/agent/presets.json" ]]
 [[ "$(readlink -f "$GLOBAL_HOME/.claude/CLAUDE.md")" == "$REPO_ROOT/.claude/CLAUDE.md" ]]
 [[ "$(readlink -f "$GLOBAL_HOME/.codex/AGENTS.md")" == "$REPO_ROOT/.codex/AGENTS.md" ]]
 [[ "$(readlink -f "$GLOBAL_HOME/.config/ponytail/config.json")" == "$REPO_ROOT/.config/ponytail/config.json" ]]

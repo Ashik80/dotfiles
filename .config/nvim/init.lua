@@ -43,6 +43,7 @@ vim.keymap.set({'v', 'x'}, '<', '<gv')
 vim.keymap.set({'v', 'x'}, 'J', ":move '>+1<CR>gv=gv")
 vim.keymap.set({'v', 'x'}, 'K', ":move '<-2<CR>gv=gv")
 vim.keymap.set('n', '<leader>cp', ':let @+ = expand("%:.")<CR>')
+vim.keymap.set('n', '<leader>cap', ':let @+ = expand("%:p")<CR>')
 vim.keymap.set('t', '<C-w>N', '<C-\\><C-n>')
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>')
 vim.keymap.set('t', '<C-w>w', '<C-\\><C-n><C-w>w')
@@ -325,6 +326,7 @@ local plugins = {
     'https://github.com/Ashik80/VimExplorer',
     'https://github.com/Ashik80/default16.vim',
     'https://github.com/nanotech/jellybeans.vim',
+    'https://github.com/iamcco/markdown-preview.nvim'
 }
 local plugger = require("plugger")
 plugger.setup(plugins)
@@ -405,3 +407,6 @@ require("sessionizer")
 
 -- Compile
 require("compile")
+
+-- Clipboard support
+require("clipper")

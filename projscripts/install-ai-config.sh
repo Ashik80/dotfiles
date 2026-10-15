@@ -69,7 +69,7 @@ for agent in "$DOTFILES"/.pi/agent/agents/*.md; do
 done
 
 # Custom extensions are kept in dotfiles; package extensions are installed below.
-for extension in confirm-destructive.ts generate-image git-checkpoint.ts notify.ts plan-mode preset.ts protected-paths.ts subagent todo.ts; do
+for extension in confirm-destructive.ts generate-image git-checkpoint.ts notify.ts preset.ts protected-paths.ts subagent todo.ts; do
     link_path "$DOTFILES/.pi/agent/extensions/$extension" "$HOME/.pi/agent/extensions/$extension"
 done
 

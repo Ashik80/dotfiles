@@ -37,7 +37,7 @@ them, say so explicitly rather than implying the change is verified.
 
 ## Tooling available in pi
 
-- `/plan` (Ctrl+Alt+P) for read-only exploration before implementing.
+- `/preset plan` for read-only exploration before implementing.
 - `subagent` tool for isolated-context delegation: `scout` (recon), `planner`, `worker`, `reviewer`.
 - `todo` tool for multi-step work; keep it current so `/tree` branching stays coherent.
 - `/preset` to switch model + toolset per phase (see `~/.pi/agent/presets.json`).
