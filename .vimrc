@@ -1,4 +1,6 @@
 let g:mapleader = " "
+let g:loaded_netrw = 1
+let g:loaded_netrwPlugin = 1
 
 set nocompatible
 filetype plugin indent on
@@ -237,7 +239,9 @@ let g:plugins = [
     \ 'https://github.com/Exafunction/windsurf.vim',
     \ 'https://github.com/SilentGlasses/colorhighlighter',
     \ 'https://github.com/Ashik80/vim-polyglot',
+    \ 'https://github.com/Ashik80/VimExplorer',
     \ 'https://github.com/Ashik80/default16.vim',
+    \ 'https://github.com/Ashik80/VimProject',
     \ 'https://github.com/neoclide/coc.nvim',
     \ 'https://github.com/mhinz/vim-signify',
     \ ]
@@ -343,3 +347,9 @@ colorscheme default16
 hi link htmlH1 Title
 hi mkdHeading ctermfg=1
 hi CocFloating ctermbg=0
+
+" Local plugin development
+" set runtimepath+=/home/ashik/src/vim-plugin/VimProject
+nnoremap <leader>fc :call VimProjectCreate('find ~/src ~/Documents ~/projscripts ~/postgresql ~/dotfiles -type d \( -name node_modules -o -name .git -o -name *cache* -o -name .venv -o -name .cxx -o -name .nx \) -prune -o -type d -print')<CR>
+nnoremap <leader>fp :VimProjectOpen<CR>
+nnoremap <leader>ft :VimProjectTerm<CR>

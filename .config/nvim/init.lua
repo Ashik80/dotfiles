@@ -325,6 +325,7 @@ local plugins = {
     'https://github.com/brenoprata10/nvim-highlight-colors',
     'https://github.com/Ashik80/VimExplorer',
     'https://github.com/Ashik80/default16.vim',
+    'https://github.com/Ashik80/VimProject',
     'https://github.com/nanotech/jellybeans.vim',
     'https://github.com/iamcco/markdown-preview.nvim'
 }
@@ -403,10 +404,22 @@ hi StatusLineNC gui=NONE cterm=NONE
 ]]
 
 -- Sessionizer
-require("sessionizer")
+-- require("sessionizer")
 
 -- Compile
 require("compile")
 
 -- Clipboard support
 require("clipper")
+
+-- VimProject
+-- vim.opt.runtimepath:append("/home/ashik/src/vim-plugin/VimProject")
+vim.keymap.set("n", "<leader>fc", function()
+ vim.fn.VimProjectCreate([[
+   find ~/src ~/Documents ~/projscripts ~/postgresql ~/dotfiles \
+     -type d \( -name node_modules -o -name .git -o -name *cache* -o -name .venv -o -name .cxx -o -name .nx \) \
+     -prune -o -type d -print
+ ]])
+end, { desc = "Create or visit project" })
+vim.keymap.set("n", "<leader>fp", "<cmd>VimProjectOpen<CR>", { desc = "Open saved project" })
+vim.keymap.set("n", "<leader>ft", "<cmd>VimProjectTerm<CR>", { desc = "Open project shell" })

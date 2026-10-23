@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Neovide
+Comment=Neovim graphical editor
+Exec=/usr/local/bin/neovide %F
+TryExec=/usr/local/bin/neovide
+Icon=neovide
+Terminal=false
+Categories=Utility;TextEditor;
+Keywords=Neovim;Vim;Editor;
+MimeType=text/plain;
+StartupWMClass=neovide
