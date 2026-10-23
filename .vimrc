@@ -98,14 +98,28 @@ nnoremap <leader>fg :grep!<space>
 " Fuzzy file finder
 function! FuzzyFileFinder()
     let l:tmpfile = tempname()
-    let l:cmd = "cat {}"
-    if executable("batcat")
-        let l:cmd = "batcat --theme=ansi --style=numbers --color=always {}"
-    endif
-    execute "silent !find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx \\) -prune -o -type f | fzf | sed 's/$/:0:0/' > " . l:tmpfile
-    set efm=%f:%l:%c
-    silent execute 'cfile ' . l:tmpfile
-    redraw!
+    let l:window = win_getid()
+    let l:cmd = "find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx \\) -prune -o -type f | fzf | sed 's/$/:0:0/' > " . shellescape(l:tmpfile)
+    botright new
+    resize 12
+    call term_start([&shell, &shellcmdflag, l:cmd], {'curwin': 1,
+                \ 'exit_cb': function('s:FuzzyFileFinderExited', [l:tmpfile, l:window, bufnr('%')])})
+    startinsert
+endfunction
+function! s:FuzzyFileFinderExited(tmpfile, window, buffer, job, status)
+    " Defer cleanup until the terminal has finished processing its exit.
+    call timer_start(0, function('s:FuzzyFileFinderFinish', [a:tmpfile, a:window, a:buffer]))
+endfunction
+function! s:FuzzyFileFinderFinish(tmpfile, window, buffer, timer)
+    try
+        execute 'silent! bwipeout! ' . a:buffer
+        if win_gotoid(a:window) && getfsize(a:tmpfile) > 0
+            set efm=%f:%l:%c
+            silent execute 'cfile ' . fnameescape(a:tmpfile)
+        endif
+    finally
+        call delete(a:tmpfile)
+    endtry
 endfunction
 nnoremap <leader>ff :call FuzzyFileFinder()<CR>
 
@@ -241,6 +255,7 @@ let g:plugins = [
     \ 'https://github.com/Ashik80/vim-polyglot',
     \ 'https://github.com/Ashik80/VimExplorer',
     \ 'https://github.com/Ashik80/default16.vim',
+    \ 'https://github.com/nanotech/jellybeans.vim',
     \ 'https://github.com/Ashik80/VimProject',
     \ 'https://github.com/neoclide/coc.nvim',
     \ 'https://github.com/mhinz/vim-signify',
@@ -342,11 +357,20 @@ let g:vimexplorer_show_header = 0
 "     autocmd ColorScheme * hi link CocHintSign DiagnosticHint
 " augroup END
 
-colorscheme default16
+colorscheme jellybeans
 
-hi link htmlH1 Title
-hi mkdHeading ctermfg=1
-hi CocFloating ctermbg=0
+" jellybeans specific highlights
+hi SignColumn guibg=NONE ctermbg=NONE
+" hi Normal guibg=NONE ctermbg=NONE
+" hi NonText guibg=NONE ctermbg=NONE
+hi LineNr guibg=NONE ctermbg=NONE
+hi Comment gui=NONE cterm=NONE
+hi StatusLine gui=NONE cterm=NONE guifg=#e8e8d3 guibg=NONE
+hi StatusLineNC gui=NONE cterm=NONE
+
+" hi link htmlH1 Title
+" hi mkdHeading ctermfg=1
+" hi CocFloating ctermbg=0
 
 " Local plugin development
 " set runtimepath+=/home/ashik/src/vim-plugin/VimProject
