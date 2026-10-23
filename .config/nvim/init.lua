@@ -18,7 +18,10 @@ vim.o.signcolumn = "yes"
 vim.o.clipboard = "unnamedplus"
 vim.o.writebackup = false
 vim.o.winborder = "solid"
-vim.o.guicursor = ""
+-- vim.o.guicursor = ""
+if vim.g.neovide or vim.fn.has("gui_running") == 1 then
+    vim.o.guifont = "Iosevka Custom Semi-Extended:h17"
+end
 vim.o.listchars = "tab:▸ ,trail:·"
 vim.o.list = true
 vim.o.fillchars = "eob: "
