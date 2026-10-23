@@ -72,6 +72,13 @@ vim.o.grepprg = "kot"
 vim.o.grepformat = "%f:%l:%c:%m"
 vim.keymap.set('n', '<leader>fg', ':grep!<space>')
 
+-- Terminal children edit prompts and Git messages in this Neovim instance.
+local terminal_editor = vim.fn.stdpath('config') .. '/editor.lua'
+vim.env.EDITOR = terminal_editor
+vim.env.VISUAL = terminal_editor
+vim.env.GIT_EDITOR = terminal_editor
+vim.env.GIT_SEQUENCE_EDITOR = terminal_editor
+
 -- Open terminal in a tab
 command("Term", function()
     vim.cmd [[tabnew | terminal]]
@@ -327,7 +334,7 @@ local plugins = {
     'https://github.com/lewis6991/gitsigns.nvim',
     'https://github.com/brenoprata10/nvim-highlight-colors',
     'https://github.com/Ashik80/VimExplorer',
-    'https://github.com/Ashik80/default16.vim',
+    -- 'https://github.com/Ashik80/default16.vim',
     'https://github.com/Ashik80/VimProject',
     'https://github.com/nanotech/jellybeans.vim',
     'https://github.com/iamcco/markdown-preview.nvim'
