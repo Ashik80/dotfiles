@@ -205,7 +205,7 @@ local function git_blame_selection()
     local line_end = vim.fn.line(".")
     local file = vim.fn.shellescape(vim.fn.expand("%"))
     local cmd = string.format(
-        [[sh -c "echo '\033[1;31mBlame results:\033[0m' && git-blame-colored %s -L%d,%d"]], file, line_start, line_end
+        [[sh -c "echo '\033[1;31mBlame results:\033[0m' && ~/dotfiles/projscripts/git-blame-colored %s -L%d,%d"]], file, line_start, line_end
     )
     local term_buf = vim.api.nvim_create_buf(false, true)
     local term_win = vim.api.nvim_open_win(term_buf, true, {
@@ -215,7 +215,7 @@ local function git_blame_selection()
 end
 local function git_blame_file()
     local file = vim.fn.shellescape(vim.fn.expand("%"))
-    local cmd = string.format([[sh -c "echo '\033[1;31mBlame results:\033[0m' && git-blame-colored %s"]], file)
+    local cmd = string.format([[sh -c "echo '\033[1;31mBlame results:\033[0m' && ~/dotfiles/projscripts/git-blame-colored %s"]], file)
     local term_buf = vim.api.nvim_create_buf(false, true)
     local term_win = vim.api.nvim_open_win(term_buf, true, {
         split = "below",

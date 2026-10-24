@@ -18,6 +18,7 @@ set ttimeoutlen=0
 set backspace=indent,eol,start
 set autoread
 set termguicolors
+set guifont=Iosevka\ Custom\ Semi-Extended\ 17
 set mouse=a
 set wildmenu
 set wildoptions=pum
@@ -145,11 +146,11 @@ nnoremap <leader>fq :FindFiles<space>
 function! GitBlameSelection()
     let line_start = getpos("'<")[1]
     let line_end = getpos("'>")[1]
-    execute "silent! terminal sh -c \"echo '\e[38;5;1mBlame results:\e[0m' && git-blame-colored ".shellescape(expand("%"))." -L".line_start.",".line_end."\""
+    execute "silent! terminal sh -c \"echo '\e[38;5;1mBlame results:\e[0m' && ~/dotfiles/projscripts/git-blame-colored ".shellescape(expand("%"))." -L".line_start.",".line_end."\""
     setlocal nobuflisted
 endfunction
 function! GitBlameFile()
-    execute "silent! terminal sh -c \"echo '\e[38;5;1mBlame results:\e[0m' && git-blame-colored ".shellescape(expand("%"))."\""
+    execute "silent! terminal sh -c \"echo '\e[38;5;1mBlame results:\e[0m' && ~/dotfiles/projscripts/git-blame-colored ".shellescape(expand("%"))."\""
     setlocal nobuflisted
 endfunction
 xnoremap gb :<C-u>call GitBlameSelection()<CR>
