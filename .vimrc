@@ -42,6 +42,7 @@ set fillchars=eob:\ ,vert:│
 
 " General mappings
 nnoremap - :VimExplorer<CR>
+nnoremap <leader>tr :TabRename<space>
 nnoremap ]q :cn<CR>
 nnoremap [q :cp<CR>
 xnoremap > >gv
@@ -362,8 +363,8 @@ colorscheme jellybeans
 
 " jellybeans specific highlights
 hi SignColumn guibg=NONE ctermbg=NONE
-" hi Normal guibg=NONE ctermbg=NONE
-" hi NonText guibg=NONE ctermbg=NONE
+hi Normal guibg=#000000 ctermbg=black
+hi NonText guibg=#000000 ctermbg=black
 hi LineNr guibg=NONE ctermbg=NONE
 hi Comment gui=NONE cterm=NONE
 hi StatusLine gui=NONE cterm=NONE guifg=#e8e8d3 guibg=NONE

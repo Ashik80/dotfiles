@@ -19,9 +19,7 @@ vim.o.clipboard = "unnamedplus"
 vim.o.writebackup = false
 vim.o.winborder = "solid"
 -- vim.o.guicursor = ""
-if vim.g.neovide or vim.fn.has("gui_running") == 1 then
-    vim.o.guifont = "Iosevka Custom Semi-Extended:h17"
-end
+vim.o.guifont = "Iosevka Custom Semi-Extended:h17"
 vim.o.listchars = "tab:▸ ,trail:·"
 vim.o.list = true
 vim.o.fillchars = "eob: "
@@ -41,6 +39,7 @@ local command = vim.api.nvim_create_user_command
 -- Mappings
 -- vim.keymap.set('n', '-', '<cmd>Ex<CR>')
 vim.keymap.set('n', '-', '<cmd>VimExplorer<CR>')
+vim.keymap.set('n', '<leader>tr', ':TabRename<space>')
 vim.keymap.set({'v', 'x'}, '>', '>gv')
 vim.keymap.set({'v', 'x'}, '<', '<gv')
 vim.keymap.set({'v', 'x'}, 'J', ":move '>+1<CR>gv=gv")
@@ -349,7 +348,6 @@ vim.lsp.enable({
     'basedpyright',
     'ts_ls',
     'eslint',
-    'tailwindcss',
     'gopls',
     'terraformls',
     'jdtls',
