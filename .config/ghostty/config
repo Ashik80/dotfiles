@@ -1,6 +1,5 @@
 # background = "#11121d"
-# foreground = "#a0a8cd"
-background = "#181820"
+background = "#000000"
 foreground = "#dcd7ba"
 
 # font-family = Roboto Mono Nerd Font
@@ -13,7 +12,7 @@ adjust-cursor-height = 10%
 # adjust-cell-height = 30%
 # adjust-cursor-height = 30%
 cursor-style-blink = false
-# custom-shader = shaders/cursor_smear.glsl
+custom-shader = shaders/cursor_smear.glsl
 
 shell-integration-features = no-cursor
 

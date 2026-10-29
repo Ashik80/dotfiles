@@ -97,6 +97,18 @@ autocmd! BufEnter,BufWinEnter *.py {
 set grepprg=grep\ -Rn\ --exclude-dir={node_modules,.git,dist,*cache*,android,ios,.next,.nx}
 nnoremap <leader>fg :grep!<space>
 
+" Emoji selector
+function! EmojiSelector()
+    botright new
+    call term_start([expand('~/dotfiles/projscripts/emoji-selector')], {'curwin': 1,
+                \ 'exit_cb': function('s:EmojiSelectorExited', [bufnr('%')])})
+    startinsert
+endfunction
+function! s:EmojiSelectorExited(buffer, job, status)
+    call timer_start(0, {timer -> execute('silent! bwipeout! ' . a:buffer)})
+endfunction
+nnoremap <silent> <leader>fe :call EmojiSelector()<CR>
+
 " Fuzzy file finder
 function! FuzzyFileFinder()
     let l:tmpfile = tempname()

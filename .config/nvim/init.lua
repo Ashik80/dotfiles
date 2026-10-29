@@ -63,6 +63,11 @@ if vim.o.diff then
     vim.keymap.set('n', '<leader>2', '<cmd>diffget BASE<CR>')
     vim.keymap.set('n', '<leader>3', '<cmd>diffget REMOTE<CR>')
 end
+vim.keymap.set("t", '<C-w>"', function()
+  local reg = vim.fn.getcharstr()
+  local text = vim.fn.getreg(reg)
+  vim.api.nvim_chan_send(vim.b.terminal_job_id, text)
+end, { desc = "Paste register into terminal" })
 
 -- Grepping
 -- vim.o.grepprg = "grep -Rn --exclude-dir={node_modules,.git,dist,*cache*,android,ios,.next,.nx}"
@@ -149,6 +154,19 @@ function create_window()
     return buf, win
 end
 
+-- Emoji selector
+local function emoji_selector()
+    local buf, win = create_window()
+    vim.fn.termopen({ vim.fn.expand('~/dotfiles/projscripts/emoji-selector') }, {
+        on_exit = function()
+            if vim.api.nvim_win_is_valid(win) then vim.api.nvim_win_close(win, true) end
+            if vim.api.nvim_buf_is_valid(buf) then vim.api.nvim_buf_delete(buf, { force = true }) end
+        end,
+    })
+    vim.cmd('startinsert')
+end
+vim.keymap.set('n', '<leader>fe', emoji_selector, { desc = 'Select emoji' })
+
 -- Fuzzy finder
 local function fuzzy_file_finder()
     local outputfile = vim.fn.tempname()
@@ -233,6 +251,13 @@ local function open_scratch_buffer()
     vim.api.nvim_win_set_buf(0, bufnr)
 end
 vim.keymap.set("n", "<leader>o", open_scratch_buffer, { noremap = true, silent = true })
+
+-- Capture command output to clipboard
+vim.api.nvim_create_user_command("Capture", function(opts)
+  local output = vim.api.nvim_exec2(opts.args, { output = true }).output
+  vim.fn.setreg("+", output)
+  print("Copied command output to clipboard")
+end, { nargs = "+" })
 
 -- Buffer to quickfix list
 local function selection_to_qf()

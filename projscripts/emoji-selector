@@ -1,5 +1,23 @@
 #!/usr/bin/env bash
 
-res=$(cat ~/Documents/emojis.txt | fzf)
+clip() {
+    local encoded status=0
+    encoded=$(set -o pipefail; base64 | tr -d '\n') || return $?
 
-echo $res | sed 's/\s-.*//' | xclip -i -selection clipboard
+    if command -v wl-copy > /dev/null 2>&1 &&
+        [[ -n "$WAYLAND_DISPLAY" || -S "${XDG_RUNTIME_DIR}/wayland-0" ]]; then
+        printf '%s' "$encoded" | base64 -d | WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-0}" wl-copy || status=$?
+    elif [[ -n "$DISPLAY" ]] && command -v xclip > /dev/null 2>&1; then
+        printf '%s' "$encoded" | base64 -d | xclip -selection clipboard || status=$?
+    fi
+
+    if [[ -n "$TMUX" ]]; then
+        printf '\033Ptmux;\033\033]52;c;%s\a\033\\' "$encoded" > /dev/tty || return $?
+    else
+        printf '\033]52;c;%s\a' "$encoded" > /dev/tty || return $?
+    fi
+    return "$status"
+}
+
+res=$(fzf < ~/Documents/emojis.txt) || exit $?
+printf '%s' "${res%% - *}" | clip
