@@ -52,6 +52,8 @@ vim.keymap.set('t', '<C-w>w', '<C-\\><C-n><C-w>w')
 vim.keymap.set('t', '<C-w><C-w>', '<C-\\><C-n><C-w>w')
 vim.keymap.set('n', '<C-Left>', '<cmd>vertical resize -5<CR>')
 vim.keymap.set('n', '<C-Right>', '<cmd>vertical resize +5<CR>')
+vim.keymap.set('n', '<C-j>', '<cmd>cn<CR>')
+vim.keymap.set('n', '<C-k>', '<cmd>cp<CR>')
 vim.keymap.set('c', '<Down>', function()
   return vim.fn.pumvisible() == 1 and '<C-n>' or '<Down>'
 end, { expr = true })
@@ -72,7 +74,8 @@ end, { desc = "Paste register into terminal" })
 -- Grepping
 -- vim.o.grepprg = "grep -Rn --exclude-dir={node_modules,.git,dist,*cache*,android,ios,.next,.nx}"
 -- vim.o.grepformat = "%f:%l:%m"
-vim.o.grepprg = "kot"
+-- vim.o.grepprg = "kot"
+vim.o.grepprg = "rg --column"
 vim.o.grepformat = "%f:%l:%c:%m"
 vim.keymap.set('n', '<leader>fg', ':grep!<space>')
 
@@ -89,9 +92,29 @@ command("Term", function()
 end, {})
 
 -- Clean no name buffers
-command("CleanNoNameBuffers", function()
-    vim.cmd [[bufdo if bufname('%') == '' && line('.') == 1 && getline('.') == '' | bdelete | endif]]
-end, {})
+function clean_no_name_buffers()
+    local current = vim.api.nvim_get_current_buf()
+    local to_delete = {}
+
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if buf ~= current
+            and vim.api.nvim_buf_is_valid(buf)
+            and vim.api.nvim_buf_get_name(buf) == ""
+            and vim.api.nvim_buf_line_count(buf) == 1
+            and vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] == ""
+        then
+            table.insert(to_delete, buf)
+        end
+    end
+
+    for _, buf in ipairs(to_delete) do
+        vim.api.nvim_buf_delete(buf, { force = false })
+    end
+end
+command("CleanNoNameBuffers", clean_no_name_buffers, {})
+-- command("CleanNoNameBuffers", function()
+--     vim.cmd [[bufdo if bufname('%') == '' && line('.') == 1 && getline('.') == '' | bdelete | endif]]
+-- end, {})
 
 -- Restart config
 command("Restart", function()

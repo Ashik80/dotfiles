@@ -1,0 +1,4 @@
+prefix_rule(pattern=["python3", "-m", "http.server"], decision="allow")
+prefix_rule(pattern=["git", "init"], decision="allow")
+prefix_rule(pattern=["git", "add"], decision="allow")
+prefix_rule(pattern=["git", "-c", "user.name=Codex"], decision="allow")

@@ -28,6 +28,10 @@ printf '%s\n' '{}' > "$SANDBOX/.agents/skills/browser-tools/package-lock.json"
 printf '%s\n' '{}' > "$SANDBOX/.agents/skills/youtube-transcript/package.json"
 printf '%s\n' claude-global > "$SANDBOX/.claude/CLAUDE.md"
 printf '%s\n' codex-global > "$SANDBOX/.codex/AGENTS.md"
+printf '%s\n' '{}' > "$SANDBOX/.claude/settings.json"
+printf '%s\n' 'model = "test"' > "$SANDBOX/.codex/config.toml"
+mkdir -p "$SANDBOX/.codex/rules"
+printf '%s\n' test > "$SANDBOX/.codex/rules/default.rules"
 printf '%s\n' '{"defaultMode":"full"}' > "$SANDBOX/.config/ponytail/config.json"
 printf '%s\n' test > "$SANDBOX/.pi/agent/AGENTS.md"
 printf '%s\n' '{}' > "$SANDBOX/.pi/agent/settings.json"
@@ -38,7 +42,7 @@ printf '%s\n' test > "$SANDBOX/.pi/agent/agents/test.md"
 printf '%s\n' test > "$SANDBOX/.pi/agent/extensions/generate-image/index.ts"
 printf '%s\n' test > "$SANDBOX/.pi/agent/extensions/subagent/index.ts"
 printf '%s\n' test > "$SANDBOX/.pi/agent/extensions/subagent/prompts/test.md"
-for extension in confirm-destructive.ts git-checkpoint.ts notify.ts preset.ts protected-paths.ts todo.ts; do
+for extension in confirm-destructive.ts git-checkpoint.ts notify.ts preset.ts protected-paths.ts slim-footer.ts todo.ts; do
     printf '%s\n' test > "$SANDBOX/.pi/agent/extensions/$extension"
 done
 
@@ -72,6 +76,11 @@ mkdir -p "$GLOBAL_HOME"
 AI_CONFIG_COMMAND_LOG="$COMMAND_LOG" PATH="$SANDBOX/bin:$PATH" HOME="$GLOBAL_HOME" "$REPO_ROOT/projscripts/install-ai-config.sh" >/dev/null
 [[ ! -e "$GLOBAL_HOME/.pi/agent/extensions/plan-mode" && ! -L "$GLOBAL_HOME/.pi/agent/extensions/plan-mode" ]] || { printf 'error: removed plan-mode extension was linked\n' >&2; exit 1; }
 [[ -L "$GLOBAL_HOME/.pi/agent/extensions/preset.ts" ]]
+for relative in .claude/settings.json .codex/config.toml .codex/rules/default.rules .pi/agent/extensions/slim-footer.ts; do
+    [[ -L "$GLOBAL_HOME/$relative" ]]
+    [[ "$(readlink "$GLOBAL_HOME/$relative")" != /* ]]
+    [[ "$(readlink -f "$GLOBAL_HOME/$relative")" == "$REPO_ROOT/$relative" ]]
+done
 [[ "$(readlink -f "$GLOBAL_HOME/.pi/agent/presets.json")" == "$REPO_ROOT/.pi/agent/presets.json" ]]
 [[ "$(readlink -f "$GLOBAL_HOME/.claude/CLAUDE.md")" == "$REPO_ROOT/.claude/CLAUDE.md" ]]
 [[ "$(readlink -f "$GLOBAL_HOME/.codex/AGENTS.md")" == "$REPO_ROOT/.codex/AGENTS.md" ]]

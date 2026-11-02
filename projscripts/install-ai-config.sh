@@ -40,7 +40,9 @@ link_path() {
         printf 'backed up:      %s -> %s\n' "$destination" "$backup"
     fi
 
-    ln -s "$source" "$destination"
+    local relative_source
+    relative_source="$(node -e 'const p = require("node:path"); console.log(p.relative(p.dirname(process.argv[2]), process.argv[1]));' "$source" "$destination")"
+    ln -s "$relative_source" "$destination"
     printf 'linked:          %s -> %s\n' "$destination" "$source"
 }
 
@@ -52,6 +54,9 @@ link_path "$DOTFILES/.agents/.skill-lock.json" "$HOME/.agents/.skill-lock.json"
 # Global instructions for each coding agent.
 link_path "$DOTFILES/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 link_path "$DOTFILES/.codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
+link_path "$DOTFILES/.claude/settings.json" "$HOME/.claude/settings.json"
+link_path "$DOTFILES/.codex/config.toml" "$HOME/.codex/config.toml"
+link_path "$DOTFILES/.codex/rules/default.rules" "$HOME/.codex/rules/default.rules"
 
 # Ponytail uses this shared default across pi, Claude Code, and Codex.
 link_path "$DOTFILES/.config/ponytail/config.json" "$HOME/.config/ponytail/config.json"
@@ -60,8 +65,9 @@ link_path "$DOTFILES/.config/ponytail/config.json" "$HOME/.config/ponytail/confi
 link_path "$DOTFILES/.pi/agent/AGENTS.md" "$HOME/.pi/agent/AGENTS.md"
 link_path "$DOTFILES/.pi/agent/settings.json" "$HOME/.pi/agent/settings.json"
 link_path "$DOTFILES/.pi/agent/presets.json" "$HOME/.pi/agent/presets.json"
-link_path "$DOTFILES/.pi/agent/prompts/commit.md" "$HOME/.pi/agent/prompts/commit.md"
-link_path "$DOTFILES/.pi/agent/prompts/review.md" "$HOME/.pi/agent/prompts/review.md"
+for prompt in "$DOTFILES"/.pi/agent/prompts/*.md; do
+    link_path "$prompt" "$HOME/.pi/agent/prompts/$(basename "$prompt")"
+done
 
 # Agent definitions are configuration, so keep them in dotfiles.
 for agent in "$DOTFILES"/.pi/agent/agents/*.md; do
@@ -69,7 +75,7 @@ for agent in "$DOTFILES"/.pi/agent/agents/*.md; do
 done
 
 # Custom extensions are kept in dotfiles; package extensions are installed below.
-for extension in confirm-destructive.ts generate-image git-checkpoint.ts notify.ts preset.ts protected-paths.ts subagent todo.ts; do
+for extension in confirm-destructive.ts generate-image git-checkpoint.ts notify.ts preset.ts protected-paths.ts slim-footer.ts subagent todo.ts; do
     link_path "$DOTFILES/.pi/agent/extensions/$extension" "$HOME/.pi/agent/extensions/$extension"
 done
 
@@ -119,5 +125,5 @@ if ! python3 -c 'import yaml' >/dev/null 2>&1; then
 fi
 printf 'manual setup:    Chrome/Chromium for browser-tools; transcribe needs Apple Silicon macOS\n'
 printf 'manual setup:    pi /login, OpenRouter key, Google CLI accounts, Asana token, gh auth login\n'
-printf 'unchanged:       ignored synced skills and machine-local credentials/runtime state\n'
+printf 'unchanged:       machine-local credentials/runtime state and skill sync metadata\n'
 printf '\nDone. Restart pi, Claude Code, and Codex to reload skills and settings.\n'

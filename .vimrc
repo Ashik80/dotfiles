@@ -53,6 +53,8 @@ nnoremap <leader>cp :let @+ = expand("%:.")<CR>
 tnoremap <Esc><Esc> <C-\><C-n>
 nnoremap <C-Left> :vertical resize -5<CR>
 nnoremap <C-Right> :vertical resize +5<CR>
+nnoremap <C-j> <cmd>cn<CR>
+nnoremap <C-k> <cmd>cp<CR>
 
 " Get highlight group
 function! SynGroup()
@@ -94,7 +96,9 @@ autocmd! BufEnter,BufWinEnter *.py {
 }
 
 " Grepping
-set grepprg=grep\ -Rn\ --exclude-dir={node_modules,.git,dist,*cache*,android,ios,.next,.nx}
+"set grepprg=grep\ -Rn\ --exclude-dir={node_modules,.git,dist,*cache*,android,ios,.next,.nx}
+set grepprg=rg\ --column
+set grepformat=%f:%l:%c:%m
 nnoremap <leader>fg :grep!<space>
 
 " Emoji selector
