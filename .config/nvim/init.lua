@@ -39,7 +39,6 @@ local command = vim.api.nvim_create_user_command
 -- Mappings
 -- vim.keymap.set('n', '-', '<cmd>Ex<CR>')
 vim.keymap.set('n', '-', '<cmd>VimExplorer<CR>')
-vim.keymap.set('n', '<leader>tr', ':TabRename<space>')
 vim.keymap.set({'v', 'x'}, '>', '>gv')
 vim.keymap.set({'v', 'x'}, '<', '<gv')
 vim.keymap.set({'v', 'x'}, 'J', ":move '>+1<CR>gv=gv")
@@ -373,6 +372,22 @@ autocmd('FileType', {
         end, { noremap = true, silent = true })
     end
 })
+
+-- Rename tabs with the current working directory
+vim.api.nvim_create_user_command("TabNameFromCwd", function()
+    vim.system({ "basename", vim.fn.getcwd() }, { text = true }, function(obj)
+        if obj.code ~= 0 then
+            vim.notify("basename failed: " .. (obj.stderr or ""), vim.log.levels.ERROR)
+            return
+        end
+        local name = vim.trim(obj.stdout or "")
+        if name == "" then return end
+        vim.schedule(function()
+            vim.cmd("TabRename " .. vim.fn.fnameescape(name))
+        end)
+    end)
+end, {})
+vim.keymap.set('n', '<leader>tr', '<cmd>TabNameFromCwd<CR>')
 
 -- Plugins
 local plugins = {

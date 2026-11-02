@@ -42,7 +42,6 @@ set fillchars=eob:\ ,vert:│
 
 " General mappings
 nnoremap - :VimExplorer<CR>
-nnoremap <leader>tr :TabRename<space>
 nnoremap ]q :cn<CR>
 nnoremap [q :cp<CR>
 xnoremap > >gv
@@ -264,6 +263,23 @@ function! RunShellBuffer() abort
   %!sh
   redraw!
 endfunction
+
+" Rename tabs with the current working directory
+function! TabNameFromCwd() abort
+    let name = trim(system('basename ' . shellescape(getcwd())))
+    if v:shell_error
+        echohl ErrorMsg
+        echomsg 'basename failed'
+        echohl None
+        return
+    endif
+    if empty(name)
+        return
+    endif
+    execute 'TabRename ' . fnameescape(name)
+endfunction
+command! TabNameFromCwd call TabNameFromCwd()
+nnoremap <leader>tr <cmd>TabNameFromCwd<CR>
 
 " Plugins
 let g:codeium_enabled = v:false
