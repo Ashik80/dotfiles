@@ -73,18 +73,27 @@ AI_CONFIG_COMMAND_LOG="$COMMAND_LOG" PATH="$SANDBOX/bin:$PATH" HOME="$SANDBOX" "
 
 GLOBAL_HOME="$SANDBOX/home"
 mkdir -p "$GLOBAL_HOME"
-AI_CONFIG_COMMAND_LOG="$COMMAND_LOG" PATH="$SANDBOX/bin:$PATH" HOME="$GLOBAL_HOME" "$REPO_ROOT/projscripts/install-ai-config.sh" >/dev/null
-[[ ! -e "$GLOBAL_HOME/.pi/agent/extensions/plan-mode" && ! -L "$GLOBAL_HOME/.pi/agent/extensions/plan-mode" ]] || { printf 'error: removed plan-mode extension was linked\n' >&2; exit 1; }
-[[ -L "$GLOBAL_HOME/.pi/agent/extensions/preset.ts" ]]
-for relative in .claude/settings.json .codex/config.toml .codex/rules/default.rules .pi/agent/extensions/slim-footer.ts; do
-    [[ -L "$GLOBAL_HOME/$relative" ]]
-    [[ "$(readlink "$GLOBAL_HOME/$relative")" != /* ]]
-    [[ "$(readlink -f "$GLOBAL_HOME/$relative")" == "$REPO_ROOT/$relative" ]]
-done
-[[ "$(readlink -f "$GLOBAL_HOME/.pi/agent/presets.json")" == "$REPO_ROOT/.pi/agent/presets.json" ]]
-[[ "$(readlink -f "$GLOBAL_HOME/.claude/CLAUDE.md")" == "$REPO_ROOT/.claude/CLAUDE.md" ]]
-[[ "$(readlink -f "$GLOBAL_HOME/.codex/AGENTS.md")" == "$REPO_ROOT/.codex/AGENTS.md" ]]
-[[ "$(readlink -f "$GLOBAL_HOME/.config/ponytail/config.json")" == "$REPO_ROOT/.config/ponytail/config.json" ]]
+AI_CONFIG_COMMAND_LOG="$COMMAND_LOG" PATH="$SANDBOX/bin:$PATH" HOME="$GLOBAL_HOME" "$REPO_ROOT/projscripts/install-ai-config.sh" > "$SANDBOX/unlinked.log"
+grep -Fq 'is not linked, run projscripts/dotfiles-stow.sh' "$SANDBOX/unlinked.log" ||
+    { printf 'error: missing links were not reported\n' >&2; exit 1; }
+[[ -z "$(ls -A "$GLOBAL_HOME")" ]] ||
+    { printf 'error: install script created links; dotfiles-stow.sh owns those\n' >&2; exit 1; }
+
+# With links in place the warning disappears and nothing is duplicated.
+mkdir -p "$GLOBAL_HOME/.pi/agent" "$GLOBAL_HOME/.agents" "$GLOBAL_HOME/.claude"
+ln -s "$REPO_ROOT/.pi/agent/settings.json" "$GLOBAL_HOME/.pi/agent/settings.json"
+ln -s "$REPO_ROOT/.pi/agent/agents" "$GLOBAL_HOME/.pi/agent/agents"
+ln -s "$REPO_ROOT/.agents/skills" "$GLOBAL_HOME/.agents/skills"
+ln -s "$REPO_ROOT/.claude/CLAUDE.md" "$GLOBAL_HOME/.claude/CLAUDE.md"
+printf '%s\n' local-auth > "$GLOBAL_HOME/.pi/agent/auth.json"
+AI_CONFIG_COMMAND_LOG="$COMMAND_LOG" PATH="$SANDBOX/bin:$PATH" HOME="$GLOBAL_HOME" "$REPO_ROOT/projscripts/install-ai-config.sh" > "$SANDBOX/linked.log"
+grep -Fq 'is not linked' "$SANDBOX/linked.log" &&
+    { printf 'error: warning printed while links exist\n' >&2; exit 1; }
+[[ "$(< "$GLOBAL_HOME/.pi/agent/auth.json")" == local-auth ]]
+[[ -L "$GLOBAL_HOME/.pi/agent/settings.json" ]]
+[[ ! -e "$GLOBAL_HOME/.pi/agent/settings.json.before-dotfiles-"* ]]
+[[ -f "$REPO_ROOT/.pi/agent/settings.json" && ! -L "$REPO_ROOT/.pi/agent/settings.json" ]]
+
 grep -Fxq 'claude plugin marketplace add DietrichGebert/ponytail --scope user' "$COMMAND_LOG"
 grep -Fxq 'claude plugin install ponytail@ponytail --scope user' "$COMMAND_LOG"
 grep -Fxq 'codex plugin marketplace add DietrichGebert/ponytail' "$COMMAND_LOG"
@@ -93,25 +102,6 @@ grep -Fxq 'pi update --extensions --no-approve' "$COMMAND_LOG"
 grep -Fxq 'npm install -g --ignore-scripts @mariozechner/gccli @mariozechner/gdcli @mariozechner/gmcli' "$COMMAND_LOG"
 grep -Fxq "npm ci --prefix $REPO_ROOT/.agents/skills/browser-tools" "$COMMAND_LOG"
 grep -Fxq "npm install --prefix $REPO_ROOT/.agents/skills/youtube-transcript --package-lock=false" "$COMMAND_LOG"
-[[ -L "$GLOBAL_HOME/.pi/agent/agents/openrouter-vision.md" ]]
-[[ "$(readlink -f "$GLOBAL_HOME/.agents/skills")" == "$REPO_ROOT/.agents/skills" ]]
-for source in "$REPO_ROOT"/.pi/agent/agents/*.md "$REPO_ROOT"/.pi/agent/extensions/* "$REPO_ROOT"/.pi/agent/prompts/*.md; do
-    relative="${source#"$REPO_ROOT"/}"
-    [[ "$(readlink -f "$GLOBAL_HOME/$relative")" == "$source" ]]
-done
-for source in "$REPO_ROOT"/.pi/agent/extensions/subagent/prompts/*.md; do
-    [[ "$(readlink -f "$GLOBAL_HOME/.pi/agent/prompts/$(basename "$source")")" == "$source" ]]
-done
-
-# Reinstalling preserves correct links, local credentials, and existing backups.
-printf '%s\n' local-auth > "$GLOBAL_HOME/.pi/agent/auth.json"
-rm "$GLOBAL_HOME/.pi/agent/prompts/commit.md"
-printf '%s\n' local-prompt > "$GLOBAL_HOME/.pi/agent/prompts/commit.md"
-AI_CONFIG_COMMAND_LOG="$COMMAND_LOG" PATH="$SANDBOX/bin:$PATH" HOME="$GLOBAL_HOME" "$REPO_ROOT/projscripts/install-ai-config.sh" >/dev/null
-[[ "$(< "$GLOBAL_HOME/.pi/agent/auth.json")" == local-auth ]]
-[[ -L "$GLOBAL_HOME/.pi/agent/prompts/commit.md" ]]
-grep -Fxq local-prompt "$GLOBAL_HOME"/.pi/agent/prompts/commit.md.before-dotfiles-*
-
 # A missing Pi CLI is installed before packages are reconciled.
 cp "$SANDBOX/bin/pi" "$SANDBOX/pi-stub"
 rm "$SANDBOX/bin/pi"

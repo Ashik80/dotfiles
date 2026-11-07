@@ -37,5 +37,5 @@ local toggle_checklist = function()
   vim.api.nvim_set_current_line(current_line)
 end
 
-map("n", "<leader>c", toggle_checked, { desc = "Markdown check/uncheck checklist" })
-map("n", "<leader>t", toggle_checklist, { desc = "Markdown toggle check item" })
+map("n", "<leader>tc", toggle_checked, { desc = "Markdown check/uncheck checklist" })
+map("n", "<leader>tt", toggle_checklist, { desc = "Markdown toggle check item" })

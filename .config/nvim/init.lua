@@ -19,7 +19,7 @@ vim.o.clipboard = "unnamedplus"
 vim.o.writebackup = false
 vim.o.winborder = "solid"
 -- vim.o.guicursor = ""
-vim.o.guifont = "Iosevka Custom Semi-Extended:h17"
+vim.o.guifont = "Iosevka Custom Semi-Extended, Noto Color Emoji:h17"
 vim.o.listchars = "tab:▸ ,trail:·"
 vim.o.list = true
 vim.o.fillchars = "eob: "
@@ -31,6 +31,7 @@ vim.o.pumheight = 10
 vim.opt.completeopt = { "menuone", "noinsert", "fuzzy", "popup", "preview" }
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
+vim.opt.showtabline = 2
 
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
@@ -399,7 +400,8 @@ local plugins = {
     -- 'https://github.com/Ashik80/default16.vim',
     'https://github.com/Ashik80/VimProject',
     'https://github.com/nanotech/jellybeans.vim',
-    'https://github.com/iamcco/markdown-preview.nvim'
+    'https://github.com/iamcco/markdown-preview.nvim',
+    'https://github.com/mason-org/mason.nvim'
 }
 local plugger = require("plugger")
 plugger.setup(plugins)
@@ -407,9 +409,10 @@ vim.keymap.set('n', '<leader>pu', plugger.update, { noremap = true, silent = tru
 vim.keymap.set('n', '<leader>pc', function() plugger.clean(plugins) end, { noremap = true, silent = true })
 
 -- LSP
+require("mason").setup()
 vim.lsp.enable({
     'basedpyright',
-    'ts_ls',
+    'vtsls',
     'eslint',
     'gopls',
     'terraformls',

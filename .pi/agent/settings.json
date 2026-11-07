@@ -1,6 +1,6 @@
 {
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-6.1-sol",
+  "defaultProvider": "opencode-go",
+  "defaultModel": "deepseek-v4.1-flash",
   "defaultThinkingLevel": "medium",
   "theme": "dark",
   "tuiMode": "regular",
@@ -29,6 +29,6 @@
     "npm:pi-zcode-provider",
     "git:github.com/DietrichGebert/ponytail"
   ],
-  "lastChangelogVersion": "1.4.0",
+  "lastChangelogVersion": "1.5.0",
   "hideThinkingBlock": false
 }

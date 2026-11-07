@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Install shared Agent Skills, their npm dependencies, and portable pi configuration.
-# Existing paths are preserved as timestamped backups.
+# Install shared Agent Skills, their npm dependencies, and pi/claude/codex plugins.
+# Symlinks are owned by dotfiles-stow.sh; this script only installs what they need.
 set -euo pipefail
 
 for command in node npm git; do
@@ -13,79 +13,13 @@ node -e 'const [major, minor] = process.versions.node.split(".").map(Number); if
 
 SCRIPT_PATH="$(node -e 'console.log(require("node:fs").realpathSync(process.argv[1]))' "${BASH_SOURCE[0]}")"
 DOTFILES="$(cd "$(dirname "$SCRIPT_PATH")/.." && pwd)"
-STAMP="$(date +%Y%m%d-%H%M%S)"
-
-link_path() {
-    local source="$1" destination="$2"
-    local resolved_source resolved_destination
-
-    if [[ ! -e "$source" && ! -L "$source" ]]; then
-        printf 'error: link source does not exist: %s\n' "$source" >&2
-        return 1
+# Symlinks come from dotfiles-stow.sh; warn when that has not run yet.
+for relative in .pi/agent/settings.json .pi/agent/agents .agents/skills .claude/CLAUDE.md; do
+    if [[ ! -L "$HOME/$relative" ]]; then
+        printf 'manual setup:    %s is not linked, run projscripts/dotfiles-stow.sh\n' "$relative"
+        break
     fi
-
-    resolved_source="$(node -e 'try { console.log(require("node:fs").realpathSync(process.argv[1])); } catch {}' "$source")"
-    resolved_destination="$(node -e 'try { console.log(require("node:fs").realpathSync(process.argv[1])); } catch {}' "$destination")"
-    if [[ "$source" == "$destination" ]] ||
-        [[ -n "$resolved_source" && "$resolved_source" == "$resolved_destination" ]]; then
-        printf 'already in place: %s\n' "$destination"
-        return
-    fi
-
-    mkdir -p "$(dirname "$destination")"
-
-    if [[ -e "$destination" || -L "$destination" ]]; then
-        local backup="${destination}.before-dotfiles-${STAMP}"
-        mv "$destination" "$backup"
-        printf 'backed up:      %s -> %s\n' "$destination" "$backup"
-    fi
-
-    local relative_source
-    relative_source="$(node -e 'const p = require("node:path"); console.log(p.relative(p.dirname(process.argv[2]), process.argv[1]));' "$source" "$destination")"
-    ln -s "$relative_source" "$destination"
-    printf 'linked:          %s -> %s\n' "$destination" "$source"
-}
-
-# Shared skills: pi discovers ~/.agents/skills; Claude uses ~/.claude/skills.
-link_path "$DOTFILES/.agents/skills" "$HOME/.agents/skills"
-link_path "$DOTFILES/.agents/skills" "$HOME/.claude/skills"
-link_path "$DOTFILES/.agents/.skill-lock.json" "$HOME/.agents/.skill-lock.json"
-
-# Global instructions for each coding agent.
-link_path "$DOTFILES/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
-link_path "$DOTFILES/.codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
-link_path "$DOTFILES/.claude/settings.json" "$HOME/.claude/settings.json"
-link_path "$DOTFILES/.codex/config.toml" "$HOME/.codex/config.toml"
-link_path "$DOTFILES/.codex/rules/default.rules" "$HOME/.codex/rules/default.rules"
-
-# Ponytail uses this shared default across pi, Claude Code, and Codex.
-link_path "$DOTFILES/.config/ponytail/config.json" "$HOME/.config/ponytail/config.json"
-
-# Portable pi configuration. Authentication and runtime files remain local.
-link_path "$DOTFILES/.pi/agent/AGENTS.md" "$HOME/.pi/agent/AGENTS.md"
-link_path "$DOTFILES/.pi/agent/settings.json" "$HOME/.pi/agent/settings.json"
-link_path "$DOTFILES/.pi/agent/presets.json" "$HOME/.pi/agent/presets.json"
-for prompt in "$DOTFILES"/.pi/agent/prompts/*.md; do
-    link_path "$prompt" "$HOME/.pi/agent/prompts/$(basename "$prompt")"
 done
-
-# Agent definitions are configuration, so keep them in dotfiles.
-for agent in "$DOTFILES"/.pi/agent/agents/*.md; do
-    link_path "$agent" "$HOME/.pi/agent/agents/$(basename "$agent")"
-done
-
-# Custom extensions are kept in dotfiles; package extensions are installed below.
-for extension in confirm-destructive.ts generate-image git-checkpoint.ts notify.ts preset.ts protected-paths.ts slim-footer.ts subagent todo.ts; do
-    link_path "$DOTFILES/.pi/agent/extensions/$extension" "$HOME/.pi/agent/extensions/$extension"
-done
-
-# Install the workflow prompts bundled with the subagent extension.
-for prompt in "$DOTFILES"/.pi/agent/extensions/subagent/prompts/*.md; do
-    link_path "$prompt" "$HOME/.pi/agent/prompts/$(basename "$prompt")"
-done
-
-# Convenience CLI installed by the custom Asana skill.
-link_path "$DOTFILES/.agents/skills/asana/asana" "$HOME/.local/bin/asana"
 
 # Install Pi if needed, then reconcile packages declared in the linked settings.
 if ! command -v pi >/dev/null 2>&1; then

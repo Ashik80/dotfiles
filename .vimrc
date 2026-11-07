@@ -34,6 +34,7 @@ set nowritebackup
 set list
 set listchars=tab:▸\ ,trail:·
 set fillchars=eob:\ ,vert:│
+set showtabline=2
 
 " Cursor change
 "let &t_SI = "\e[6 q"
@@ -332,6 +333,7 @@ inoremap <silent><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(
 vnoremap <silent><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
 vnoremap <silent><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 inoremap <silent><expr> <c-x><c-o> coc#refresh()
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 augroup coc-go-to-definition
     autocmd!

@@ -20,5 +20,5 @@ function! ToggleChecklist()
     call setline('.', l:newline)
 endfunction
 
-nnoremap <leader>c :call ToggleCheckmark()<CR>
-nnoremap <leader>t :call ToggleChecklist()<CR>
+nnoremap <leader>tc :call ToggleCheckmark()<CR>
+nnoremap <leader>tt :call ToggleChecklist()<CR>
