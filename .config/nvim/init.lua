@@ -54,6 +54,8 @@ vim.keymap.set('n', '<C-Left>', '<cmd>vertical resize -5<CR>')
 vim.keymap.set('n', '<C-Right>', '<cmd>vertical resize +5<CR>')
 vim.keymap.set('n', '<C-j>', '<cmd>cn<CR>')
 vim.keymap.set('n', '<C-k>', '<cmd>cp<CR>')
+vim.keymap.set('n', 'g0', '<cmd>tabfirst<CR>')
+vim.keymap.set('n', 'g$', '<cmd>tablast<CR>')
 vim.keymap.set('c', '<Down>', function()
   return vim.fn.pumvisible() == 1 and '<C-n>' or '<Down>'
 end, { expr = true })
@@ -190,33 +192,100 @@ local function emoji_selector()
 end
 vim.keymap.set('n', '<leader>fe', emoji_selector, { desc = 'Select emoji' })
 
+-- Database picker
+local state = {}
+
+local function pick_database()
+    local buf, win = create_window()
+    local cmd = "~/dotfiles/projscripts/list-psql-databases.sh | fzf"
+    vim.fn.termopen({ "/bin/sh", "-c", cmd}, {
+        on_exit = function()
+            local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+            if vim.api.nvim_win_is_valid(win) then vim.api.nvim_win_close(win, true) end
+            if vim.api.nvim_buf_is_valid(buf) then vim.api.nvim_buf_delete(buf, { force = true }) end
+            for i = #lines, 1, -1 do
+                if lines[i] ~= "" then
+                    state.database = lines[i]
+                    return
+                end
+            end
+        end,
+    })
+    vim.cmd('startinsert')
+end
+
+-- 'completefunc' for the picked database's tables (trigger with <C-x><C-u>)
+local table_cache = {}
+
+function _G.SqlTableComplete(findstart, base)
+    if not state.database then
+        return findstart == 1 and -3 or {}
+    end
+    if findstart == 1 then
+        local line = vim.api.nvim_get_current_line()
+        local col = vim.api.nvim_win_get_cursor(0)[2]
+        return col - #(line:sub(1, col):match('[%w_]*$'))
+    end
+    if table_cache.database ~= state.database then
+        local cmd = string.format('DATABASE=%s ~/dotfiles/projscripts/list-psql-database-tables.sh',
+            vim.fn.shellescape(state.database))
+        table_cache = { database = state.database, tables = vim.fn.systemlist(cmd) }
+    end
+    base = base:lower()
+    return vim.tbl_filter(function(name)
+        return name:lower():sub(1, #base) == base
+    end, table_cache.tables)
+end
+
+-- Compile the current SQL file against the picked database
+local function compile_psql_file()
+    if not state.database then
+        vim.notify('Pick a database first', vim.log.levels.WARN)
+        return
+    end
+    local cmd = string.format('DATABASE=%s FILE=%s ~/dotfiles/projscripts/compile-psql-file.sh',
+        vim.fn.shellescape(state.database), vim.fn.shellescape(vim.fn.expand('%')))
+    local output = vim.fn.systemlist(cmd)
+    open_scratch_buffer('right')
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, output)
+    vim.wo.wrap = false
+end
+
+autocmd('FileType', {
+    pattern = 'sql',
+    callback = function()
+        vim.keymap.set('n', '<leader>ld', pick_database, { buffer = true, desc = 'Pick database' })
+        vim.keymap.set('n', '<leader>lc', compile_psql_file, { buffer = true, desc = 'Compile SQL file' })
+        vim.bo.completefunc = 'v:lua.SqlTableComplete'
+        vim.bo.omnifunc = '' -- runtime ftplugin sets sqlcomplete, which we don't want
+    end,
+})
+
 -- Fuzzy finder
 local function fuzzy_file_finder()
-    local outputfile = vim.fn.tempname()
-    local fzf_cmd = string.format("find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx -o -name .serverless -o -name .venv -o -name .cdk \\) -prune -o -type f | fzf > %s", outputfile)
+    local fzf_cmd = "find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx -o -name .serverless -o -name .venv -o -name .cdk \\) -prune -o -type f | fzf"
     local origin_win = vim.api.nvim_get_current_win()
     local term_buf, term_win = create_window()
-    vim.cmd("startinsert")
     vim.fn.termopen({ "/bin/sh", "-c", fzf_cmd }, {
-        on_exit = function(job_id, code, event)
-            local raw_lines = vim.fn.readfile(outputfile)
-            vim.api.nvim_win_close(term_win, true)
-            vim.api.nvim_buf_delete(term_buf, { force = true })
+        on_exit = function()
+            local lines = vim.api.nvim_buf_get_lines(term_buf, 0, -1, false)
+            if vim.api.nvim_win_is_valid(term_win) then vim.api.nvim_win_close(term_win, true) end
+            if vim.api.nvim_buf_is_valid(term_buf) then vim.api.nvim_buf_delete(term_buf, { force = true }) end
             local selected = nil
-            for _, line in ipairs(raw_lines) do
-                if line ~= "" then
-                    selected = line
+            for i = #lines, 1, -1 do
+                if lines[i] ~= "" then
+                    selected = lines[i]
                     break
                 end
             end
             if selected == nil then
                 return
             end
-            os.remove(outputfile)
             vim.api.nvim_set_current_win(origin_win)
             vim.cmd("edit " .. vim.fn.fnameescape(selected))
         end
     })
+    vim.cmd("startinsert")
 end
 vim.keymap.set("n", "<leader>ff", fuzzy_file_finder, { noremap = true, silent = true })
 
@@ -265,15 +334,15 @@ end
 vim.keymap.set({'v', 'x'}, "gb", git_blame_selection, { noremap = true, silent = true })
 vim.keymap.set('n', "gb", git_blame_file, { noremap = true, silent = true })
 
--- Open a scratch buffer
-local function open_scratch_buffer()
+-- Open a scratch buffer (dir = "above" | "below" | "left" | "right")
+function open_scratch_buffer(dir)
     local bufnr = vim.api.nvim_create_buf(false, true)
     local scratch_win = vim.api.nvim_open_win(bufnr, true, {
-        split = "above",
+        split = dir or "above",
     })
     vim.api.nvim_win_set_buf(0, bufnr)
 end
-vim.keymap.set("n", "<leader>o", open_scratch_buffer, { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>o", function() open_scratch_buffer("above") end, { noremap = true, silent = true })
 
 -- Capture command output to clipboard
 vim.api.nvim_create_user_command("Capture", function(opts)

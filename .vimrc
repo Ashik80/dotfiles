@@ -55,6 +55,8 @@ nnoremap <C-Left> :vertical resize -5<CR>
 nnoremap <C-Right> :vertical resize +5<CR>
 nnoremap <C-j> <cmd>cn<CR>
 nnoremap <C-k> <cmd>cp<CR>
+nnoremap g0 <cmd>tabfirst<CR>
+nnoremap g$ <cmd>tablast<CR>
 
 " Get highlight group
 function! SynGroup()
