@@ -35,6 +35,7 @@ set list
 set listchars=tab:▸\ ,trail:·
 set fillchars=eob:\ ,vert:│
 set showtabline=2
+set completeopt=menuone,noinsert,fuzzy,popup,preview,noselect
 
 " Cursor change
 "let &t_SI = "\e[6 q"
@@ -175,15 +176,89 @@ endfunction
 xnoremap gb :<C-u>call GitBlameSelection()<CR>
 nnoremap gb :call GitBlameFile()<CR>
 
-" Open a scratch buffer
-function! OpenScratchBuffer()
-    above new
-    setlocal buftype=nofile
-    setlocal bufhidden=hide
-    setlocal noswapfile
-    setlocal nobuflisted
+" Open a scratch buffer (a:1 = 'above' | 'below' | 'left' | 'right'), returns the window id
+function! OpenScratchBuffer(...)
+    let l:dir = a:0 ? a:1 : 'above'
+    execute get({'right': 'rightbelow vnew', 'left': 'leftabove vnew', 'below': 'below new'}, l:dir, 'above new')
+    let l:win = win_getid()
+    call win_execute(l:win, 'setlocal buftype=nofile bufhidden=hide noswapfile nobuflisted')
+    return l:win
 endfunction
-nnoremap <silent> <leader>o :call OpenScratchBuffer()<CR>
+nnoremap <silent> <leader>o :call OpenScratchBuffer('above')<CR>
+
+" SQL: pick a database, complete its tables, compile the current file
+let g:sql_database = ''
+
+augroup SqlPicker
+    autocmd!
+    autocmd FileType sql call SqlPickerSetup()
+augroup END
+
+function! SqlPickerSetup() abort
+    setlocal completefunc=SqlTableComplete
+    nnoremap <silent> <buffer> <leader>ld :call PickDatabase()<CR>
+    nnoremap <silent> <buffer> <leader>lc :call CompilePsqlFile()<CR>
+endfunction
+
+function! PickDatabase() abort
+    let l:tmpfile = tempname()
+    let l:cmd = '~/dotfiles/projscripts/list-psql-databases.sh | fzf > ' . shellescape(l:tmpfile)
+    let l:origin = win_getid()
+    botright new
+    call term_start([&shell, &shellcmdflag, l:cmd],
+                \ {'curwin': 1, 'exit_cb': function('s:PickDatabaseExited', [l:origin, l:tmpfile, bufnr('%')])})
+    startinsert
+endfunction
+function! s:PickDatabaseExited(origin, tmpfile, buffer, job, status)
+    " Defer until the terminal has flushed its last output.
+    call timer_start(0, function('s:PickDatabaseFinish', [a:origin, a:tmpfile, a:buffer]))
+endfunction
+function! s:PickDatabaseFinish(origin, tmpfile, buffer, timer)
+    let l:lines = filereadable(a:tmpfile) ? readfile(a:tmpfile) : []
+    call delete(a:tmpfile)
+    silent! execute 'bwipeout! ' . a:buffer
+    call win_gotoid(a:origin)
+    if !empty(l:lines)
+        let g:sql_database = l:lines[0]
+    endif
+endfunction
+
+let s:table_cache = {}
+
+function! SqlTableComplete(findstart, base)
+    if empty(g:sql_database)
+        return a:findstart ? -3 : []
+    endif
+    if a:findstart
+        let l:prefix = strpart(getline('.'), 0, col('.') - 1)
+        return col('.') - 1 - strlen(matchstr(l:prefix, '\k*$'))
+    endif
+    if get(s:table_cache, 'database', '') !=# g:sql_database
+        let l:cmd = 'DATABASE=' . shellescape(g:sql_database) . ' ~/dotfiles/projscripts/list-psql-database-tables.sh'
+        let s:table_cache = {'database': g:sql_database, 'tables': systemlist(l:cmd)}
+    endif
+    if empty(a:base)
+        return copy(s:table_cache.tables)
+    endif
+    let l:base = tolower(a:base)
+    return filter(copy(s:table_cache.tables), 'tolower(v:val)[: len(l:base) - 1] ==# l:base')
+endfunction
+
+function! CompilePsqlFile() abort
+    if empty(g:sql_database)
+        echohl WarningMsg | echomsg 'Pick a database first' | echohl None
+        return
+    endif
+    let l:cmd = 'DATABASE=' . shellescape(g:sql_database)
+                \ . ' FILE=' . shellescape(expand('%'))
+                \ . ' ~/dotfiles/projscripts/compile-psql-file.sh'
+    let l:output = systemlist(l:cmd)
+    let l:win = OpenScratchBuffer('right')
+    if !empty(l:output)
+        call setbufline(winbufnr(l:win), 1, l:output)
+    endif
+    call win_execute(l:win, 'setlocal nowrap nonumber norelativenumber')
+endfunction
 
 " Buffer to quickfix list
 function! SelectionToQF()
@@ -335,7 +410,9 @@ inoremap <silent><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(
 vnoremap <silent><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
 vnoremap <silent><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 inoremap <silent><expr> <c-x><c-o> coc#refresh()
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+            \ : pumvisible() ? "\<C-y>"
+            \ : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 augroup coc-go-to-definition
     autocmd!
