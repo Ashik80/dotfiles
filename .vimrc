@@ -36,6 +36,9 @@ set listchars=tab:▸\ ,trail:·
 set fillchars=eob:\ ,vert:│
 set showtabline=2
 set completeopt=menuone,noinsert,fuzzy,popup,preview,noselect
+set guicursor=a:block-blinkon0
+set guioptions-=T
+set guioptions-=m
 
 " Cursor change
 "let &t_SI = "\e[6 q"
@@ -51,7 +54,8 @@ xnoremap < <gv
 xnoremap J :move '>+1<CR>gv=gv
 xnoremap K :move '<-2<CR>gv=gv
 nnoremap <leader>cp :let @+ = expand("%:.")<CR>
-tnoremap <Esc><Esc> <C-\><C-n>
+" <Esc><Esc> leaves Terminal-Job mode (<C-W>N is Vim's own key, works in older Vims)
+tnoremap <Esc><Esc> <C-W>N
 nnoremap <C-Left> :vertical resize -5<CR>
 nnoremap <C-Right> :vertical resize +5<CR>
 nnoremap <C-j> <cmd>cn<CR>
@@ -72,7 +76,7 @@ command! -nargs=* -complete=shellcmd Term tabnew | term ++curwin <args>
 " Terminal settings
 augroup terminal_no_line_numbers
     autocmd!
-    autocmd TerminalOpen * setlocal nonumber norelativenumber signcolumn=no
+    autocmd TerminalOpen * setlocal nonumber norelativenumber signcolumn=no nolist
 augroup END
 
 " Lazygit
@@ -120,7 +124,7 @@ nnoremap <silent> <leader>fe :call EmojiSelector()<CR>
 function! FuzzyFileFinder()
     let l:tmpfile = tempname()
     let l:window = win_getid()
-    let l:cmd = "find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx \\) -prune -o -type f | fzf | sed 's/$/:0:0/' > " . shellescape(l:tmpfile)
+    let l:cmd = "find . -type d \\( -name node_modules -o -name .git -o -name dist -o -name *cache* -o -name android -o -name ios -o -name .next -o -name plugger -o -name .nx -o -name .serverless -o -name .venv -o -name .cdk \\) -prune -o -type f | fzf | sed 's/$/:0:0/' > " . shellescape(l:tmpfile)
     botright new
     resize 12
     call term_start([&shell, &shellcmdflag, l:cmd], {'curwin': 1,
@@ -478,10 +482,15 @@ colorscheme jellybeans
 hi SignColumn guibg=NONE ctermbg=NONE
 hi Normal guibg=#000000 ctermbg=black
 hi NonText guibg=#000000 ctermbg=black
+" listchars (trails/tabs) otherwise get jellybeans' lighter #151515 background
+hi Whitespace guibg=#000000 ctermbg=black
+hi SpecialKey guibg=#000000 ctermbg=black
 hi LineNr guibg=NONE ctermbg=NONE
 hi Comment gui=NONE cterm=NONE
 hi StatusLine gui=NONE cterm=NONE guifg=#e8e8d3 guibg=NONE
 hi StatusLineNC gui=NONE cterm=NONE
+hi! link StatusLineTerm StatusLine
+hi! link StatusLineTermNC StatusLineNC
 
 " hi link htmlH1 Title
 " hi mkdHeading ctermfg=1
